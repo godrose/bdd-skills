@@ -20,9 +20,9 @@ CLAUDE_DIR="$TARGET/.claude"
 mkdir -p "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents"
 
 # Copy skills (always overwrite — they're generic)
-cp "$SCRIPT_DIR/commands/bdd-scenario-design.md" "$CLAUDE_DIR/commands/"
-cp "$SCRIPT_DIR/commands/bdd-implement-scenario.md" "$CLAUDE_DIR/commands/"
-cp "$SCRIPT_DIR/agents/bdd-verifier.md" "$CLAUDE_DIR/agents/"
+cp "$SCRIPT_DIR/.claude/commands/bdd-scenario-design.md" "$CLAUDE_DIR/commands/"
+cp "$SCRIPT_DIR/.claude/commands/bdd-implement-scenario.md" "$CLAUDE_DIR/commands/"
+cp "$SCRIPT_DIR/.claude/agents/bdd-verifier.md" "$CLAUDE_DIR/agents/"
 
 echo "Installed BDD skills:"
 echo "  $CLAUDE_DIR/commands/bdd-scenario-design.md"
@@ -31,12 +31,12 @@ echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
 # Config template — only copy if no config exists yet
 if [ ! -f "$CLAUDE_DIR/bdd-config.md" ]; then
-  cp "$SCRIPT_DIR/bdd-config.template.md" "$CLAUDE_DIR/bdd-config.md"
+  cp "$SCRIPT_DIR/.claude/bdd-config.template.md" "$CLAUDE_DIR/bdd-config.md"
   echo "  $CLAUDE_DIR/bdd-config.md (from template — edit this for your project)"
 else
   echo ""
   echo "bdd-config.md already exists — skipped (not overwritten)."
-  echo "Compare with template: diff $CLAUDE_DIR/bdd-config.md $SCRIPT_DIR/bdd-config.template.md"
+  echo "Compare with template: diff $CLAUDE_DIR/bdd-config.md $SCRIPT_DIR/.claude/bdd-config.template.md"
 fi
 
 echo ""

@@ -5,13 +5,14 @@ Generic BDD workflow skills for Claude Code. Framework-agnostic — works with P
 ## What's included
 
 ```
-commands/
-  bdd-scenario-design.md      # Design scenarios from ACs — analyze gaps, formulate, implement
-  bdd-implement-scenario.md   # Implement step definitions — explore UI, discover selectors, verify
-agents/
-  bdd-verifier.md             # Run tests + type check, report results (read-only, no edits)
-bdd-config.template.md        # Project config template — fill in your tooling and conventions
-install.sh                    # Copy skills into your project's .claude/ directory
+.claude/
+  commands/
+    bdd-scenario-design.md      # Design scenarios from ACs — analyze gaps, formulate, implement
+    bdd-implement-scenario.md   # Implement step definitions — explore UI, discover selectors, verify
+  agents/
+    bdd-verifier.md             # Run tests + type check, report results (read-only, no edits)
+  bdd-config.template.md        # Project config template — fill in your tooling and conventions
+install.sh                      # Copy skills into your project's .claude/ directory
 ```
 
 ## Architecture
@@ -85,5 +86,4 @@ cd /tmp/bdd-skills && git pull
 
 ## Tested with
 
-- A Playwright-BDD + TypeScript project (60 scenarios)
 - [godrose/bdd-netcore](https://github.com/godrose/bdd-netcore) — SpecFlow + xUnit + .NET 6 (7 scenarios)
