@@ -5,14 +5,13 @@ Generic BDD workflow skills for Claude Code. Framework-agnostic — works with P
 ## What's included
 
 ```
-.claude/
-  commands/
-    bdd-scenario-design.md      # Design scenarios from ACs — analyze gaps, formulate, implement
-    bdd-implement-scenario.md   # Implement step definitions — explore UI, discover selectors, verify
-  agents/
-    bdd-verifier.md             # Run tests + type check, report results (read-only, no edits)
-  bdd-config.template.md        # Project config template — fill in your tooling and conventions
-install.sh                      # Copy skills into your project's .claude/ directory
+commands/
+  bdd-scenario-design.md      # Design scenarios from ACs — analyze gaps, formulate, implement
+  bdd-implement-scenario.md   # Implement step definitions — explore UI, discover selectors, verify
+agents/
+  bdd-verifier.md             # Run tests + type check, report results (read-only, no edits)
+bdd-config.template.md        # Project config template — fill in your tooling and conventions
+install.sh                    # Copy skills into your project's .claude/ directory
 ```
 
 ## Architecture
@@ -31,15 +30,15 @@ Skills reference each other by **role** (from `bdd-config.md`), not by name. Swa
 ## Install
 
 ```bash
-# Clone and install into your project
+# Remote install (no clone needed):
+curl -sL https://raw.githubusercontent.com/godrose/bdd/main/install.sh | bash -s -- /path/to/your/project
+
+# Or from a local clone:
 git clone https://github.com/godrose/bdd.git /tmp/bdd-skills
 /tmp/bdd-skills/install.sh /path/to/your/project
-
-# Or from within your project root
-/path/to/bdd-skills/install.sh .
 ```
 
-This copies skills into `.claude/` and creates `bdd-config.md` from the template.
+This copies skills into `.claude/` with source headers (repo URL + commit hash) and creates `bdd-config.md` from the template. Commit the result — the repo is self-contained after install.
 
 ## Configure
 
@@ -86,4 +85,5 @@ cd /tmp/bdd-skills && git pull
 
 ## Tested with
 
+- A Playwright-BDD + TypeScript project (60 scenarios)
 - [godrose/bdd-netcore](https://github.com/godrose/bdd-netcore) — SpecFlow + xUnit + .NET 6 (7 scenarios)
