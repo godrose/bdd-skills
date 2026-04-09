@@ -9,6 +9,7 @@ Generic BDD workflow skills for Claude Code. Framework-agnostic — works with P
   commands/
     bdd-scenario-design.md      # Design scenarios from ACs — analyze gaps, formulate, implement
     bdd-implement-scenario.md   # Implement step definitions — explore UI, discover selectors, verify
+    test-feature.md             # Run tests by tag/name/suite — config-driven, any framework
   agents/
     bdd-verifier.md             # Run tests + type check, report results (read-only, no edits)
   bdd-config.template.md        # Project config template — fill in your tooling and conventions

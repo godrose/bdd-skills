@@ -71,11 +71,13 @@ install_skill() {
 # Install skills with source headers
 install_skill "$SOURCE_DIR/.claude/commands/bdd-scenario-design.md" "$CLAUDE_DIR/commands/bdd-scenario-design.md"
 install_skill "$SOURCE_DIR/.claude/commands/bdd-implement-scenario.md" "$CLAUDE_DIR/commands/bdd-implement-scenario.md"
+install_skill "$SOURCE_DIR/.claude/commands/test-feature.md" "$CLAUDE_DIR/commands/test-feature.md"
 install_skill "$SOURCE_DIR/.claude/agents/bdd-verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
 
 echo "Installed BDD skills (from $REPO_URL ${VERSION:-}):"
 echo "  $CLAUDE_DIR/commands/bdd-scenario-design.md"
 echo "  $CLAUDE_DIR/commands/bdd-implement-scenario.md"
+echo "  $CLAUDE_DIR/commands/test-feature.md"
 echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
 # Config template — only copy if no config exists yet
