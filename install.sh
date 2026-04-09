@@ -20,7 +20,7 @@ REPO_URL="https://github.com/godrose/bdd"
 REPO_BRANCH="main"
 
 # Determine source directory
-if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/commands/bdd-scenario-design.md" ]; then
+if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.claude/commands/bdd-scenario-design.md" ]; then
   # Running from a local clone
   SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   CLEANUP=""
@@ -69,9 +69,9 @@ install_skill() {
 }
 
 # Install skills with source headers
-install_skill "$SOURCE_DIR/commands/bdd-scenario-design.md" "$CLAUDE_DIR/commands/bdd-scenario-design.md"
-install_skill "$SOURCE_DIR/commands/bdd-implement-scenario.md" "$CLAUDE_DIR/commands/bdd-implement-scenario.md"
-install_skill "$SOURCE_DIR/agents/bdd-verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
+install_skill "$SOURCE_DIR/.claude/commands/bdd-scenario-design.md" "$CLAUDE_DIR/commands/bdd-scenario-design.md"
+install_skill "$SOURCE_DIR/.claude/commands/bdd-implement-scenario.md" "$CLAUDE_DIR/commands/bdd-implement-scenario.md"
+install_skill "$SOURCE_DIR/.claude/agents/bdd-verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
 
 echo "Installed BDD skills (from $REPO_URL ${VERSION:-}):"
 echo "  $CLAUDE_DIR/commands/bdd-scenario-design.md"
@@ -80,7 +80,7 @@ echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
 # Config template — only copy if no config exists yet
 if [ ! -f "$CLAUDE_DIR/bdd-config.md" ]; then
-  cp "$SOURCE_DIR/bdd-config.template.md" "$CLAUDE_DIR/bdd-config.md"
+  cp "$SOURCE_DIR/.claude/bdd-config.template.md" "$CLAUDE_DIR/bdd-config.md"
   echo "  $CLAUDE_DIR/bdd-config.md (from template — edit this for your project)"
 else
   echo ""
