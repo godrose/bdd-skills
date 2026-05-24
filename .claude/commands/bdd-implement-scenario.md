@@ -23,7 +23,7 @@ A `.feature` file path or scenario tag. The scenario Gherkin must already exist 
 2. Read existing step definitions in the **steps_dir** to see which steps are already implemented
 3. Read relevant Page Object Models to understand current selectors
 4. Read environment config for target URLs and auth
-5. Identify which steps need new implementation vs which already exist
+5. Identify which steps need new implementation vs which already exist. For EACH apparently-new step, also run a paraphrase grep against the **steps_dir** — generate 2–3 natural paraphrases of the same assertion and search for each. If any paraphrase hits an existing step def, **stop and report back**: the `.feature` should be reworded to use the existing step text, not a new step def created. Do not author a duplicate step def silently — paraphrase blindness at implementation time is the last line of defense before a duplicate ships.
 
 #### Phase 1: Prepare
 
@@ -66,6 +66,8 @@ Based on what you learned from the UI state:
 1. Update the Page Object Model
 2. Update step definitions
 3. Update support modules if needed
+
+**Before authoring a NEW step def** (as opposed to editing an existing one), repeat the paraphrase grep from Phase 0 step 5 against the current inventory. The inventory may have changed since Phase 0 (e.g., a sibling scenario was implemented in between, or a step def merged upstream). If a paraphrase now exists, reword the `.feature` instead of adding a duplicate.
 
 ##### 2d. Verify the fix
 

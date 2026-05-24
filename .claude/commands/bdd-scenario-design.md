@@ -35,8 +35,19 @@ The user provides one or more of:
 1. **Scan feature files** — search the **features_dir** (from BDD config) for existing scenarios
 2. **Map AC to existing scenarios** — which assertions are already tested?
 3. **Identify gaps** — which AC bullets have no scenario coverage?
-4. **Check step inventory** — search the **steps_dir** for existing Given/When/Then steps that new scenarios can reuse
-5. **Present coverage matrix** to the user:
+4. **Check step inventory (two passes — both required):**
+   - **Pass A — exact match**: grep each drafted step verbatim against the **steps_dir** and existing `.feature` files
+   - **Pass B — paraphrase audit**: for EACH new step, generate 2–3 natural paraphrases of the same assertion and grep them too. If any paraphrase hits, USE the existing wording. Paraphrase families to consider:
+     - Success: "completes without error" / "exits cleanly" / "succeeds" / "returns no error"
+     - Negation: "does not equal X" / "should not match X" / "differs from X"
+     - Action verbs: "I copy / extract / read / capture" — the same intent often appears under several verbs
+     - Container references: any phrase like "from the X tab / panel / page" — the existing step may identify the container differently
+5. **Sweep project conventions** — before drafting NEW steps, read existing step defs in the same domain to learn the project's vocabulary:
+   - **Negation form** — `is disabled` vs `is not enabled`; `should not match` vs `should differ`
+   - **Data-table column names** already used in the same assertion family (e.g., `| field | matcher |` vs `| field | expected |`)
+   - **Given-vs-When tense** for shared facts — if `When I open X` exists everywhere, don't invent `Given I have opened X` for a Background
+   - **Composite-Given vs explicit-When-chain** patterns for `I have <state>` preconditions — prefer whichever pattern the rest of the suite already uses
+6. **Present coverage matrix** to the user:
 
 ```
 | AC Assertion                      | Covered by              | Gap? |
@@ -59,7 +70,11 @@ For each gap, formulate a scenario following these principles:
 - **Tags for routing** — `@PROJ-XXXX` for issue tracker linking, `@e2e`/`@smoke`/`@deep` for suite membership, scenario-specific tag for individual runs
 
 **Step formulation rules:**
-- **Reuse existing steps verbatim** — if a step already exists in the step inventory, use that exact text
+- **Reuse existing steps verbatim** — if a step (or a paraphrase you generated in Phase 2 Pass B) already exists, use that exact text. **Treat `@manual` scenarios with the same rigor** — today's @manual paraphrase becomes tomorrow's duplicate step def the moment it gets automated.
+- **Collapse parallel string Thens into one DataTable Then** — if you're about to write ≥3 Thens of the form `the X should contain "Y"` (or any other parallel pattern), replace them with a single Then that takes a DataTable column listing the values. N+1 string Thens become 1 table-driven Then with N rows.
+- **Match established data-table shapes** — if existing assertion steps in the same family use one set of column headers (e.g., `| field | matcher |`), use the same headers for the same fact. Don't invent a parallel convention (e.g., `| field | expected |`) — readers and step regex both fragment.
+- **Don't tense-shift existing Whens into new Givens for Background** — if `When I open X` exists, REUSE that When in Background (even chained with sibling Whens that establish the precondition). Don't paraphrase as `Given I have opened X` just because Background slots typically carry Givens.
+- **Match the project's negation convention** — read the inventory before drafting. If the codebase says `is disabled`, don't write `is not enabled`. If it says `should not point at`, don't write `does not point at`.
 - **New steps should be generic** — `Then the most recent row should have non-empty values for:` (reusable with DataTable) vs `Then the row should have name, email, status` (hardcoded)
 - **Avoid implementation details in Gherkin** — `When I click the Download button` (good) vs `When I click [data-testid="download-btn"]` (bad)
 - **Match the user's vocabulary** — use domain terms from the AC, not internal UI component names
@@ -71,9 +86,21 @@ For each gap, formulate a scenario following these principles:
 
 #### Phase 4: Review with User
 
-Present the designed scenarios to the user:
+Present the designed scenarios to the user. **Before requesting approval, produce a per-step reuse audit table — this is mandatory, not optional. It is the artifact that forces conscious reconciliation of every new step against the existing inventory.**
+
+Example:
+
+| Step Text | Status | Existing Analog |
+|-----------|--------|------------------|
+| `When I submit the form` | ✅ exact | `steps/forms.ts:42` |
+| `Then the response should contain:` (table) | ⚠ paraphrase — prefer `the response should match:` | `steps/api.ts:88` |
+| `Given the flag is not enabled` | ⚠ convention drift — codebase uses `is disabled` | `steps/flags.ts:17` |
+| `Then a toast notification appears` | 🆕 genuinely new — no toast assertions exist yet | — |
+
+**Resolve every ⚠ row before requesting approval** — either by rewording to the existing analog, or by documenting why the new wording is intentionally different. Then present:
+
 1. The proposed feature file(s) with full Gherkin text
-2. Which steps are new vs reused
+2. The per-step audit table above (every ⚠ should be either reconciled to ✅ or annotated `🆕 intentional because: <reason>`)
 3. Which project/tag each scenario belongs to
 4. Estimated implementation complexity (how many new steps, any new POM methods?)
 
@@ -112,3 +139,9 @@ After all scenarios are implemented and verified:
 | Skip coverage audit | May duplicate existing tests | Always check what exists first |
 | Design scenarios without reading existing steps | Will create redundant step definitions | Audit step inventory in Phase 2 |
 | Implement without user approval | User may have different priorities or wording preferences | Present and wait for approval in Phase 4 |
+| Paraphrasing an existing step into new wording | Creates duplicate step defs with overlapping behavior; PR reviewers waste cycles spotting them | Phase 2 Pass B — generate 2–3 paraphrases of each drafted step and grep them against the inventory before finalizing |
+| Multi-string Thens for an ordered/list assertion | N+1 step defs to maintain, each asserting one element of a fact that could be one DataTable assertion | Collapse ≥3 parallel `... should contain "X" ...` Thens into one DataTable Then |
+| Tense-shifting an existing When into a Given for Background | The Given duplicates the When, requires a new step def, drifts from how the rest of the suite establishes the same precondition | Reuse the existing When-chain in Background, even if slightly verbose |
+| Drift from established conventions (negation form, data-table column names) | The new wording looks fine in isolation but reads as inconsistent next to existing scenarios; locks in vocabulary forks | Phase 2 step 5 — sweep the inventory for vocabulary BEFORE drafting; match the project's word choice |
+| Treating `@manual` scenarios as exempt from step-reuse rigor | Every @manual step becomes a step def when automated; paraphrases get locked in before anyone notices | Apply identical step-reuse rules to @manual and @automated scenarios |
+| Presenting scenarios for approval without a per-step audit table | User can't tell which steps are new without manually grepping; review burden falls on reviewers, not the designer | Phase 4 — produce the audit table before requesting approval; every ⚠ row must be reconciled or annotated |
