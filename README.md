@@ -1,6 +1,6 @@
 # BDD Skills for Claude Code
 
-Generic BDD workflow skills for Claude Code. Framework-agnostic — works with Playwright-BDD, SpecFlow, Cucumber, or any Gherkin-based test framework.
+BDD workflow skills for Claude Code: design scenarios from acceptance criteria, implement step definitions, and verify they pass. Framework-agnostic — works with Playwright-BDD, SpecFlow, Cucumber, or any Gherkin runner.
 
 ## What's included
 
@@ -44,7 +44,7 @@ This copies skills into `.claude/` with source headers (repo URL + commit hash) 
 
 ## Configure
 
-Edit `.claude/bdd-config.md` in your project with your specific tooling:
+Edit `.claude/bdd-config.md` in your project. Drop one of these row sets into the **Tooling** table (the template ships with the column headers already in place):
 
 **Playwright-BDD (TypeScript):**
 ```markdown
@@ -84,8 +84,3 @@ Re-run the install script to update skills. Your `bdd-config.md` won't be overwr
 cd /tmp/bdd-skills && git pull
 /tmp/bdd-skills/install.sh /path/to/your/project
 ```
-
-## Tested with
-
-- A Playwright-BDD + TypeScript project (60 scenarios)
-- [godrose/bdd-netcore](https://github.com/godrose/bdd-netcore) — SpecFlow + xUnit + .NET 6 (7 scenarios)
