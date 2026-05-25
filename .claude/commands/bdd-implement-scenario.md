@@ -69,6 +69,8 @@ Based on what you learned from the UI state:
 
 **Before authoring a NEW step def** (as opposed to editing an existing one), repeat the paraphrase grep from Phase 0 step 5 against the current inventory. The inventory may have changed since Phase 0 (e.g., a sibling scenario was implemented in between, or a step def merged upstream). If a paraphrase now exists, reword the `.feature` instead of adding a duplicate.
 
+**Import discipline** — author imports just-in-time for what the current edit actually references. Do NOT pre-import symbols you "might use" later, and do NOT carry over imports from a prior draft that the final step body no longer references. Unused imports become typecheck failures under `--noUnusedLocals` (or equivalent strict mode) and require a follow-up cleanup PR. Before exiting Phase 2c, scan the file for imports introduced in this iteration and confirm each one is referenced by the code you just wrote.
+
 ##### 2d. Verify the fix
 
 Re-run the test. If the step now passes, move to the next step. If not, repeat 2b-2d.
@@ -85,9 +87,14 @@ Project: <project>
 Tag: <scenario-tag>
 ```
 
-The verifier runs the full scenario (without `--headed`) and the strict type check. If it reports failures, fix and re-dispatch.
+The verifier runs the full scenario (without `--headed`) and the strict type check. Failures must be resolved before declaring the scenario done — re-dispatch after each fix.
 
 If dispatching the agent is not possible, run manually: the **generate** command, then the **test** command, then the **typecheck** command (all from BDD config). All must pass with zero errors before the scenario is considered complete.
+
+**Common typecheck failures and how to resolve them:**
+- **Unused import / local / parameter** (e.g., `TS6133 declared but never read` in TypeScript projects) — delete the offending line. Use the `_`-prefix convention ONLY when an unused function parameter must remain to satisfy an interface or callback signature; never to silence an unused top-level import.
+- **Missing import** (e.g., `cannot find name`) — add the import; verify the resolved path matches the project's module resolution config.
+- **State-fixture property errors** — declare the new property on the **state_type** per Code Quality Rules below; don't paper over with `as any`.
 
 After failure, inspect available artifacts in the **test_results_dir**:
 - `error-context.md` — accessibility snapshot at failure
