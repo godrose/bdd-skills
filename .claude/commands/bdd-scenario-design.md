@@ -75,6 +75,17 @@ For each gap, formulate a scenario following these principles:
 - **Match established data-table shapes** — if existing assertion steps in the same family use one set of column headers (e.g., `| field | matcher |`), use the same headers for the same fact. Don't invent a parallel convention (e.g., `| field | expected |`) — readers and step regex both fragment.
 - **Don't tense-shift existing Whens into new Givens for Background** — if `When I open X` exists, REUSE that When in Background (even chained with sibling Whens that establish the precondition). Don't paraphrase as `Given I have opened X` just because Background slots typically carry Givens.
 - **Match the project's negation convention** — read the inventory before drafting. If the codebase says `is disabled`, don't write `is not enabled`. If it says `should not point at`, don't write `does not point at`.
+- **Multi-line content — use a DocString, never inline line breaks** — Gherkin step text is single-line. If a step needs a multi-line payload, place the payload in a Gherkin DocString (`"""…"""`) directly below a single-line step, never as line breaks inside a quoted step argument. Line breaks inside a quoted step argument fail Gherkin parsing.
+
+  ```gherkin
+  When I submit the following input:
+    """
+    line 1
+    line 2
+    """
+  ```
+
+  The step def signature takes a DocString parameter, not a quoted-string parameter. When a single-line form of the same input exists, prefer it — the scenario can reuse an existing single-argument step verbatim.
 - **New steps should be generic** — `Then the most recent row should have non-empty values for:` (reusable with DataTable) vs `Then the row should have name, email, status` (hardcoded)
 - **Avoid implementation details in Gherkin** — `When I click the Download button` (good) vs `When I click [data-testid="download-btn"]` (bad)
 - **Match the user's vocabulary** — use domain terms from the AC, not internal UI component names
@@ -145,3 +156,4 @@ After all scenarios are implemented and verified:
 | Drift from established conventions (negation form, data-table column names) | The new wording looks fine in isolation but reads as inconsistent next to existing scenarios; locks in vocabulary forks | Phase 2 step 5 — sweep the inventory for vocabulary BEFORE drafting; match the project's word choice |
 | Treating `@manual` scenarios as exempt from step-reuse rigor | Every @manual step becomes a step def when automated; paraphrases get locked in before anyone notices | Apply identical step-reuse rules to @manual and @automated scenarios |
 | Presenting scenarios for approval without a per-step audit table | User can't tell which steps are new without manually grepping; review burden falls on reviewers, not the designer | Phase 4 — produce the audit table before requesting approval; every ⚠ row must be reconciled or annotated |
+| Embedding multi-line content inside a quoted step argument | Fails Gherkin parsing | Use a single-line step with a Gherkin DocString (`"""…"""`) directly below it; the step def takes a DocString parameter |
