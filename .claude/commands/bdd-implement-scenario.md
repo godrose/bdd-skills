@@ -57,6 +57,7 @@ Gather failure details using the best available source (in priority order):
 - Note the element hierarchy — scoping selectors to parent containers prevents false matches
 - Use `.first()` on locators that may match multiple elements
 - For component library dropdowns (MUI, Ant, etc.), prefer element IDs over role-based selectors to avoid strict mode violations
+- **Escape regex specials when interpolating dynamic values into regex-based locators** — when a name-matching locator is built from a regex whose pattern was interpolated from an upstream value (an auto-discovered label, a file path, a formatted display string), characters like `(`, `)`, `.`, `[`, `]`, `?`, `+`, `*`, `|`, `\`, `^`, `$`, `{`, `}` are silently interpreted by the regex engine. The locator returns "no matches" even though the visible text matches the human's mental model exactly. Pipe the interpolated value through a regex-escape helper before constructing the regex. The smell that points at this bug: a snapshot-confirmed visible element that the locator still can't find
 
 **Before fixing**, check if a **domain-knowledge** skill is configured in the BDD config. Invoke it to avoid known pitfalls.
 
