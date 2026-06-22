@@ -27,9 +27,10 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 
 | Role | Skill/Agent | Required | Description |
 |------|-------------|----------|-------------|
-| designer | `bdd-scenario-design` | yes | Formulate scenarios from ACs |
-| implementer | `bdd-implement-scenario` | yes | Implement step definitions |
+| designer | `bdd-design` | yes | Formulate scenarios from ACs |
+| implementer | `bdd-implement` | yes | Implement step definitions |
 | verifier | `bdd-verifier` (agent) | yes | Run tests + type check, report results |
+| test-runner | `bdd-run` | no | Environment selection + test execution |
 | domain-knowledge | `<your-project-knowledge-skill>` | no | Project-specific selectors and patterns |
 | requirements-sync | `<your-sync-skill>` | no | Fetch ACs from issue tracker, publish results |
 

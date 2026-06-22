@@ -7,9 +7,9 @@ BDD workflow skills for Claude Code: design scenarios from acceptance criteria, 
 ```
 .claude/
   commands/
-    bdd-scenario-design.md      # Design scenarios from ACs — analyze gaps, formulate, implement
-    bdd-implement-scenario.md   # Implement step definitions — explore UI, discover selectors, verify
-    test-feature.md             # Run tests by tag/name/suite — config-driven, any framework
+    bdd-design.md               # Design scenarios from ACs — analyze gaps, formulate, implement
+    bdd-implement.md            # Implement step definitions — explore UI, discover selectors, verify
+    bdd-run.md                  # Run tests by tag/name/suite — config-driven, any framework
   agents/
     bdd-verifier.md             # Run tests + type check, report results (read-only, no edits)
   bdd-config.template.md        # Project config template — fill in your tooling and conventions
@@ -19,7 +19,7 @@ install.sh                      # Copy skills into your project's .claude/ direc
 ## Architecture
 
 ```
-bdd-scenario-design (methodology — what scenarios to create)
+bdd-design (methodology — what scenarios to create)
   ├─ Discovers: requirements-sync skill (fetch ACs, optional)
   ├─ Invokes:   implementer skill (implement each scenario)
   │               ├─ Discovers: domain-knowledge skill (project patterns, optional)

@@ -20,7 +20,7 @@ REPO_URL="https://github.com/godrose/bdd"
 REPO_BRANCH="main"
 
 # Determine source directory
-if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.claude/commands/bdd-scenario-design.md" ]; then
+if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.claude/commands/bdd-design.md" ]; then
   # Running from a local clone
   SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   CLEANUP=""
@@ -68,16 +68,29 @@ install_skill() {
   fi
 }
 
+# Clean legacy filenames from any prior install (rename pass 2026-06-22).
+# Remove this block six months after PR-1 merges — by then every consumer
+# has re-installed and the legacy files no longer exist anywhere.
+for legacy in \
+  "$CLAUDE_DIR/commands/bdd-scenario-design.md" \
+  "$CLAUDE_DIR/commands/bdd-implement-scenario.md" \
+  "$CLAUDE_DIR/commands/test-feature.md"; do
+  if [ -f "$legacy" ]; then
+    echo "Removing legacy: $legacy"
+    rm "$legacy"
+  fi
+done
+
 # Install skills with source headers
-install_skill "$SOURCE_DIR/.claude/commands/bdd-scenario-design.md" "$CLAUDE_DIR/commands/bdd-scenario-design.md"
-install_skill "$SOURCE_DIR/.claude/commands/bdd-implement-scenario.md" "$CLAUDE_DIR/commands/bdd-implement-scenario.md"
-install_skill "$SOURCE_DIR/.claude/commands/test-feature.md" "$CLAUDE_DIR/commands/test-feature.md"
-install_skill "$SOURCE_DIR/.claude/agents/bdd-verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
+install_skill "$SOURCE_DIR/.claude/commands/bdd-design.md"    "$CLAUDE_DIR/commands/bdd-design.md"
+install_skill "$SOURCE_DIR/.claude/commands/bdd-implement.md" "$CLAUDE_DIR/commands/bdd-implement.md"
+install_skill "$SOURCE_DIR/.claude/commands/bdd-run.md"       "$CLAUDE_DIR/commands/bdd-run.md"
+install_skill "$SOURCE_DIR/.claude/agents/bdd-verifier.md"    "$CLAUDE_DIR/agents/bdd-verifier.md"
 
 echo "Installed BDD skills (from $REPO_URL ${VERSION:-}):"
-echo "  $CLAUDE_DIR/commands/bdd-scenario-design.md"
-echo "  $CLAUDE_DIR/commands/bdd-implement-scenario.md"
-echo "  $CLAUDE_DIR/commands/test-feature.md"
+echo "  $CLAUDE_DIR/commands/bdd-design.md"
+echo "  $CLAUDE_DIR/commands/bdd-implement.md"
+echo "  $CLAUDE_DIR/commands/bdd-run.md"
 echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
 # Config template — only copy if no config exists yet
@@ -99,4 +112,4 @@ echo "Next steps:"
 echo "  1. Edit .claude/bdd-config.md with your project's tooling commands"
 echo "  2. Optionally add a domain-knowledge skill: .claude/commands/bdd-<project>-knowledge.md"
 echo "  3. Commit the installed skills: git add .claude/"
-echo "  4. Try: /bdd-scenario-design <issue-key-or-AC-text>"
+echo "  4. Try: /bdd-design <issue-key-or-AC-text>"
