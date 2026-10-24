@@ -15,9 +15,13 @@ This skill handles **execution only** — it takes a scenario (from a `.feature`
 
 A `.feature` file path or scenario tag. The scenario Gherkin must already exist in a `.feature` file.
 
+The scenarios may come from an approved spec: a `specify-only` run of the designer that left them unautomated and tagged with the project's unautomated tag.
+
 ### Workflow
 
 #### Phase 0: Understand the Scenario
+
+If a spec PR summary exists for an approved spec, read its **Step status** table first. Look for it beside the feature file as `<feature>.spec-summary.md`. If it is not there, ask for it. Treat the "new (to be built)" and "existing (not yet automated)" rows as the work list. Stop and report if an "existing (automated)" step can no longer be found, or if the wording of a new step differs from the approved scenario text. Do not reword approved scenarios silently.
 
 1. Read the `.feature` file to get the full scenario with all steps
 2. Read existing step definitions in the **steps_dir** to see which steps are already implemented
@@ -79,6 +83,8 @@ Re-run the test. If the step now passes, move to the next step. If not, repeat 2
 **Max retries per step: 3.** If a step fails 3 times, stop and report what you've learned from the accessibility snapshots. The user may need to provide guidance.
 
 #### Phase 3: Full Scenario Verification
+
+After the verifier reports PASS for a scenario from an approved spec, remove the unautomated tag (the **unautomated_tag** row, default `@manual`) from it. If an **automated_tag** is configured, add it. Do this only after the verifier step below has passed.
 
 Once all steps pass individually, dispatch the **verifier** agent (from BDD config) for end-to-end verification:
 

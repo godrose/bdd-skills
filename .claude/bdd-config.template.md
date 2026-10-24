@@ -10,6 +10,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | test | `<command to run tests>` |
 | typecheck | `<command to check types / compile with strict warnings>` |
 | show-trace | `<command to view test traces, if available>` |
+| lint | `<optional project linter for tags, casing, indentation; empty to skip>` |
 
 ## Conventions
 
@@ -22,11 +23,22 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | error_context | `<path pattern for failure context, or empty if using stdout>` |
 | state_type | `<type name for shared test state>` |
 | state_fixture | `<fixture/variable name for shared state>` |
+| glossary_file | `<optional path to a domain glossary; empty to skip>` |
+| discovery_dir | `docs/discovery` (where a saved discovery pack goes; optional) |
+| unautomated_tag | `@manual` (tag for scenarios written but not yet automated; optional) |
+| automated_tag | `<optional tag your test-management tool keys on, e.g. @automated; empty to skip>` |
+
+## Workflow
+
+| Setting | Value |
+|---------|-------|
+| workflow_mode | `specify-and-implement` (default) or `specify-only` (stop at the scenarios, automate later) |
 
 ## Skill Roles
 
 | Role | Skill/Agent | Required | Description |
 |------|-------------|----------|-------------|
+| discoverer | `bdd-discover` | no | Turn a story into questions, examples and edge cases before design |
 | designer | `bdd-design` | yes | Formulate scenarios from ACs |
 | implementer | `bdd-implement` | yes | Implement step definitions |
 | verifier | `bdd-verifier` (agent) | yes | Run tests + type check, report results |

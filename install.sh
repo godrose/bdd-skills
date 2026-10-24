@@ -82,12 +82,14 @@ for legacy in \
 done
 
 # Install skills with source headers
+install_skill "$SOURCE_DIR/.claude/commands/bdd-discover.md"  "$CLAUDE_DIR/commands/bdd-discover.md"
 install_skill "$SOURCE_DIR/.claude/commands/bdd-design.md"    "$CLAUDE_DIR/commands/bdd-design.md"
 install_skill "$SOURCE_DIR/.claude/commands/bdd-implement.md" "$CLAUDE_DIR/commands/bdd-implement.md"
 install_skill "$SOURCE_DIR/.claude/commands/bdd-run.md"       "$CLAUDE_DIR/commands/bdd-run.md"
 install_skill "$SOURCE_DIR/.claude/agents/bdd-verifier.md"    "$CLAUDE_DIR/agents/bdd-verifier.md"
 
 echo "Installed BDD skills (from $REPO_URL ${VERSION:-}):"
+echo "  $CLAUDE_DIR/commands/bdd-discover.md"
 echo "  $CLAUDE_DIR/commands/bdd-design.md"
 echo "  $CLAUDE_DIR/commands/bdd-implement.md"
 echo "  $CLAUDE_DIR/commands/bdd-run.md"
@@ -102,6 +104,21 @@ else
   echo "bdd-config.md already exists — skipped (not overwritten)."
 fi
 
+# Report newer config rows that an older bdd-config.md does not have yet
+report_missing_row() {
+  local row="$1" default="$2"
+  if ! grep -qE "^\|[[:space:]]*$row[[:space:]]*\|" "$CLAUDE_DIR/bdd-config.md"; then
+    echo "  note: bdd-config.md has no '$row' row - default: $default"
+  fi
+}
+report_missing_row workflow_mode "specify-and-implement"
+report_missing_row glossary_file "skipped"
+report_missing_row discovery_dir "docs/discovery"
+report_missing_row lint "skipped"
+report_missing_row discoverer "bdd-discover"
+report_missing_row unautomated_tag "@manual"
+report_missing_row automated_tag "skipped"
+
 # Cleanup temp dir if we cloned
 if [ -n "$CLEANUP" ]; then
   rm -rf "$CLEANUP"
@@ -112,4 +129,4 @@ echo "Next steps:"
 echo "  1. Edit .claude/bdd-config.md with your project's tooling commands"
 echo "  2. Optionally add a domain-knowledge skill: .claude/commands/bdd-<project>-knowledge.md"
 echo "  3. Commit the installed skills: git add .claude/"
-echo "  4. Try: /bdd-design <issue-key-or-AC-text>"
+echo "  4. Try: /bdd-discover <story> to find what to build, then /bdd-design"

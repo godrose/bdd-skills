@@ -1,5 +1,5 @@
 ---
-description: "Design BDD scenarios from user stories or ACs — analyze coverage gaps, formulate scenarios, audit step reuse, then implement"
+description: "Design BDD scenarios from user stories or ACs: analyze coverage gaps, formulate scenarios, audit step reuse, then implement or stop at the approved spec"
 allowed-tools: ["Agent", "Bash", "Read", "Grep", "Glob", "AskUserQuestion"]
 ---
 
@@ -18,10 +18,22 @@ The user provides one or more of:
 - Acceptance criteria text
 - A feature area to cover (e.g., "user profile settings")
 - A gap to fill (e.g., "we test field presence but not field values")
+- A discovery pack from `bdd-discover` (agreed examples, edge cases and exclusions)
+
+### Mode
+
+Read `workflow_mode` from `.claude/bdd-config.md`.
+
+- `specify-and-implement`: the default. Design, get approval, implement, verify.
+- `specify-only`: design and get approval, then stop. The scenarios are written as `.feature` files and left unautomated. A team uses this to put the scenarios in front of a product manager before any automation exists.
+
+`--specify-only` or `--specify-and-implement` on the command overrides the config. If `workflow_mode` is absent, use `specify-and-implement`.
 
 ### Workflow
 
 #### Phase 1: Understand the Requirements
+
+If a discovery pack is given and its Readiness says it is not ready, say so and list what is missing before you design. Otherwise take its confirmed examples, edge cases and answered questions as the AC source. Skip the fetch and the ambiguity flag for anything the pack already settled.
 
 1. **Fetch the source** — check if a **requirements-sync** skill is configured in the BDD config. If the input is an issue tracker key/URL, invoke it to fetch ACs, subtasks, comments, and linked issues. If no sync skill exists or the user provides AC text directly, use that as-is.
 2. **Extract testable assertions** — for each AC bullet, identify concrete verifiable claims:
@@ -119,6 +131,16 @@ Example:
 3. Which project/tag each scenario belongs to
 4. Estimated implementation complexity (how many new steps, any new POM methods?)
 
+Show the scenarios in plain words first, so the person approving sees what they will get. The audit table follows.
+
+In `specify-only` mode, also produce a **spec PR summary** for a reader who has not seen the step library. Give it these sections:
+
+- **Story to scenarios**: each part of the story and the scenarios that cover it.
+- **Cases included**: the cases the scenarios cover.
+- **Cases deliberately excluded**: cases left out, each with a reason.
+- **New terms**: words the scenarios introduce, each with a reason.
+- **Step status**: the audit table above, with each step marked "existing (automated)", "existing (not yet automated)" or "new (to be built)". Mark a step "existing (automated)" only when a step definition for it exists in the **steps_dir**. A step that appears only in unautomated scenarios is "existing (not yet automated)".
+
 **Wait for user approval before implementing.** The user may:
 - Reorder priorities
 - Merge or split scenarios
@@ -126,6 +148,8 @@ Example:
 - Add edge cases
 
 #### Phase 5: Implement
+
+In `specify-only` mode, do not implement. Write the `.feature` files and tag each scenario with the project's unautomated tag (the **unautomated_tag** row, default `@manual`). Save the spec PR summary beside the feature file as `<feature>.spec-summary.md`. Then run the **generate** command once. If it fails on undefined steps, report that and point the builder at excluding the unautomated tag from the generate and test commands, or from CI. Do not work around the failure. In `specify-only` mode the designer does not invoke the implementer. Say how to resume: run `/bdd-implement <feature path>` after the scenarios are approved. Then skip to Phase 6.
 
 For each approved scenario, invoke the **implementer** skill (from BDD config):
 
@@ -137,6 +161,8 @@ For each approved scenario, invoke the **implementer** skill (from BDD config):
 If implementing multiple scenarios in the same feature file, implement them **in order** — Background steps are validated by the first scenario, subsequent ones build on that foundation.
 
 #### Phase 6: Summary
+
+In `specify-only` mode, report the scenarios written and where the spec PR summary is, instead of pass or fail status. If a **requirements-sync** skill is configured, sync the `.feature` files so the scenarios show on the ticket. In this mode there are no results to push yet.
 
 After all scenarios are implemented and verified:
 1. Report final pass/fail status per scenario
