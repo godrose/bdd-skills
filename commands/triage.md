@@ -7,7 +7,9 @@ allowed-tools: ["Agent", "Bash", "Read", "Edit", "Write", "Grep", "Glob", "AskUs
 
 Take the discussion about a story and turn it into reviewed changes: scenario edits and decision records. The discussion lives in the story's channel. This skill reads it as pasted text and proposes. It writes nothing until the builder approves each item.
 
-**Before starting**, read `.claude/bdd-config.md`. Read these rows: `decision_log`, `decisions_dir` (default `docs/decisions`), `features_dir`, `scenario_id_prefix` (default `spec-`), `lint`, the status rows, and the `requirements-sync` role.
+**Before starting**, read `.claude/bdd-config.md`. Read these rows: `decision_log`, `decisions_dir` (default `docs/decisions`), `features_dir`, `scenario_id_prefix` (default `spec-`), `lint`, the status rows, and the `requirements-sync` role. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
+
+> Plugin note: if `.claude/bdd-config.md` is missing, tell the user to run `/bdd:init`. The template is at `${CLAUDE_PLUGIN_ROOT}/bdd-config.template.md`.
 
 ### Input
 
@@ -15,9 +17,11 @@ Take the discussion about a story and turn it into reviewed changes: scenario ed
 - Pasted text. The builder labels each pasted block with its channel: Slack, Jira or PR. Several channels can come in one run.
 - If the `requirements-sync` skill is configured and can read comments, you may fetch the Jira comments yourself.
 
+> Plugin note: the script path in the commands below is an absolute path inside the plugin. If it still starts with `$`, or the script is not found, say the plugin root was not set, and stop. Do not search for the script elsewhere.
+
 ### Steps
 
-1. **Read the current state.** Read the story's `.feature` files. If `decision_log` is `on`, run `.claude/scripts/decisions.sh show STORY` to see the live decisions.
+1. **Read the current state.** Read the story's `.feature` files. If `decision_log` is `on`, run `"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh show STORY` to see the live decisions.
 
 2. **Split and classify.** Split the pasted text into messages. Classify each as:
    - **approve**: any positive reply counts. There is no single pattern.
@@ -36,11 +40,11 @@ Take the discussion about a story and turn it into reviewed changes: scenario ed
 5. **Wait.** The skill writes nothing until the builder approves each item. Ask per item.
 
 6. **Write the approved items.**
-   - Take `fp` from `.claude/scripts/decisions.sh fingerprint <spec-id> --features <features_dir>`. Compute it after the scenario is written.
+   - Take `fp` from `"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh fingerprint <spec-id> --features <features_dir>`. Compute it after the scenario is written.
    - Add the spec id tag (`@<scenario_id_prefix><slug>`) to a legacy scenario the first time a decision touches it.
    - Append records to `<decisions_dir>/<story>.jsonl`, one JSON object per line. Never edit an existing line.
    - Run the `lint` row when it is set. Report a new tag family that must be registered.
-   - Run `.claude/scripts/decisions.sh check` and show the result.
+   - Run `"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh check` and show the result.
    - Nothing is committed without being asked.
 
 ### Record shapes

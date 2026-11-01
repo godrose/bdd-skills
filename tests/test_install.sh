@@ -38,7 +38,7 @@ assert_not_contains "$T/prose-out.txt" "no 'lint' row"
 
 mkdir -p "$T/fresh"
 bash "$ROOT/install.sh" "$T/fresh" > "$T/fresh-out.txt" 2>&1
-assert_file "$T/fresh/.claude/commands/bdd-feedback.md"
+assert_file "$T/fresh/.claude/commands/bdd-triage.md"
 assert_file "$T/fresh/.claude/commands/bdd-reconcile.md"
 assert_file "$T/fresh/.claude/schemas/decision.schema.json"
 [ -x "$T/fresh/.claude/scripts/decisions.sh" ] && pass || fail "decisions.sh not executable"
@@ -52,4 +52,24 @@ for k in decision_log decisions_dir scenario_id_prefix status_scope manual_only_
 done
 assert_contains "$T/old-out.txt" "planned_dir"
 assert_contains "$T/old-out.txt" "manual_only_dir"
+
+# The project copy is the plugin text converted back to project names and paths
+for f in "$T"/fresh/.claude/commands/*.md "$T"/fresh/.claude/agents/*.md "$T/fresh/.claude/bdd-config.md"; do
+  assert_not_contains "$f" 'CLAUDE_PLUGIN_ROOT'
+  if grep -qE 'bdd:(discover|design|implement|run|triage|reconcile|verifier)' "$f"; then fail "$f has a plugin-style skill name"; else pass; fi
+done
+assert_contains "$T/fresh/.claude/agents/bdd-verifier.md" "name: bdd-verifier"
+assert_contains "$T/fresh/.claude/commands/bdd-reconcile.md" '.claude/scripts/decisions.sh check'
+assert_contains "$T/fresh/.claude/bdd-config.md" '`bdd-design`'
+for c in design triage reconcile; do
+  assert_not_contains "$T/fresh/.claude/commands/bdd-$c.md" "Plugin note"
+  assert_not_contains "$T/fresh/.claude/commands/bdd-$c.md" "plugin root"
+done
+for c in design implement run triage reconcile; do
+  assert_contains "$T/fresh/.claude/commands/bdd-$c.md" 'does not exist, say so and stop'
+  assert_not_contains "$T/fresh/.claude/commands/bdd-$c.md" 'template is at'
+done
+[ -e "$T/fresh/.claude/commands/bdd-init.md" ] && fail "project install has an init command" || pass
+[ -e "$T/fresh/.claude/commands/init.md" ] && fail "project install has an init command" || pass
+
 finish

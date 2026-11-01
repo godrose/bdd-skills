@@ -9,7 +9,9 @@ Implement a BDD scenario by exploring the actual UI state at each step, discover
 
 This skill handles **execution only** — it takes a scenario (from a `.feature` file or from the **designer** skill) and implements the step definitions, POMs, and support code needed to make it pass.
 
-**Before starting**, read `.claude/bdd-config.md` for project-specific tooling, conventions, and skill role mappings. Project-specific patterns and selector knowledge are loaded separately via the **domain-knowledge** skill if configured.
+**Before starting**, read `.claude/bdd-config.md` for project-specific tooling, conventions, and skill role mappings. Project-specific patterns and selector knowledge are loaded separately via the **domain-knowledge** skill if configured. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
+
+> Plugin note: if `.claude/bdd-config.md` is missing, tell the user to run `/bdd:init`. The template is at `${CLAUDE_PLUGIN_ROOT}/bdd-config.template.md`.
 
 ### Input
 

@@ -5,7 +5,7 @@ allowed-tools: ["Agent", "Bash", "Read", "Grep", "Glob", "AskUserQuestion"]
 
 ## BDD Discover
 
-Turn a story into a shared understanding before any scenario is written. This is a **methodology skill**. It runs the conversation that removes surprises, then hands a discovery pack to the **designer** skill (`bdd-design`).
+Turn a story into a shared understanding before any scenario is written. This is a **methodology skill**. It runs the conversation that removes surprises, then hands a discovery pack to the **designer** skill (`bdd:design`).
 
 The person who owns the story is the **builder**. The builder may be a lone developer, or a developer working from a product manager's story. You take the questioning side: you ask what a skeptical product manager and a careful tester would ask.
 
@@ -20,7 +20,7 @@ One of:
 
 ### Size gate
 
-Apply the size gate once you have read the story. Some changes do not need discovery: a one-line fix, a rename, a copy edit. If the change is that small, say so in one sentence, skip discovery, and point the builder at `bdd-design` or at the change itself. Do not interrogate a builder about a trivial change.
+Apply the size gate once you have read the story. Some changes do not need discovery: a one-line fix, a rename, a copy edit. If the change is that small, say so in one sentence, skip discovery, and point the builder at `bdd:design` or at the change itself. Do not interrogate a builder about a trivial change.
 
 ### Workflow
 
@@ -75,7 +75,7 @@ Present the discovery pack (below). It stays in the conversation by default. Sav
 <case, reason, confirmed or not>
 
 ## Readiness
-<ready for bdd-design, or what is still missing>
+<ready for bdd:design, or what is still missing>
 ```
 
 The pack is **ready** only when no open question is unanswered and every exclusion is confirmed.

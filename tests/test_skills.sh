@@ -2,21 +2,22 @@
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 . "$ROOT/tests/lib.sh"
 
-for f in "$ROOT"/.claude/commands/*.md "$ROOT"/.claude/agents/*.md; do
+for f in "$ROOT"/commands/*.md "$ROOT"/agents/*.md; do
   assert_equals "---" "$(head -1 "$f" | tr -d '\r')" "frontmatter in $f"
   grep -qE '^(description|name):' "$f" && pass || fail "$f lacks description or name"
 done
 
-CFG="$ROOT/.claude/bdd-config.template.md"
+CFG="$ROOT/bdd-config.template.md"
 for key in workflow_mode glossary_file discovery_dir '| lint |' discoverer; do
   assert_contains "$CFG" "$key"
 done
-
-for name in $(grep -o '`bdd-[a-z-]*`' "$CFG" | tr -d '`' | sort -u); do
-  if [ -f "$ROOT/.claude/commands/$name.md" ] || [ -f "$ROOT/.claude/agents/$name.md" ]; then pass; else fail "role $name has no skill file"; fi
+ROLE_NAMES=$(grep -o '`bdd:[a-z-]*`' "$CFG" | tr -d '`' | sed 's/^bdd://' | sort -u)
+[ -n "$ROLE_NAMES" ] && pass || fail "no skill roles found in the config template"
+for name in $ROLE_NAMES; do
+  if [ -f "$ROOT/commands/$name.md" ] || [ -f "$ROOT/agents/$name.md" ]; then pass; else fail "role bdd:$name has no skill file"; fi
 done
 
-D="$ROOT/.claude/commands/bdd-discover.md"
+D="$ROOT/commands/discover.md"
 assert_file "$D"
 for h in Story 'Open questions' 'Candidate examples' 'Edge and negative cases' 'Vocabulary check' 'Candidate exclusions' Readiness; do
   assert_contains "$D" "## $h"
@@ -26,7 +27,7 @@ for s in 'Defaults when config rows are absent' 'stop and ask' 'requirements-syn
 done
 assert_not_contains "$D" "$(printf '\xe2\x80\x94')"
 
-G="$ROOT/.claude/commands/bdd-design.md"
+G="$ROOT/commands/design.md"
 for s in '--specify-only' 'specify-only' 'specify-and-implement' 'discovery pack' 'does not invoke the implementer' 'unautomated tag' 'If `workflow_mode` is absent'; do
   assert_contains "$G" "$s"
 done
@@ -34,7 +35,7 @@ for h in 'Story to scenarios' 'Cases included' 'Cases deliberately excluded' 'Ne
   assert_contains "$G" "$h"
 done
 
-I="$ROOT/.claude/commands/bdd-implement.md"
+I="$ROOT/commands/implement.md"
 for s in 'approved spec' 'Step status' 'remove the unautomated tag'; do
   assert_contains "$I" "$s"
 done
@@ -57,20 +58,20 @@ for s in unautomated_tag automated_tag; do
 done
 
 # Deferred minors
-assert_no_added_emdash .claude README.md install.sh tests
+assert_no_added_emdash .claude commands agents scripts schemas .claude-plugin bdd-config.template.md README.md install.sh tests docs
 for s in 'size gate once you have read the story' 'ask the builder to paste the story' 'counts as empty'; do
   assert_contains "$D" "$s"
 done
 for s in 'Readiness says it is not ready' 'there are no results to push' 'stop at the approved spec'; do
   assert_contains "$G" "$s"
 done
-for s in '## Optional config rows' '--specify-and-implement' 'prints a note for each newer row' 'bdd-discover (optional first step' 'stops after the scenarios'; do
+for s in '## Optional config rows' '--specify-and-implement' 'prints a note for each newer row' 'bdd:discover (optional first step' 'stops after the scenarios'; do
   assert_contains "$R" "$s"
 done
 assert_file "$ROOT/docs/superpowers/dry-runs/2026-10-24-discover-and-specify-only.md"
 
-RC_="$ROOT/.claude/commands/bdd-reconcile.md"
-FB="$ROOT/.claude/commands/bdd-feedback.md"
+RC_="$ROOT/commands/reconcile.md"
+FB="$ROOT/commands/triage.md"
 assert_file "$RC_"; assert_file "$FB"
 for s in 'decisions.sh check' 'decisions.sh show' '--base' 'report, not a sync' 'never edits' 'contradict' 'audit' 'jq' 'legacy' 'decision_log'; do
   assert_contains "$RC_" "$s"
@@ -95,7 +96,7 @@ done
 assert_not_contains "$I" 'default `@manual`'
 assert_not_contains "$G" 'default `@manual`'
 
-for s in 'decision log' 'bdd-feedback' 'bdd-reconcile' 'jq' '@pending' 'story page'; do
+for s in 'decision log' 'bdd-triage' 'bdd-reconcile' 'jq' '@pending' 'story page'; do
   assert_contains "$R" "$s"
 done
 assert_not_contains "$R" 'tagged `@manual`'
@@ -115,13 +116,65 @@ for s in 'manual_only_dir' 'default `scenario`'; do
   assert_contains "$G" "$s"
 done
 
-for f in "$ROOT/.claude/commands/bdd-run.md" "$ROOT/.claude/agents/bdd-verifier.md"; do
+for f in "$ROOT/commands/run.md" "$ROOT/agents/verifier.md"; do
   for s in 'unautomated_tag' 'manual_only_tag' 'never an error'; do
     assert_contains "$f" "$s"
   done
 done
 
 for s in 'skip scenarios tagged' 'checked by hand or waiting on the product' 'reconciler' 'feedback-intake'; do
+  assert_contains "$R" "$s"
+done
+
+
+# A missing config file stops the skills that need tooling or paths
+for f in "$ROOT"/commands/{design,implement,run,triage,reconcile}.md "$ROOT/agents/verifier.md"; do
+  assert_contains "$f" 'does not exist, say so and stop'
+  assert_contains "$f" '`bdd-config.template.md`'
+done
+assert_not_contains "$ROOT/commands/discover.md" 'does not exist, say so and stop'
+
+
+# Install docs: plugin first, project files second
+for s in '### As a plugin' '/plugin marketplace add godrose/bdd' '/plugin install bdd@godrose-plugins' \
+  '### As project files' 'use a hyphen' '`/bdd-design`' \
+  '### Moving from project files to the plugin' 'claude plugin update bdd@godrose-plugins' \
+  '`/bdd:discover <story>`' '`/bdd:design`' '`/bdd:implement`'; do
+  assert_contains "$R" "$s"
+done
+assert_not_contains "$R" '`/bdd-discover <story>` asks'
+
+
+# /bdd:init copies the template and nothing more
+for s in '`/bdd:init`' 'never overwrites' 'does not fill in' 'init.md' 'may ask you to approve'; do
+  assert_contains "$R" "$s"
+done
+assert_not_contains "$R" 'mkdir -p .claude && curl'
+
+
+# A generate row with no command is skipped, not run (godog and similar need no generation)
+for f in "$ROOT/commands/run.md" "$ROOT/agents/verifier.md"; do
+  assert_contains "$f" '_(not needed)_'
+  assert_contains "$f" 'skip this step'
+  assert_contains "$f" 'not a failure'
+done
+assert_contains "$ROOT/bdd-config.template.md" 'empty if the framework reads .feature files directly'
+
+
+# /bdd:init --detect is documented
+for s in '`/bdd:init --detect`' 'writes only the rows you approve' 'never changes a row that already has a value' 'never runs your commands' 'unknown'; do
+  assert_contains "$R" "$s"
+done
+assert_contains "$ROOT/docs/superpowers/specs/2026-11-01-plugin-packaging-design.md" '/bdd:init --detect'
+
+# Migration must not tell users to delete the bdd-* glob (it matches their own skills)
+assert_not_contains "$R" '.claude/commands/bdd-*.md'
+for s in 'bdd-discover' 'bdd-reconcile' '`.claude/agents/bdd-verifier.md`' 'bdd-<project>-knowledge' 'Keep your own' 'older installs'; do
+  assert_contains "$R" "$s"
+done
+
+# The repo is private for now: the README says who can install and which route needs a public repo
+for s in 'The repository is private for now' 'read access' 'gh auth setup-git' 'ssh-agent' 'only works once the repository is public'; do
   assert_contains "$R" "$s"
 done
 

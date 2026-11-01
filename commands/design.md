@@ -9,7 +9,9 @@ Design and formulate BDD scenarios from user stories, acceptance criteria, or fe
 
 Framework-agnostic: the design process works regardless of whether the underlying framework is Playwright, Cypress, Selenium, or any BDD runner.
 
-**Before starting**, read `.claude/bdd-config.md` for project-specific tooling, conventions, and skill role mappings.
+**Before starting**, read `.claude/bdd-config.md` for project-specific tooling, conventions, and skill role mappings. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
+
+> Plugin note: if `.claude/bdd-config.md` is missing, tell the user to run `/bdd:init`. The template is at `${CLAUDE_PLUGIN_ROOT}/bdd-config.template.md`.
 
 ### Input
 
@@ -18,7 +20,7 @@ The user provides one or more of:
 - Acceptance criteria text
 - A feature area to cover (e.g., "user profile settings")
 - A gap to fill (e.g., "we test field presence but not field values")
-- A discovery pack from `bdd-discover` (agreed examples, edge cases and exclusions)
+- A discovery pack from `bdd:discover` (agreed examples, edge cases and exclusions)
 
 ### Mode
 
@@ -150,14 +152,16 @@ In `specify-only` mode, also produce a **spec PR summary** for a reader who has 
 
 #### Phase 5: Implement
 
-In `specify-only` mode, do not implement. Write the `.feature` files and tag each scenario with the project's unautomated tag (the **unautomated_tag** row, default `@pending`), placed where **status_scope** says (default `scenario`): a scenario tag, a feature tag, or a directory (**planned_dir**, and **manual_only_dir** for manual-only scenarios). With directory scope and a partly approved feature, say that automated scenarios live in the automated directory and the rest stay. Scenarios that carry the **manual_only_tag** are not tagged as planned. Save the spec PR summary beside the feature file as `<feature>.spec-summary.md`. Then run the **generate** command once. If it fails on undefined steps, report that and point the builder at excluding the unautomated tag from the generate and test commands, or from CI. Do not work around the failure. In `specify-only` mode the designer does not invoke the implementer. Say how to resume: run `/bdd-implement <feature path>` after the scenarios are approved. Then skip to Phase 6.
+In `specify-only` mode, do not implement. Write the `.feature` files and tag each scenario with the project's unautomated tag (the **unautomated_tag** row, default `@pending`), placed where **status_scope** says (default `scenario`): a scenario tag, a feature tag, or a directory (**planned_dir**, and **manual_only_dir** for manual-only scenarios). With directory scope and a partly approved feature, say that automated scenarios live in the automated directory and the rest stay. Scenarios that carry the **manual_only_tag** are not tagged as planned. Save the spec PR summary beside the feature file as `<feature>.spec-summary.md`. Then run the **generate** command once. If it fails on undefined steps, report that and point the builder at excluding the unautomated tag from the generate and test commands, or from CI. Do not work around the failure. In `specify-only` mode the designer does not invoke the implementer. Say how to resume: run `/bdd:implement <feature path>` after the scenarios are approved. Then skip to Phase 6.
 
 **Decision log.** Read **decision_log**. When it is `on` and the change passes the size gate (more than a wording fix), then after approval, in both modes:
 
-1. Write a decision record to `<decisions_dir>/<story>.jsonl` for each approved scenario and each exclusion. Take `fp` from `.claude/scripts/decisions.sh fingerprint <spec-id> --features <features_dir>`.
+> Plugin note: the script path in the commands below is an absolute path inside the plugin. If it still starts with `$`, or the script is not found, say the plugin root was not set, and stop. Do not search for the script elsewhere.
+
+1. Write a decision record to `<decisions_dir>/<story>.jsonl` for each approved scenario and each exclusion. Take `fp` from `"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh fingerprint <spec-id> --features <features_dir>`.
 2. Tag each scenario with `@<scenario_id_prefix><slug>`. Never change an id once written.
-3. Run the **lint** row, then `.claude/scripts/decisions.sh check`, and show the result.
-4. Add the output of `.claude/scripts/decisions.sh show <story>` to the spec summary as a **Decisions** section.
+3. Run the **lint** row, then `"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh check`, and show the result.
+4. Add the output of `"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh show <story>` to the spec summary as a **Decisions** section.
 
 When the log is off, none of this happens.
 

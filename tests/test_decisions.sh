@@ -1,7 +1,7 @@
 #!/bin/bash
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 . "$ROOT/tests/lib.sh"
-SCRIPT="$ROOT/.claude/scripts/decisions.sh"
+SCRIPT="$ROOT/scripts/decisions.sh"
 T=$(mktemp -d)
 trap 'rm -rf "$T"' EXIT
 

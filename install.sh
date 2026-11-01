@@ -10,7 +10,8 @@
 #
 # What it does:
 #   1. If no local source, clones godrose/bdd to a temp dir
-#   2. Copies commands/ and agents/ into .claude/ with source header, plus scripts/ and schemas/ for the decision log
+#   2. Copies commands/ and agents/ into .claude/ with a source header and project names (bdd-design),
+#      plus scripts/ and schemas/ for the decision log
 #   3. Copies bdd-config.template.md as .claude/bdd-config.md (if not exists)
 #   4. Prints next steps
 
@@ -20,7 +21,7 @@ REPO_URL="https://github.com/godrose/bdd"
 REPO_BRANCH="main"
 
 # Determine source directory
-if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.claude/commands/bdd-design.md" ]; then
+if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/commands/design.md" ]; then
   # Running from a local clone
   SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   CLEANUP=""
@@ -43,10 +44,20 @@ if [ -d "$SOURCE_DIR/.git" ]; then
 fi
 INSTALLED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
+# The source tree holds plugin text (bdd:design, ${CLAUDE_PLUGIN_ROOT}). A project install uses
+# prefixed file names and .claude/ paths, so convert the text back.
+to_project() {
+  sed -E '/^> Plugin note:/{N;d;}; s#"\$\{CLAUDE_PLUGIN_ROOT\}"/scripts/decisions\.sh#.claude/scripts/decisions.sh#g; s/bdd:(discover|design|implement|run|triage|reconcile|verifier)/bdd-\1/g; s/^name: verifier(\r?)$/name: bdd-verifier\1/'
+}
+
 # Inject source header into a skill file and write to destination
 install_skill() {
   local src="$1"
   local dst="$2"
+  local body
+  body=$(mktemp)
+  to_project < "$src" > "$body"
+  src="$body"
 
   # Read the file, inject source comment after the frontmatter opening ---
   if head -1 "$src" | grep -q "^---"; then
@@ -66,6 +77,7 @@ install_skill() {
       cat "$src"
     } > "$dst"
   fi
+  rm -f "$body"
 }
 
 # Clean legacy filenames from any prior install (rename pass 2026-06-22).
@@ -82,23 +94,20 @@ for legacy in \
 done
 
 # Install skills with source headers
-install_skill "$SOURCE_DIR/.claude/commands/bdd-discover.md"  "$CLAUDE_DIR/commands/bdd-discover.md"
-install_skill "$SOURCE_DIR/.claude/commands/bdd-design.md"    "$CLAUDE_DIR/commands/bdd-design.md"
-install_skill "$SOURCE_DIR/.claude/commands/bdd-implement.md" "$CLAUDE_DIR/commands/bdd-implement.md"
-install_skill "$SOURCE_DIR/.claude/commands/bdd-run.md"       "$CLAUDE_DIR/commands/bdd-run.md"
-install_skill "$SOURCE_DIR/.claude/commands/bdd-feedback.md"  "$CLAUDE_DIR/commands/bdd-feedback.md"
-install_skill "$SOURCE_DIR/.claude/commands/bdd-reconcile.md" "$CLAUDE_DIR/commands/bdd-reconcile.md"
-cp "$SOURCE_DIR/.claude/scripts/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
+for s in discover design implement run triage reconcile; do
+  install_skill "$SOURCE_DIR/commands/$s.md" "$CLAUDE_DIR/commands/bdd-$s.md"
+done
+cp "$SOURCE_DIR/scripts/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
 chmod +x "$CLAUDE_DIR/scripts/decisions.sh"
-cp "$SOURCE_DIR/.claude/schemas/decision.schema.json" "$CLAUDE_DIR/schemas/decision.schema.json"
-install_skill "$SOURCE_DIR/.claude/agents/bdd-verifier.md"    "$CLAUDE_DIR/agents/bdd-verifier.md"
+cp "$SOURCE_DIR/schemas/decision.schema.json" "$CLAUDE_DIR/schemas/decision.schema.json"
+install_skill "$SOURCE_DIR/agents/verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
 
 echo "Installed BDD skills (from $REPO_URL ${VERSION:-}):"
 echo "  $CLAUDE_DIR/commands/bdd-discover.md"
 echo "  $CLAUDE_DIR/commands/bdd-design.md"
 echo "  $CLAUDE_DIR/commands/bdd-implement.md"
 echo "  $CLAUDE_DIR/commands/bdd-run.md"
-echo "  $CLAUDE_DIR/commands/bdd-feedback.md"
+echo "  $CLAUDE_DIR/commands/bdd-triage.md"
 echo "  $CLAUDE_DIR/commands/bdd-reconcile.md"
 echo "  $CLAUDE_DIR/scripts/decisions.sh"
 echo "  $CLAUDE_DIR/schemas/decision.schema.json"
@@ -106,7 +115,7 @@ echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
 # Config template — only copy if no config exists yet
 if [ ! -f "$CLAUDE_DIR/bdd-config.md" ]; then
-  cp "$SOURCE_DIR/.claude/bdd-config.template.md" "$CLAUDE_DIR/bdd-config.md"
+  to_project < "$SOURCE_DIR/bdd-config.template.md" > "$CLAUDE_DIR/bdd-config.md"
   echo "  $CLAUDE_DIR/bdd-config.md (from template — edit this for your project)"
 else
   echo ""
@@ -136,7 +145,7 @@ report_missing_row planned_dir "none (used with status_scope directory)"
 report_missing_row manual_only_dir "none (used with status_scope directory)"
 report_missing_row blocked_tag "none"
 report_missing_row reconciler "bdd-reconcile"
-report_missing_row feedback-intake "bdd-feedback"
+report_missing_row feedback-intake "bdd-triage"
 
 # Cleanup temp dir if we cloned
 if [ -n "$CLEANUP" ]; then

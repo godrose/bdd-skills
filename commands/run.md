@@ -5,7 +5,9 @@ allowed-tools: ["Agent", "Bash", "Read", "Write", "Grep", "Glob", "AskUserQuesti
 
 ## Test Feature — Run BDD Scenarios
 
-Run BDD feature tests against any configured environment. Framework-agnostic — reads tooling commands and conventions from `.claude/bdd-config.md`.
+Run BDD feature tests against any configured environment. Framework-agnostic - reads tooling commands and conventions from `.claude/bdd-config.md`. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
+
+> Plugin note: if `.claude/bdd-config.md` is missing, tell the user to run `/bdd:init`. The template is at `${CLAUDE_PLUGIN_ROOT}/bdd-config.template.md`.
 
 ### Input
 
@@ -56,7 +58,7 @@ If unclear, ask the user or use the default project.
 Before running, verify:
 
 1. **Dependencies** — check if the project's dependency directory exists (e.g., `node_modules/`, `bin/`, `packages/`). Run the install command if missing.
-2. **Code generation** — run the **generate** command from bdd-config. If it fails, report the error and stop.
+2. **Code generation** - run the **generate** command from bdd-config. If the row is empty, still in `<...>` form, or a note such as `_(not needed)_`, skip this step and say so. That is not a failure: some frameworks read `.feature` files directly. If the command fails, report the error and stop.
 3. **Auth/environment state** — check if the environment requires authentication setup, credentials, or external services. Look for auth state files or config referenced by the project.
 4. **Environment-specific prereqs** — check if the feature's Background or preconditions require special setup (e.g., SSO login, VPN, database seeding, server startup).
 

@@ -6,7 +6,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 
 | Role | Command |
 |------|---------|
-| generate | `<command to generate test files from .feature files>` |
+| generate | `<command to generate test files from .feature files; empty if the framework reads .feature files directly>` |
 | test | `<command to run tests>` |
 | typecheck | `<command to check types / compile with strict warnings>` |
 | show-trace | `<command to view test traces, if available>` |
@@ -46,13 +46,13 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 
 | Role | Skill/Agent | Required | Description |
 |------|-------------|----------|-------------|
-| discoverer | `bdd-discover` | no | Turn a story into questions, examples and edge cases before design |
-| designer | `bdd-design` | yes | Formulate scenarios from ACs |
-| reconciler | `bdd-reconcile` | no | Report drift between the decision log and the scenarios |
-| feedback-intake | `bdd-feedback` | no | Turn pasted channel discussion into scenario edits and decision records |
-| implementer | `bdd-implement` | yes | Implement step definitions |
-| verifier | `bdd-verifier` (agent) | yes | Run tests + type check, report results |
-| test-runner | `bdd-run` | no | Environment selection + test execution |
+| discoverer | `bdd:discover` | no | Turn a story into questions, examples and edge cases before design |
+| designer | `bdd:design` | yes | Formulate scenarios from ACs |
+| reconciler | `bdd:reconcile` | no | Report drift between the decision log and the scenarios |
+| feedback-intake | `bdd:triage` | no | Turn pasted channel discussion into scenario edits and decision records |
+| implementer | `bdd:implement` | yes | Implement step definitions |
+| verifier | `bdd:verifier` (agent) | yes | Run tests + type check, report results |
+| test-runner | `bdd:run` | no | Environment selection + test execution |
 | domain-knowledge | `<your-project-knowledge-skill>` | no | Project-specific selectors and patterns |
 | requirements-sync | `<your-sync-skill>` | no | Fetch ACs from issue tracker, publish results |
 
