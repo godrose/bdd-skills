@@ -72,6 +72,8 @@ Run the **test** command from bdd-config with the appropriate filter flags for t
 
 The exact flag syntax depends on the framework (read from test command conventions or config_file).
 
+**Planned and manual-only scenarios.** Scenarios tagged with the **unautomated_tag** (default `@pending`) or the **manual_only_tag** (default `@manual-only`) have no step definitions on purpose. Exclude both from the run. Undefined steps under either marker are expected and never an error.
+
 ### Step 7: Results
 
 **On success:**

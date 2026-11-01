@@ -68,4 +68,61 @@ for s in '## Optional config rows' '--specify-and-implement' 'prints a note for 
   assert_contains "$R" "$s"
 done
 assert_file "$ROOT/docs/superpowers/dry-runs/2026-10-24-discover-and-specify-only.md"
+
+RC_="$ROOT/.claude/commands/bdd-reconcile.md"
+FB="$ROOT/.claude/commands/bdd-feedback.md"
+assert_file "$RC_"; assert_file "$FB"
+for s in 'decisions.sh check' 'decisions.sh show' '--base' 'report, not a sync' 'never edits' 'contradict' 'audit' 'jq' 'legacy' 'decision_log'; do
+  assert_contains "$RC_" "$s"
+done
+for s in 'approve' 'change' 'question' 'unclear' 'Unclear never counts as approval' 'confirms' 'supersedes' 'channel' 'writes nothing until' 'rewords' 'decisions.sh fingerprint' 'decision_log' 'Nothing is committed without being asked' 'objected' 'open'; do
+  assert_contains "$FB" "$s"
+done
+for f in "$RC_" "$FB"; do assert_not_contains "$f" "$(printf '\xe2\x80\x94')"; done
+for s in reconciler feedback-intake; do assert_contains "$CFG" "$s"; done
+
+for k in decisions_dir scenario_id_prefix status_scope manual_only_tag blocked_tag planned_dir manual_only_dir decision_log; do
+  assert_contains "$CFG" "$k"
+done
+assert_contains "$CFG" '| unautomated_tag | `@pending`'
+assert_not_contains "$CFG" '| unautomated_tag | `@manual`'
+for s in 'manual_only_tag' 'status_scope' 'decision_log' 'decisions.sh fingerprint' 'scenario_id_prefix' 'size gate' 'Decisions' 'decisions.sh check'; do
+  assert_contains "$G" "$s"
+done
+for s in 'manual_only_tag' 'stays manual' 'fingerprint' 'rewords' 'default `@pending`'; do
+  assert_contains "$I" "$s"
+done
+assert_not_contains "$I" 'default `@manual`'
+assert_not_contains "$G" 'default `@manual`'
+
+for s in 'decision log' 'bdd-feedback' 'bdd-reconcile' 'jq' '@pending' 'story page'; do
+  assert_contains "$R" "$s"
+done
+assert_not_contains "$R" 'tagged `@manual`'
+
+for s in '"op":"adds"' '"scenario":"spec-' '"role":"agreed"' '"kind":"slack"' '"ref":' 'YYYY-MM-DD'; do
+  assert_contains "$FB" "$s"
+done
+
+for s in '--planned-tag' '--manual-only-tag' '--blocked-tag' '--scope' '--planned-dir' '--manual-only-dir'; do
+  assert_contains "$RC_" "$s"
+done
+
+for s in 'E-JSON' 'E-SCHEMA' 'E-VERSION' 'E-DUP-ID' 'E-REF' 'I-EMPTY' 'decisions.sh status' 'never fails on status'; do
+  assert_contains "$RC_" "$s"
+done
+for s in 'manual_only_dir' 'default `scenario`'; do
+  assert_contains "$G" "$s"
+done
+
+for f in "$ROOT/.claude/commands/bdd-run.md" "$ROOT/.claude/agents/bdd-verifier.md"; do
+  for s in 'unautomated_tag' 'manual_only_tag' 'never an error'; do
+    assert_contains "$f" "$s"
+  done
+done
+
+for s in 'skip scenarios tagged' 'checked by hand or waiting on the product' 'reconciler' 'feedback-intake'; do
+  assert_contains "$R" "$s"
+done
+
 finish

@@ -25,14 +25,22 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | state_fixture | `<fixture/variable name for shared state>` |
 | glossary_file | `<optional path to a domain glossary; empty to skip>` |
 | discovery_dir | `docs/discovery` (where a saved discovery pack goes; optional) |
-| unautomated_tag | `@manual` (tag for scenarios written but not yet automated; optional) |
+| unautomated_tag | `@pending` (tag for scenarios planned to be automated; optional) |
 | automated_tag | `<optional tag your test-management tool keys on, e.g. @automated; empty to skip>` |
+| decisions_dir | `docs/decisions` (where the decision log lives; used when decision_log is on) |
+| scenario_id_prefix | `spec-` (stable scenario id tag prefix, for example `@spec-export-empty-list`) |
+| status_scope | `scenario` (where the planned marker sits: `scenario`, `feature` or `directory`) |
+| manual_only_tag | `@manual-only` (scenarios that stay manual by design; never automated) |
+| blocked_tag | `` (optional tag for scenarios waiting on the product; empty to skip) |
+| planned_dir | `` (with directory scope: a path component that marks planned scenarios) |
+| manual_only_dir | `` (with directory scope: a path component that marks manual-only scenarios) |
 
 ## Workflow
 
 | Setting | Value |
 |---------|-------|
 | workflow_mode | `specify-and-implement` (default) or `specify-only` (stop at the scenarios, automate later) |
+| decision_log | `off` (default) or `on` (record decisions in `decisions_dir`) |
 
 ## Skill Roles
 
@@ -40,6 +48,8 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 |------|-------------|----------|-------------|
 | discoverer | `bdd-discover` | no | Turn a story into questions, examples and edge cases before design |
 | designer | `bdd-design` | yes | Formulate scenarios from ACs |
+| reconciler | `bdd-reconcile` | no | Report drift between the decision log and the scenarios |
+| feedback-intake | `bdd-feedback` | no | Turn pasted channel discussion into scenario edits and decision records |
 | implementer | `bdd-implement` | yes | Implement step definitions |
 | verifier | `bdd-verifier` (agent) | yes | Run tests + type check, report results |
 | test-runner | `bdd-run` | no | Environment selection + test execution |

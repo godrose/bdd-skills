@@ -1,0 +1,22 @@
+{
+  "description": "Compact schema for BDD decision log records. Read by decisions.sh.",
+  "supported_versions": [1],
+  "kinds": {
+    "decision": {"required": ["v", "id", "kind", "story", "at", "text"]},
+    "confirms": {"required": ["v", "id", "kind", "of", "at", "sources"]},
+    "open":     {"required": ["v", "id", "kind", "story", "at", "text"]}
+  },
+  "enums": {
+    "effect_op": ["adds", "changes", "rewords", "removes", "excludes", "defers"],
+    "source_role": ["proposed", "agreed", "objected"],
+    "source_kind": ["slack", "jira", "pr", "meeting", "other"]
+  },
+  "effect_required": {
+    "adds": ["scenario", "fp"],
+    "changes": ["scenario", "fp"],
+    "rewords": ["scenario", "fp"],
+    "removes": ["scenario"],
+    "excludes": ["phrase"],
+    "defers": ["phrase"]
+  }
+}

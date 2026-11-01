@@ -17,6 +17,8 @@ A `.feature` file path or scenario tag. The scenario Gherkin must already exist 
 
 The scenarios may come from an approved spec: a `specify-only` run of the designer that left them unautomated and tagged with the project's unautomated tag.
 
+Work on scenarios that carry the planned marker. Never edit or implement a scenario carrying the **manual_only_tag**: report that it stays manual.
+
 ### Workflow
 
 #### Phase 0: Understand the Scenario
@@ -84,7 +86,7 @@ Re-run the test. If the step now passes, move to the next step. If not, repeat 2
 
 #### Phase 3: Full Scenario Verification
 
-After the verifier reports PASS for a scenario from an approved spec, remove the unautomated tag (the **unautomated_tag** row, default `@manual`) from it. If an **automated_tag** is configured, add it. Do this only after the verifier step below has passed.
+After the verifier reports PASS for a scenario from an approved spec, remove the unautomated tag (the **unautomated_tag** row, default `@pending`) from it. If an **automated_tag** is configured, add it. Do this only after the verifier step below has passed. Never touch spec id tags (`@<scenario_id_prefix>...`). If implementing changes a scenario's text, say that its fingerprint will drift and that a `rewords` record is needed when the decision log is on.
 
 Once all steps pass individually, dispatch the **verifier** agent (from BDD config) for end-to-end verification:
 

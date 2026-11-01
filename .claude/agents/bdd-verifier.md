@@ -91,6 +91,7 @@ Return a structured report:
 
 ### Rules
 
+- Scenarios tagged with the **unautomated_tag** or the **manual_only_tag** (from BDD config) are not run. Undefined steps under either marker are expected and never an error
 - **Do NOT edit any files** — report findings only
 - **Do NOT retry failed tests** — report the first failure
 - **Do NOT suggest fixes** — the calling skill handles that

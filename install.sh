@@ -10,7 +10,7 @@
 #
 # What it does:
 #   1. If no local source, clones godrose/bdd to a temp dir
-#   2. Copies commands/ and agents/ into .claude/ with source header
+#   2. Copies commands/ and agents/ into .claude/ with source header, plus scripts/ and schemas/ for the decision log
 #   3. Copies bdd-config.template.md as .claude/bdd-config.md (if not exists)
 #   4. Prints next steps
 
@@ -34,7 +34,7 @@ fi
 
 TARGET="${1:-.}"
 CLAUDE_DIR="$TARGET/.claude"
-mkdir -p "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents"
+mkdir -p "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents" "$CLAUDE_DIR/scripts" "$CLAUDE_DIR/schemas"
 
 # Resolve version from git
 VERSION=""
@@ -86,6 +86,11 @@ install_skill "$SOURCE_DIR/.claude/commands/bdd-discover.md"  "$CLAUDE_DIR/comma
 install_skill "$SOURCE_DIR/.claude/commands/bdd-design.md"    "$CLAUDE_DIR/commands/bdd-design.md"
 install_skill "$SOURCE_DIR/.claude/commands/bdd-implement.md" "$CLAUDE_DIR/commands/bdd-implement.md"
 install_skill "$SOURCE_DIR/.claude/commands/bdd-run.md"       "$CLAUDE_DIR/commands/bdd-run.md"
+install_skill "$SOURCE_DIR/.claude/commands/bdd-feedback.md"  "$CLAUDE_DIR/commands/bdd-feedback.md"
+install_skill "$SOURCE_DIR/.claude/commands/bdd-reconcile.md" "$CLAUDE_DIR/commands/bdd-reconcile.md"
+cp "$SOURCE_DIR/.claude/scripts/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
+chmod +x "$CLAUDE_DIR/scripts/decisions.sh"
+cp "$SOURCE_DIR/.claude/schemas/decision.schema.json" "$CLAUDE_DIR/schemas/decision.schema.json"
 install_skill "$SOURCE_DIR/.claude/agents/bdd-verifier.md"    "$CLAUDE_DIR/agents/bdd-verifier.md"
 
 echo "Installed BDD skills (from $REPO_URL ${VERSION:-}):"
@@ -93,6 +98,10 @@ echo "  $CLAUDE_DIR/commands/bdd-discover.md"
 echo "  $CLAUDE_DIR/commands/bdd-design.md"
 echo "  $CLAUDE_DIR/commands/bdd-implement.md"
 echo "  $CLAUDE_DIR/commands/bdd-run.md"
+echo "  $CLAUDE_DIR/commands/bdd-feedback.md"
+echo "  $CLAUDE_DIR/commands/bdd-reconcile.md"
+echo "  $CLAUDE_DIR/scripts/decisions.sh"
+echo "  $CLAUDE_DIR/schemas/decision.schema.json"
 echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
 # Config template — only copy if no config exists yet
@@ -116,8 +125,18 @@ report_missing_row glossary_file "skipped"
 report_missing_row discovery_dir "docs/discovery"
 report_missing_row lint "skipped"
 report_missing_row discoverer "bdd-discover"
-report_missing_row unautomated_tag "@manual"
+report_missing_row unautomated_tag "@pending (v1 default was @manual; set the row to keep the old tag)"
 report_missing_row automated_tag "skipped"
+report_missing_row decision_log "off"
+report_missing_row decisions_dir "docs/decisions"
+report_missing_row scenario_id_prefix "spec-"
+report_missing_row status_scope "scenario"
+report_missing_row manual_only_tag "@manual-only"
+report_missing_row planned_dir "none (used with status_scope directory)"
+report_missing_row manual_only_dir "none (used with status_scope directory)"
+report_missing_row blocked_tag "none"
+report_missing_row reconciler "bdd-reconcile"
+report_missing_row feedback-intake "bdd-feedback"
 
 # Cleanup temp dir if we cloned
 if [ -n "$CLEANUP" ]; then
@@ -130,3 +149,5 @@ echo "  1. Edit .claude/bdd-config.md with your project's tooling commands"
 echo "  2. Optionally add a domain-knowledge skill: .claude/commands/bdd-<project>-knowledge.md"
 echo "  3. Commit the installed skills: git add .claude/"
 echo "  4. Try: /bdd-discover <story> to find what to build, then /bdd-design"
+echo "  5. Decision log (optional): set decision_log to on. It needs jq. Add this line to .gitattributes so parallel branches merge:"
+echo "       docs/decisions/*.jsonl merge=union"

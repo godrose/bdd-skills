@@ -1,0 +1,7 @@
+[Slack]
+PM: Header row only for an empty export, yes. Approved.
+Dev: Should the date column use ISO format or the local one?
+PM: Make the export limit 500 rows instead of 1000.
+PM: looks fine, but what about refunds?
+[Jira]
+Reviewer: ok
