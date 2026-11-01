@@ -37,7 +37,7 @@ Both forms end by reporting leftover project-file copies (see Leftovers).
 
 ### Detect
 
-1. **Find the placeholder rows.** In the Tooling and Conventions tables, collect the rows whose value is still in `<...>` form. Never change a row that already has a value, whatever it is: a command, a path, a default, or a note in `_(...)_` form. If no row is a placeholder, say so and stop.
+1. **Find the placeholder rows.** In the Tooling and Conventions tables, or the two placeholder roles in the Skill Roles table, collect the rows whose value is still in `<...>` form. Never change a row that already has a value, whatever it is: a command, a path, a default, or a note in `_(...)_` form. If no row is a placeholder, say so and stop.
 
 2. **Inspect the project, read-only.** Look at the build and package files (for example `package.json` scripts, `*.sln`, `*.csproj`, `pom.xml`, `go.mod`), the test framework config, the CI workflow files (for example `.github/workflows/`), the README and `CLAUDE.md`, and the `.feature` files and step definitions. CI workflow files are often the best source for the commands. Do not run the project's commands, builds or tests.
 
@@ -59,6 +59,16 @@ Both forms end by reporting leftover project-file copies (see Leftovers).
 6. **Write.** Put the approved values into `.claude/bdd-config.md`. Change the value cell only. Show the rows that were written and the rows that are still placeholders.
 
 Running `--detect` again later only touches rows that are still placeholders.
+
+### Skill roles
+
+The Skill Roles table has two placeholder roles, `domain-knowledge` and `requirements-sync`. Projects often already have their own skills for them. Propose these together with the other rows, and write them only on approval, like any other row. Never change a role that already has a value.
+
+1. **Find candidates.** List the skill files in `.claude/commands/` and `.claude/skills/`. Read only the name and the one-line description in each header. Do not read skill bodies, and do not look in `~/.claude/` or in other plugins.
+2. **Skip the installer's files.** A file with the `# Source: https://github.com/godrose/bdd` line is the installer's copy of a plugin skill. It is never a candidate. The same goes for the files listed under Leftovers.
+3. **Match.** `domain-knowledge` fits a skill about the project's selectors, patterns or gotchas, often named `*-knowledge`. `requirements-sync` fits a skill that fetches stories from, or publishes results to, an issue tracker or test-management tool, often named `*-sync`. A name hint raises confidence. A description that clearly fits can match on its own, at lower confidence.
+4. **Propose.** Give the skill name, the evidence (its file and description) and a confidence. If several skills fit one role, propose the best one and name the runners-up in the evidence. The table holds one skill per role.
+5. **Nothing found.** Leave the row as it is. Write `no local skill found for <role>` and name the places you searched. The role is optional.
 
 ### Leftovers
 

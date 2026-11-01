@@ -73,6 +73,7 @@ for s in '### Leftovers' '# Source: https://github.com/godrose/bdd' 'bdd-<name>.
 done
 assert_contains "$ROOT/install.sh" '# Source: $REPO_URL'
 assert_contains "$ROOT/README.md" 'lists leftover'
+assert_contains "$ROOT/README.md" 'proposes your own skills'
 
 
 # /bdd:init --detect: search the feature files for tag rows, say what was searched, check paths, label defaults low
@@ -83,11 +84,20 @@ for s in 'count how often each tag is used' 'in the `.feature` files' 'Do not re
 done
 
 
+# Step 1 counts the two role rows too, so a config with only those placeholders still gets proposals
+assert_contains "$INIT" 'or the two placeholder roles in the Skill Roles table'
+
 # Leftovers: only files that exist on disk count
 for s in 'only if it exists on disk' 'git shows as deleted is not a leftover'; do
   assert_contains "$INIT" "$s"
 done
 
+
+# /bdd:init --detect: propose the domain-knowledge and requirements-sync roles from the project's own skills
+for s in '### Skill roles' 'domain-knowledge' 'requirements-sync' '.claude/skills/' 'one-line description' \
+  'runners-up' 'no local skill found' 'never a candidate' '# Source:'; do
+  assert_contains "$INIT" "$s"
+done
 
 # feedback was renamed to triage (verb form, like the other commands)
 assert_file "$ROOT/commands/triage.md"
