@@ -65,7 +65,7 @@ done
 for s in 'Readiness says it is not ready' 'there are no results to push' 'stop at the approved spec'; do
   assert_contains "$G" "$s"
 done
-for s in '## Optional config rows' '--specify-and-implement' 'prints a note for each newer row' 'bdd:discover (optional first step' 'stops after the scenarios'; do
+for s in '<summary><b>Optional config rows</b></summary>' '--specify-and-implement' 'prints a note for each newer row' 'bdd:discover (optional first step' 'stops after the scenarios'; do
   assert_contains "$R" "$s"
 done
 assert_file "$ROOT/docs/superpowers/dry-runs/2026-10-24-discover-and-specify-only.md"
@@ -137,8 +137,8 @@ assert_not_contains "$ROOT/commands/discover.md" 'does not exist, say so and sto
 
 # Install docs: plugin first, project files second
 for s in '### As a plugin' '/plugin marketplace add godrose/bdd' '/plugin install bdd@godrose-plugins' \
-  '### As project files' 'use a hyphen' '`/bdd-design`' \
-  '### Moving from project files to the plugin' 'claude plugin update bdd@godrose-plugins' \
+  '<summary><b>As project files</b></summary>' 'use a hyphen' '`/bdd-design`' \
+  '<summary><b>Moving from project files to the plugin</b></summary>' 'claude plugin update bdd@godrose-plugins' \
   '`/bdd:discover <story>`' '`/bdd:design`' '`/bdd:implement`'; do
   assert_contains "$R" "$s"
 done

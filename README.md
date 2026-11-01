@@ -1,6 +1,42 @@
 # BDD Skills for Claude Code
 
-BDD workflow skills for Claude Code: design scenarios from acceptance criteria, implement step definitions, and verify they pass. Framework-agnostic — works with Playwright-BDD, SpecFlow, Cucumber, or any Gherkin runner.
+Agree the examples first, then automate them. A Claude Code plugin that takes a story through discussion, scenarios and step definitions to a verified run. Framework-agnostic: works with Playwright-BDD, SpecFlow, Cucumber, or any Gherkin runner.
+
+## Contents
+
+- [Quick start](#quick-start)
+- [The flow](#the-flow)
+- [Modes](#modes)
+- [Install](#install)
+- [Configure](#configure)
+- [Decision log](#decision-log)
+- [What's included](#whats-included)
+- [Update](#update)
+
+## Quick start
+
+You need read access to this repository. It is private for now, so see Access under Install.
+
+In Claude Code:
+
+```
+/plugin marketplace add godrose/bdd
+/plugin install bdd@godrose-plugins
+```
+
+Then, once in each project:
+
+```
+/bdd:init --detect
+```
+
+This creates `.claude/bdd-config.md` and proposes values for it from your build files, CI and `.feature` files. It writes only the rows you approve. Plain `/bdd:init` copies the template and fills in nothing.
+
+Then start with a story:
+
+```
+/bdd:discover <story>
+```
 
 ## The flow
 
@@ -10,59 +46,15 @@ For an individual builder:
 2. `/bdd:design` shows the scenarios in plain words, with a reuse audit of every step. You approve them.
 3. `/bdd:implement` automates the scenarios and `bdd:verifier` checks them.
 
-With the plugin, run `/bdd:init` once per project first. It creates the config file you then fill in.
-
 The agreed scenarios become automated checks, so later changes cannot silently break them.
+
+If you run a command before `/bdd:init`, it stops and tells you to run it.
 
 ## Modes
 
 The default mode is `specify-and-implement`. For teams there is `specify-only`: design and approve the scenarios, then stop. The scenarios are written as `.feature` files and tagged `@pending`, or `@manual-only` when a scenario stays manual by design. A product manager can review them in a pull request before any automation exists. Automate them later with `/bdd:implement`. `/bdd:run` and `bdd:verifier` skip scenarios tagged `@pending` or `@manual-only`, and undefined steps under those tags are never an error.
 
 Choose the mode with the `workflow_mode` row in `.claude/bdd-config.md`, or per run with `--specify-only` or `--specify-and-implement`. If the row is absent, the default applies.
-
-## What's included
-
-```
-.claude-plugin/
-  plugin.json                   # Plugin manifest: name, version
-  marketplace.json              # Marketplace listing for this repo
-commands/
-  init.md                       # Plugin only: create .claude/bdd-config.md from the template (copy only)
-  discover.md                   # Discover what to build: questions, examples, edge cases, exclusions
-  design.md                     # Design scenarios from ACs - analyze gaps, formulate, implement
-  implement.md                  # Implement step definitions - explore UI, discover selectors, verify
-  run.md                        # Run tests by tag/name/suite - config-driven, any framework
-  triage.md                     # Turn pasted channel discussion into scenario edits and decision records
-  reconcile.md                  # Report drift between the decision log and the scenarios
-agents/
-  verifier.md                   # Run tests + type check, report results (read-only, no edits)
-scripts/decisions.sh            # Check, fingerprint, status and story page for the decision log (needs jq)
-schemas/decision.schema.json    # Record schema read by decisions.sh
-bdd-config.template.md          # Project config template - fill in your tooling and conventions
-install.sh                      # Copy the skills into a project's .claude/ directory as bdd-<name> files
-```
-
-## Architecture
-
-```
-bdd:discover (optional first step: questions, examples, edge cases)
-  └─ hands a discovery pack to:
-bdd:design (methodology: what scenarios to create)
-  ├─ Discovers: requirements-sync skill (fetch ACs, optional)
-  ├─ Invokes:   implementer skill (implement each scenario)
-  │               ├─ Discovers: domain-knowledge skill (project patterns, optional)
-  │               └─ Dispatches: verifier agent (run tests + type check)
-  └─ Discovers: requirements-sync skill (publish results, optional)
-
-bdd:triage (optional: channel discussion to approved edits and decision records)
-bdd:reconcile (optional: report drift between the decision log and the scenarios)
-```
-
-Skills reference each other by **role** (from `bdd-config.md`), not by name. Swap implementations by editing the config. The optional roles `reconciler` and `feedback-intake` point at `bdd:reconcile` and `bdd:triage`.
-
-With the decision log on, `bdd:triage` turns channel discussion into approved edits and records, and `bdd:reconcile` reports drift (neither runs tests).
-
-In `specify-only` mode, `bdd:design` stops after the scenarios. `bdd:implement` runs later, once they are approved.
 
 ## Install
 
@@ -72,32 +64,18 @@ There are two ways to install. The plugin is the recommended one.
 
 ### As a plugin
 
-In Claude Code:
-
-```
-/plugin marketplace add godrose/bdd
-/plugin install bdd@godrose-plugins
-```
-
-On Claude Code 2.1.275 or later, one step also works: `/plugin install bdd --marketplace godrose/bdd`.
+The commands are in the Quick start. On Claude Code 2.1.275 or later, one step also works: `/plugin install bdd --marketplace godrose/bdd`.
 
 The plugin namespaces its commands: `/bdd:discover`, `/bdd:design`, `/bdd:implement`, `/bdd:run`, `/bdd:triage` and `/bdd:reconcile`.
 
-A plugin cannot create files in your project, so run this once in each project:
-
-```
-/bdd:init
-```
-
-`/bdd:init` copies the template to `.claude/bdd-config.md`. It never overwrites an existing config, and it does not fill in anything: the file still has placeholders. Claude Code may ask you to approve the copy, because it writes into `.claude/`. Open it and fill in the commands and paths for your project, as described under Configure, then commit it.
+A plugin cannot create files in your project, so run `/bdd:init` once in each project. It copies the template to `.claude/bdd-config.md`. It never overwrites an existing config, and it does not fill in anything: the file still has placeholders. Claude Code may ask you to approve the copy, because it writes into `.claude/`. Open it and fill in the commands and paths for your project, as described under Configure, then commit it.
 
 To get proposed values instead of filling the file in by hand, run `/bdd:init --detect`. It reads your build files, CI workflows, README and `.feature` files, and proposes a value for each placeholder row, with the file it came from and a confidence level. It writes only the rows you approve, never changes a row that already has a value, never runs your commands, and says `unknown` where the files do not answer. Check the commands it proposes before you rely on them. It also proposes your own skills for the `domain-knowledge` and `requirements-sync` roles, matched by the name and one-line description in `.claude/commands/` and `.claude/skills/`. If several fit, it names the runners-up, and if none fit, it leaves the row alone. It is plugin only.
 
 `/bdd:init` also lists leftover project-file copies of the skills, which give duplicate commands next to the plugin. It only reports them and never deletes. Your own `bdd-*` skills are told apart from the installer's files by the `# Source:` line the installer writes.
 
-If you run another command before this, it stops and tells you to run `/bdd:init`.
-
-### As project files
+<details>
+<summary><b>As project files</b></summary>
 
 Use this when you do not want a plugin, or when you want the skills committed in your repo.
 
@@ -114,7 +92,10 @@ This copies the skills into `.claude/` with source headers (repo URL + commit ha
 
 Project files have no plugin namespace, so the commands use a hyphen: `/bdd-discover`, `/bdd-design`, `/bdd-implement`, `/bdd-run`, `/bdd-triage` and `/bdd-reconcile`. Everything else in this README applies to both ways. Where it says `/bdd:design`, type `/bdd-design`.
 
-### Moving from project files to the plugin
+</details>
+
+<details>
+<summary><b>Moving from project files to the plugin</b></summary>
 
 1. Install the plugin as above.
 2. Delete the files the installer created, and only these: `.claude/commands/bdd-discover.md`, `bdd-design.md`, `bdd-implement.md`, `bdd-run.md`, `bdd-triage.md` and `bdd-reconcile.md` in that folder, plus `.claude/agents/bdd-verifier.md`, `.claude/scripts/decisions.sh` and `.claude/schemas/decision.schema.json`. Some may not exist, because older installs did not have every file. That is fine. Having both sets gives you duplicate commands.
@@ -122,9 +103,16 @@ Project files have no plugin namespace, so the commands use a hyphen: `/bdd-disc
 3. Keep `.claude/bdd-config.md`. In its Skill Roles table, change `bdd-design` to `bdd:design`, and the same for the other skills and the verifier.
 4. Tell the maintainer if you still need the project-file install. It stays for a few releases.
 
+</details>
+
 ## Configure
 
-Edit `.claude/bdd-config.md` in your project. Drop one of these row sets into the **Tooling** table (the template ships with the column headers already in place):
+Edit `.claude/bdd-config.md` in your project, or let `/bdd:init --detect` propose the values. Skills reference each other by **role** (from the Skill Roles table in that file), not by name, so you swap an implementation by editing the config.
+
+<details>
+<summary><b>Tooling rows by framework</b></summary>
+
+Drop one of these row sets into the **Tooling** table (the template ships with the column headers already in place):
 
 **Playwright-BDD (TypeScript):**
 ```markdown
@@ -147,27 +135,10 @@ Edit `.claude/bdd-config.md` in your project. Drop one of these row sets into th
 | typecheck | `mvn compile -Werror` |
 ```
 
-## Decision log (opt-in)
+</details>
 
-Set `decision_log` to `on` to keep a decision log. Each story gets a file, `docs/decisions/<story>.jsonl`, with one JSON record per line. A record says what was decided, why, which scenarios it adds, changes or removes, and links to where it was agreed (Slack, Jira, a pull request). Records are append-only. A change of mind is a new record that supersedes the old one. Git is the source of truth. Jira and your test-management tool only show it.
-
-The log needs `jq`. Add `docs/decisions/*.jsonl merge=union` to `.gitattributes` so parallel branches can append to one file.
-
-Each scenario in the log carries a stable tag such as `@spec-export-empty-list`. Scenarios without one are legacy and not tracked. They get an id the first time a decision touches them.
-
-### Feedback intake
-
-Each story has one channel for discussion. Paste that text into `/bdd:triage <story>`. The skill classifies each message as approve, change, question or unclear, proposes scenario edits and records, and writes nothing until you approve each item. Unclear never counts as approval.
-
-### Reconcile
-
-`/bdd:reconcile` runs `decisions.sh check` and reports orphans, drift, undecided scenarios and conflicts. It is a report, not a sync, and it never edits anything. The same check can run in CI or a pre-push hook.
-
-### Story page
-
-`decisions.sh show <story>` prints a read-only story page in Markdown for product managers: what was agreed (with a status: automated, planned, checked by hand or waiting on the product), what was left out or postponed, what is still open, and the history. With `--since <ref>` it lists what changed since you last looked. Paste it into Jira, Confluence or Slack.
-
-## Optional config rows
+<details>
+<summary><b>Optional config rows</b></summary>
 
 Every row below is optional. If a row is absent, the default applies.
 
@@ -187,14 +158,90 @@ Every row below is optional. If a row is absent, the default applies.
 | `lint` | none | Project linter for tags, casing and indentation |
 | `discovery_dir` | `docs/discovery` | Where a saved discovery pack goes |
 
-## Optional skills (project-specific)
+</details>
 
-These are NOT included — create them in your project's `.claude/commands/`:
+<details>
+<summary><b>Optional skills (project-specific)</b></summary>
 
-- **Domain knowledge** (`bdd-<project>-knowledge.md`) — project-specific selectors, patterns, gotchas
-- **Requirements sync** (`bdd-jira-sync.md`, `bdd-azdo-sync.md`, etc.) — fetch ACs from issue tracker, publish results
+These are NOT included. Create them in your project's `.claude/commands/`:
+
+- **Domain knowledge** (`bdd-<project>-knowledge.md`): project-specific selectors, patterns, gotchas
+- **Requirements sync** (`bdd-jira-sync.md`, `bdd-azdo-sync.md`, etc.): fetch ACs from issue tracker, publish results
 
 Register them in `bdd-config.md` under Skill Roles.
+
+</details>
+
+## Decision log
+
+Opt in with `decision_log` set to `on`. Each story gets a file, `docs/decisions/<story>.jsonl`, with one JSON record per line. A record says what was decided, why, which scenarios it adds, changes or removes, and links to where it was agreed (Slack, Jira, a pull request). Records are append-only. A change of mind is a new record that supersedes the old one. Git is the source of truth. Jira and your test-management tool only show it.
+
+The log needs `jq`. Add `docs/decisions/*.jsonl merge=union` to `.gitattributes` so parallel branches can append to one file.
+
+Each scenario in the log carries a stable tag such as `@spec-export-empty-list`. Scenarios without one are legacy and not tracked. They get an id the first time a decision touches them.
+
+<details>
+<summary><b>Feedback intake, reconcile and the story page</b></summary>
+
+**Feedback intake.** Each story has one channel for discussion. Paste that text into `/bdd:triage <story>`. The skill classifies each message as approve, change, question or unclear, proposes scenario edits and records, and writes nothing until you approve each item. Unclear never counts as approval.
+
+**Reconcile.** `/bdd:reconcile` runs `decisions.sh check` and reports orphans, drift, undecided scenarios and conflicts. It is a report, not a sync, and it never edits anything. The same check can run in CI or a pre-push hook.
+
+**Story page.** `decisions.sh show <story>` prints a read-only story page in Markdown for product managers: what was agreed (with a status: automated, planned, checked by hand or waiting on the product), what was left out or postponed, what is still open, and the history. With `--since <ref>` it lists what changed since you last looked. Paste it into Jira, Confluence or Slack.
+
+</details>
+
+## What's included
+
+<details>
+<summary><b>Files</b></summary>
+
+```
+.claude-plugin/
+  plugin.json                   # Plugin manifest: name, version
+  marketplace.json              # Marketplace listing for this repo
+commands/
+  init.md                       # Plugin only: create .claude/bdd-config.md from the template (copy only)
+  discover.md                   # Discover what to build: questions, examples, edge cases, exclusions
+  design.md                     # Design scenarios from ACs - analyze gaps, formulate, implement
+  implement.md                  # Implement step definitions - explore UI, discover selectors, verify
+  run.md                        # Run tests by tag/name/suite - config-driven, any framework
+  triage.md                     # Turn pasted channel discussion into scenario edits and decision records
+  reconcile.md                  # Report drift between the decision log and the scenarios
+agents/
+  verifier.md                   # Run tests + type check, report results (read-only, no edits)
+scripts/decisions.sh            # Check, fingerprint, status and story page for the decision log (needs jq)
+schemas/decision.schema.json    # Record schema read by decisions.sh
+bdd-config.template.md          # Project config template - fill in your tooling and conventions
+install.sh                      # Copy the skills into a project's .claude/ directory as bdd-<name> files
+```
+
+</details>
+
+<details>
+<summary><b>Architecture</b></summary>
+
+```
+bdd:discover (optional first step: questions, examples, edge cases)
+  └─ hands a discovery pack to:
+bdd:design (methodology: what scenarios to create)
+  ├─ Discovers: requirements-sync skill (fetch ACs, optional)
+  ├─ Invokes:   implementer skill (implement each scenario)
+  │               ├─ Discovers: domain-knowledge skill (project patterns, optional)
+  │               └─ Dispatches: verifier agent (run tests + type check)
+  └─ Discovers: requirements-sync skill (publish results, optional)
+
+bdd:triage (optional: channel discussion to approved edits and decision records)
+bdd:reconcile (optional: report drift between the decision log and the scenarios)
+```
+
+Skills reference each other by **role** (from `bdd-config.md`), not by name. The optional roles `reconciler` and `feedback-intake` point at `bdd:reconcile` and `bdd:triage`.
+
+With the decision log on, `bdd:triage` turns channel discussion into approved edits and records, and `bdd:reconcile` reports drift (neither runs tests).
+
+In `specify-only` mode, `bdd:design` stops after the scenarios. `bdd:implement` runs later, once they are approved.
+
+</details>
 
 ## Update
 
