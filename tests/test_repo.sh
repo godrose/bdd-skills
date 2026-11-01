@@ -23,4 +23,8 @@ assert_file "$DB"
 assert_contains "$DB" 'package-ecosystem: github-actions'
 assert_contains "$DB" 'interval: weekly'
 
+# GNU sed reads the empty string after -i as a file name, so CI on Linux fails. Use sedi from tests/lib.sh.
+n=$(grep -n -F --exclude=test_repo.sh "sed -i ''" "$ROOT"/tests/test_*.sh "$ROOT"/scripts/*.sh "$ROOT"/install.sh | wc -l | tr -d " ")
+assert_equals 0 "$n" "sed -i with an empty suffix"
+
 finish

@@ -12,6 +12,9 @@ assert_equals() { [ "$1" = "$2" ] && pass || fail "$3: expected '$1' got '$2'"; 
 
 finish() { echo "passed=$PASSES failed=$FAILS"; [ "$FAILS" -eq 0 ]; }
 
+# In-place edit that works on BSD and GNU sed. The last argument is the file.
+sedi() { local f="${!#}"; sed -i.bak "$@" && rm -f "$f.bak"; }
+
 # Fail if lines added since the merge-base with main contain an em-dash (U+2014).
 # Fails loudly when there is no base ref, so a shallow checkout cannot pass vacuously.
 assert_no_added_emdash() {
