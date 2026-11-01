@@ -1,6 +1,6 @@
 {
   "name": "bdd",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "BDD workflow skills: discover, design, implement and verify scenarios, with an optional decision log. Framework-agnostic.",
   "author": { "name": "godrose" },
   "homepage": "https://github.com/godrose/bdd",
