@@ -172,7 +172,7 @@ p=$(repo_with_log); : > "$p/docs/decisions/S.jsonl"
 check_in "$p" --base HEAD
 has "ERROR E-APPEND"
 
-p=$(repo_with_log); log_add "$p" S "$D_OK2"; sed -i '' 1d "$p/docs/decisions/S.jsonl"
+p=$(repo_with_log); log_add "$p" S "$D_OK2"; sedi 1d "$p/docs/decisions/S.jsonl"
 check_in "$p" --base HEAD
 has "ERROR E-APPEND"
 
@@ -366,7 +366,7 @@ has "WARN W-UNDECIDED"
 
 p=$(new_project); add_feature "$p"; FP=$(real_fp "$p" spec-header-row)
 log_add "$p" S "$(mk S-01 2026-10-31 "$(adds spec-header-row "$FP")")"
-sed -i '' 's/I export it/I export the list/' "$p/features/export.feature"
+sedi 's/I export it/I export the list/' "$p/features/export.feature"
 check_in "$p"
 assert_equals 0 "$RC" "drift is a warning"
 has "WARN W-DRIFT"
@@ -579,7 +579,7 @@ fp_in() {
 p=$(new_project)
 printf 'Feature: A\n  @spec-out\n  Scenario Outline: O\n    Given <x>\n    @smoke\n    Examples:\n      | x |\n      | 1 |\n\n  @spec-next\n  Scenario: N\n    Given n\n' > "$p/features/a.feature"
 fp_in "$p" spec-out; BEFORE="$OUT"
-sed -i '' 's/| 1 |/| 2 |/' "$p/features/a.feature"
+sedi 's/| 1 |/| 2 |/' "$p/features/a.feature"
 fp_in "$p" spec-out
 [ "$BEFORE" != "$OUT" ] && pass || fail "tagged Examples change must change the fingerprint"
 fp_in "$p" spec-next
@@ -590,7 +590,7 @@ printf 'Feature: A\n  @spec-doc\n  Scenario: D\n    Given text:\n      """\n    
 fp_in "$p" spec-fake
 assert_equals 1 "$RC" "tag inside a docstring is not a scenario tag"
 fp_in "$p" spec-doc; BEFORE="$OUT"
-sed -i '' 's/not real/still not real/' "$p/features/a.feature"
+sedi 's/not real/still not real/' "$p/features/a.feature"
 fp_in "$p" spec-doc
 [ "$BEFORE" != "$OUT" ] && pass || fail "docstring content belongs to the scenario fingerprint"
 OUT=$(cd "$p" && bash "$SCRIPT" check --features features --dir docs/decisions 2>&1)
