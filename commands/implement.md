@@ -32,6 +32,7 @@ If a spec PR summary exists for an approved spec, read its **Step status** table
 3. Read relevant Page Object Models to understand current selectors
 4. Read environment config for target URLs and auth
 5. Identify which steps need new implementation vs which already exist. For EACH apparently-new step, also run a paraphrase grep against the **steps_dir** — generate 2–3 natural paraphrases of the same assertion and search for each. If any paraphrase hits an existing step def, **stop and report back**: the `.feature` should be reworded to use the existing step text, not a new step def created. Do not author a duplicate step def silently — paraphrase blindness at implementation time is the last line of defense before a duplicate ships.
+   If a reused `Then` step later fails because its assertion does not fit the scenario's data, stop and report the mismatch. Do not edit approved scenario data and do not reword the step.
 
 #### Phase 1: Prepare
 
