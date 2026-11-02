@@ -80,6 +80,11 @@ The exact flag syntax depends on the framework (read from test command conventio
 
 ### Step 7: Results
 
+**Count what ran.** Before reporting anything, read the executed count from the runner's output or results (summary line, TRX, JSON report). Do not trust the exit code: some runners exit 0 when nothing ran. Skipped tests do not count as executed.
+- Zero executed, or a count you cannot find: that is no tests ran, not a pass. Report "no tests ran" (or "executed count unknown"), give the skipped count, and stop. Do not open the report.
+- Likely causes, as hints only: the filter matched nothing, generate did not run or produced no output, a feature is not linked into the test project, the wrong project was selected.
+- If every selected scenario carries the unautomated tag or the manual-only tag, report "nothing to run: all selected scenarios are pending or manual-only". That is expected, not a failure.
+
 **On success:**
 - Report pass count and total duration
 - Open the test report if the framework generates one

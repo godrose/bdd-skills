@@ -49,7 +49,7 @@ For each step in the scenario, IN ORDER:
 
 Run the **prepare** command, then the **generate** command, then the **test** command with the appropriate project and scenario tag flags, plus `--headed` for visual debugging.
 
-If the step passes -> move to the next step.
+If the step passes (at least one executed test, and none failed) -> move to the next step. If no tests ran, stop and report "no tests ran". Do not loop.
 If the step fails -> go to 2b.
 
 ##### 2b. Explore the failure point
@@ -84,13 +84,15 @@ Based on what you learned from the UI state:
 
 ##### 2d. Verify the fix
 
-Re-run the test. If the step now passes, move to the next step. If not, repeat 2b-2d.
+Re-run the test. If the step now passes, move to the next step. A run with no tests executed is not a pass. If not, repeat 2b-2d.
 
 **Max retries per step: 3.** If a step fails 3 times, stop and report what you've learned from the accessibility snapshots. The user may need to provide guidance.
 
 #### Phase 3: Full Scenario Verification
 
 After the verifier reports PASS for a scenario from an approved spec, remove the unautomated tag (the **unautomated_tag** row, default `@pending`) from it. If an **automated_tag** is configured, add it. Do this only after the verifier step below has passed. Never touch spec id tags (`@<scenario_id_prefix>...`). If implementing changes a scenario's text, say that its fingerprint will drift and that a `rewords` record is needed when the decision log is on.
+
+A verifier verdict of "no tests ran" or "executed count unknown" is a FAIL: do not change any tag.
 
 Once all steps pass individually, dispatch the **verifier** agent (from BDD config) for end-to-end verification:
 

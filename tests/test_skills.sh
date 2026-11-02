@@ -217,4 +217,22 @@ assert_before "$G" "Pass B" "Pass C"
 assert_contains "$I" "assertion does not fit"
 assert_contains "$I" "Do not edit approved scenario data"
 
+
+# Zero tests ran is never a pass
+RUN="$ROOT/commands/run.md"
+V="$ROOT/agents/verifier.md"
+I="$ROOT/commands/implement.md"
+for f in "$RUN" "$V" "$I"; do
+  assert_contains "$f" "no tests ran"
+done
+for f in "$RUN" "$V"; do
+  assert_contains "$f" "nothing to run"
+  assert_contains "$f" "Skipped tests do not count as executed"
+done
+assert_contains "$V" "executed count unknown"
+assert_contains "$V" "- Executed:"
+assert_contains "$V" "at least one test executed"
+assert_contains "$I" "at least one executed test"
+assert_before "$RUN" "Count what ran" "On success"
+
 finish

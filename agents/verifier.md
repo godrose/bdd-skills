@@ -45,6 +45,8 @@ Run the **generate** command from BDD config. If the row is empty, still in `<..
 
 Run the **test** command with the appropriate `--project` and `--grep` flags.
 
+Then read the executed count from the runner's output or results. Do not trust the exit code. Skipped tests do not count as executed. Zero executed means no tests ran, and a count you cannot find means executed count unknown. Both are FAIL, never PASS. Likely causes, as hints only: the filter matched nothing, generate produced no output, a feature is not linked into the test project, the wrong project was selected. If every selected scenario carries the unautomated tag or the manual-only tag, report "nothing to run: all selected scenarios are pending or manual-only". That is not a FAIL.
+
 #### 4. On failure - collect evidence
 
 For each failed test, gather failure details using **one of these strategies** (in priority order):
@@ -77,6 +79,8 @@ Return a structured report:
 
 ### Tests
 - Total: X
+- Executed: E
+- Skipped: S
 - Passed: Y
 - Failed: Z
 
@@ -91,6 +95,7 @@ Return a structured report:
 - <list of errors with file:line>
 
 ### Verdict: PASS | FAIL
+(FAIL also when no tests ran or the executed count is unknown; say which)
 ```
 
 ### Rules
@@ -100,4 +105,4 @@ Return a structured report:
 - **Do NOT retry failed tests** — report the first failure
 - **Do NOT suggest fixes** — the calling skill handles that
 - Keep output concise — error context excerpts, not full snapshots
-- If tests pass and type check passes, just say `Verdict: PASS`
+- If at least one test executed, all executed tests pass and type check passes, just say `Verdict: PASS`
