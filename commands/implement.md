@@ -94,13 +94,25 @@ After the verifier reports PASS for a scenario from an approved spec, remove the
 
 A verifier verdict of "no tests ran" or "executed count unknown" is a FAIL: do not change any tag.
 
+**Defaults when config rows are absent.** A value in `<...>` form counts as empty.
+
+1. **unautomated_tag** absent or empty: use `@pending`.
+2. **automated_tag** absent or empty: add nothing.
+3. The scenario does not carry the unautomated tag: change no tags and say "no tag changes: scenario carries no unautomated tag".
+4. The scenario is not from an approved spec: do not touch its tags.
+5. Add the automated tag only when the unautomated tag was removed.
+6. End the report with one line saying which tags changed, or that none did.
+
 Once all steps pass individually, dispatch the **verifier** agent (from BDD config) for end-to-end verification:
 
 ```
 Scope: strict
 Project: <project>
-Tag: <scenario-tag>
+By: tag
+Select: <scenario-tag>
 ```
+
+Use `By: name` with `Select: <scenario name>` when the scenarios carry no tag, or `By: file` with the feature file path.
 
 The verifier runs the full scenario (without `--headed`) and the strict type check. Failures must be resolved before declaring the scenario done — re-dispatch after each fix.
 

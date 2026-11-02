@@ -28,7 +28,8 @@ You verify BDD scenario implementations by running tests and type checks. You **
 ### What you receive
 
 A verification request containing:
-- **Scenario tag or project** to run (e.g., `@login-flow`, `--project e2e`)
+- **Project** to run (e.g., `--project e2e`)
+- **By**: `By: tag | name | file | all`, and **Select**: `Select: <the tag, the scenario name, or the feature file path>`. Omit `Select` for `all`. A request that still has a `Tag:` field is an error: stop and report "unknown field Tag, use By and Select".
 - **Scope**: `quick` (single scenario), `suite` (full project), or `strict` (suite + type check)
 
 ### Verification Steps
@@ -43,7 +44,7 @@ Run the **generate** command from BDD config. If the row is empty, still in `<..
 
 #### 3. Run tests
 
-Run the **test** command with the appropriate `--project` and `--grep` flags.
+Run the **test** command with the project and the selection. By tag: a tag filter. By name: a name or grep filter. By file: the feature file path. All: no filter. The flag syntax depends on the framework. The runner decides what a name matches. If `By` is `name` and more than one test ran, list the matched test names under Tests and add "name matched N tests". That is not a failure.
 
 Then read the executed count from the runner's output or results. Do not trust the exit code. Skipped tests do not count as executed. Zero executed means no tests ran, and a count you cannot find means executed count unknown. Both are FAIL, never PASS. Likely causes, as hints only: the filter matched nothing, generate produced no output, a feature is not linked into the test project, the wrong project was selected. If every selected scenario carries the unautomated tag or the manual-only tag, report "nothing to run: all selected scenarios are pending or manual-only". That is not a FAIL.
 
@@ -75,7 +76,7 @@ Return a structured report:
 
 **Scope:** <quick|suite|strict>
 **Project:** <project name>
-**Tag:** <tag if specified>
+**Selection:** <by>: <value>
 
 ### Tests
 - Total: X

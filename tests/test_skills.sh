@@ -235,4 +235,19 @@ assert_contains "$V" "at least one test executed"
 assert_contains "$I" "at least one executed test"
 assert_before "$RUN" "Count what ran" "On success"
 
+
+# Verifier selection by tag, name, file or all, and tag defaults in implement
+V="$ROOT/agents/verifier.md"
+I="$ROOT/commands/implement.md"
+for s in "By: tag | name | file | all" "Select:" "**Selection:**" "unknown field Tag" "name matched"; do
+  assert_contains "$V" "$s"
+done
+assert_not_contains "$V" "**Tag:**"
+assert_contains "$I" "By: tag"
+assert_contains "$I" "Select: <scenario-tag>"
+assert_not_contains "$I" "Tag: <scenario-tag>"
+for s in "Defaults when config rows are absent" "no tag changes" "Add the automated tag only when the unautomated tag was removed" "which tags changed"; do
+  assert_contains "$I" "$s"
+done
+
 finish
