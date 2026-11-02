@@ -1,17 +1,19 @@
 ---
-description: "Implement a BDD scenario step by step — explore UI, discover selectors, implement steps, verify iteratively"
+description: "Implement a BDD scenario step by step - explore the system under test, implement steps, verify iteratively"
 allowed-tools: ["Agent", "Bash", "Read", "Write", "Edit", "Grep", "Glob"]
 ---
 
 ## BDD Implement Scenario
 
-Implement a BDD scenario by exploring the actual UI state at each step, discovering correct selectors, and verifying iteratively.
+Implement a BDD scenario by exploring the actual state of the system under test at each step, finding the correct locators or calls, and verifying iteratively.
 
-This skill handles **execution only** — it takes a scenario (from a `.feature` file or from the **designer** skill) and implements the step definitions, POMs, and support code needed to make it pass.
+This skill handles **execution only** - it takes a scenario (from a `.feature` file or from the **designer** skill) and implements the step definitions, page objects or helpers, and support code needed to make it pass.
 
 **Before starting**, read `.claude/bdd-config.md` for project-specific tooling, conventions, and skill role mappings. Project-specific patterns and selector knowledge are loaded separately via the **domain-knowledge** skill if configured. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
 
 > Plugin note: if `.claude/bdd-config.md` is missing, tell the user to run `/bdd:init`. The template is at `${CLAUDE_PLUGIN_ROOT}/bdd-config.template.md`.
+
+**UI rules.** The UI-specific rules below apply when the config sets **error_context** or **show-trace** (`/bdd:init --detect` fills them from the project). With neither set there is no UI evidence: use the neutral rules and say so in one line.
 
 ### Input
 
@@ -29,7 +31,7 @@ If a spec PR summary exists for an approved spec, read its **Step status** table
 
 1. Read the `.feature` file to get the full scenario with all steps
 2. Read existing step definitions in the **steps_dir** to see which steps are already implemented
-3. Read relevant Page Object Models to understand current selectors
+3. Read the page objects or helpers the steps use to understand current selectors or calls
 4. Read environment config for target URLs and auth
 5. Identify which steps need new implementation vs which already exist. For EACH apparently-new step, also run a paraphrase grep against the **steps_dir** — generate 2–3 natural paraphrases of the same assertion and search for each. If any paraphrase hits an existing step def, **stop and report back**: the `.feature` should be reworded to use the existing step text, not a new step def created. Do not author a duplicate step def silently — paraphrase blindness at implementation time is the last line of defense before a duplicate ships.
    If a reused `Then` step later fails because its assertion does not fit the scenario's data, stop and report the mismatch. Do not edit approved scenario data and do not reword the step.
@@ -47,7 +49,7 @@ For each step in the scenario, IN ORDER:
 
 ##### 2a. Run the test
 
-Run the **prepare** command, then the **generate** command, then the **test** command with the appropriate project and scenario tag flags, plus `--headed` for visual debugging.
+Run the **prepare** command, then the **generate** command, then the **test** command with the appropriate project and scenario tag flags, plus the project's visual-debug flag if the test command has one (UI projects).
 
 If the step passes (at least one executed test, and none failed) -> move to the next step. If no tests ran, stop and report "no tests ran". Do not loop.
 If the step fails -> go to 2b.
@@ -60,7 +62,7 @@ Gather failure details using the best available source (in priority order):
 2. **Test results directory** — check **test_results_dir** for artifacts (screenshots, traces, logs).
 3. **Test runner stdout** — parse the failure stack trace, assertion message, and step name.
 
-**For UI-based tests — key rules for selector discovery:**
+**UI projects only - key rules for selector discovery:**
 - Use the accessibility snapshot or page source, NOT guesswork
 - Look for `button`, `link`, `tab`, `heading`, `textbox` roles with their actual names
 - Check for `data-testid` attributes first — most reliable
@@ -73,20 +75,20 @@ Gather failure details using the best available source (in priority order):
 
 ##### 2c. Fix the implementation
 
-Based on what you learned from the UI state:
-1. Update the Page Object Model
+Based on what you learned from the evidence:
+1. Update the page objects or helpers
 2. Update step definitions
 3. Update support modules if needed
 
 **Before authoring a NEW step def** (as opposed to editing an existing one), repeat the paraphrase grep from Phase 0 step 5 against the current inventory. The inventory may have changed since Phase 0 (e.g., a sibling scenario was implemented in between, or a step def merged upstream). If a paraphrase now exists, reword the `.feature` instead of adding a duplicate.
 
-**Import discipline** — author imports just-in-time for what the current edit actually references. Do NOT pre-import symbols you "might use" later, and do NOT carry over imports from a prior draft that the final step body no longer references. Unused imports become typecheck failures under `--noUnusedLocals` (or equivalent strict mode) and require a follow-up cleanup PR. Before exiting Phase 2c, scan the file for imports introduced in this iteration and confirm each one is referenced by the code you just wrote.
+**Import discipline** - author imports just-in-time for what the current edit actually references. Do NOT pre-import symbols you "might use" later, and do NOT carry over imports from a prior draft that the final step body no longer references. Unused imports become typecheck failures under strict unused checks (for example `--noUnusedLocals` in TypeScript or `-warnaserror` in .NET) and require a follow-up cleanup PR. Before exiting Phase 2c, scan the file for imports introduced in this iteration and confirm each one is referenced by the code you just wrote.
 
 ##### 2d. Verify the fix
 
 Re-run the test. If the step now passes, move to the next step. A run with no tests executed is not a pass. If not, repeat 2b-2d.
 
-**Max retries per step: 3.** If a step fails 3 times, stop and report what you've learned from the accessibility snapshots. The user may need to provide guidance.
+**Max retries per step: 3.** If a step fails 3 times, stop and report what you've learned from the evidence. The user may need to provide guidance.
 
 #### Phase 3: Full Scenario Verification
 
@@ -114,7 +116,7 @@ Select: <scenario-tag>
 
 Use `By: name` with `Select: <scenario name>` when the scenarios carry no tag, or `By: file` with the feature file path.
 
-The verifier runs the full scenario (without `--headed`) and the strict type check. Failures must be resolved before declaring the scenario done — re-dispatch after each fix.
+The verifier runs the full scenario (without any visual-debug flag) and the strict type check. Failures must be resolved before declaring the scenario done - re-dispatch after each fix.
 
 If dispatching the agent is not possible, run manually: the **prepare** command, then the **generate** command, then the **test** command, then the **typecheck** command (all from BDD config). All must pass with zero errors before the scenario is considered complete.
 
@@ -123,7 +125,7 @@ If dispatching the agent is not possible, run manually: the **prepare** command,
 - **Missing import** (e.g., `cannot find name`) — add the import; verify the resolved path matches the project's module resolution config.
 - **State-fixture property errors** — declare the new property on the **state_type** per Code Quality Rules below; don't paper over with `as any`.
 
-After failure, inspect available artifacts in the **test_results_dir**:
+After failure, inspect the artifacts in the **test_results_dir**. UI examples:
 - `error-context.md` — accessibility snapshot at failure
 - `video.webm` — browser recording
 - `trace.zip` — open with the **show-trace** command
@@ -131,6 +133,8 @@ After failure, inspect available artifacts in the **test_results_dir**:
 ---
 
 ### BDD Conventions
+
+Example from a Playwright and TypeScript project. Other stacks use their equivalents (see **state_fixture** and the **domain-knowledge** skill).
 
 | Pattern | Wrong | Right |
 |---------|-------|-------|
@@ -147,5 +151,5 @@ Read from `.claude/bdd-config.md` — the config is the single source of truth f
 - **Typecheck must pass** with zero errors (run the **typecheck** command)
 - **No unused code** — imports, locals, parameters, dead methods
 - **State properties declared** — new properties on the state fixture must be added to the state type
-- **Dynamic imports** — use `.js` extension for node16 moduleResolution
+- **Explicit file extensions** - where the module system requires explicit file extensions (Node ESM, TypeScript with node16 or nodenext resolution), imports include the `.js` extension
 - **No `as any`** for properties that should be typed

@@ -250,4 +250,14 @@ for s in "Defaults when config rows are absent" "no tag changes" "Add the automa
   assert_contains "$I" "$s"
 done
 
+
+# implement is framework neutral: UI and language advice is gated by the config
+I="$ROOT/commands/implement.md"
+for s in "apply when the config sets" "visual-debug flag" "page objects or helpers" "explicit file extensions" "UI projects only" "the system under test" "no UI evidence"; do
+  assert_contains "$I" "$s"
+done
+for s in "explore UI, discover selectors" "exploring the actual UI state" "plus \`--headed\`" "(without \`--headed\`)" "Which advice applies"; do
+  assert_not_contains "$I" "$s"
+done
+
 finish
