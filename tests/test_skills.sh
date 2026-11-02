@@ -217,4 +217,37 @@ assert_before "$G" "Pass B" "Pass C"
 assert_contains "$I" "assertion does not fit"
 assert_contains "$I" "Do not edit approved scenario data"
 
+
+# Zero tests ran is never a pass
+RUN="$ROOT/commands/run.md"
+V="$ROOT/agents/verifier.md"
+I="$ROOT/commands/implement.md"
+for f in "$RUN" "$V" "$I"; do
+  assert_contains "$f" "no tests ran"
+done
+for f in "$RUN" "$V"; do
+  assert_contains "$f" "nothing to run"
+  assert_contains "$f" "Skipped tests do not count as executed"
+done
+assert_contains "$V" "executed count unknown"
+assert_contains "$V" "- Executed:"
+assert_contains "$V" "at least one test executed"
+assert_contains "$I" "at least one executed test"
+assert_before "$RUN" "Count what ran" "On success"
+
+
+# Verifier selection by tag, name, file or all, and tag defaults in implement
+V="$ROOT/agents/verifier.md"
+I="$ROOT/commands/implement.md"
+for s in "By: tag | name | file | all" "Select:" "**Selection:**" "unknown field Tag" "name matched"; do
+  assert_contains "$V" "$s"
+done
+assert_not_contains "$V" "**Tag:**"
+assert_contains "$I" "By: tag"
+assert_contains "$I" "Select: <scenario-tag>"
+assert_not_contains "$I" "Tag: <scenario-tag>"
+for s in "Defaults when config rows are absent" "no tag changes" "Add the automated tag only when the unautomated tag was removed" "which tags changed"; do
+  assert_contains "$I" "$s"
+done
+
 finish
