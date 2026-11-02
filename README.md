@@ -157,6 +157,7 @@ Every row below is optional. If a row is absent, the default applies.
 | `glossary_file` | none | Domain terms for the vocabulary check |
 | `lint` | none | Project linter for tags, casing and indentation |
 | `prepare` | none | Command that builds what the tests launch, run before generate and test |
+| `step_batch` | `auto` | Steps per test run in `implement`: `auto` groups by risk, or `1`, a number or `all` |
 | `discovery_dir` | `docs/discovery` | Where a saved discovery pack goes |
 
 </details>

@@ -260,4 +260,15 @@ for s in "explore UI, discover selectors" "exploring the actual UI state" "plus 
   assert_not_contains "$I" "$s"
 done
 
+
+# step_batch: group steps by risk so the implement loop needs fewer runs
+I="$ROOT/commands/implement.md"
+for s in "Plan the groups" "step_batch" "classify it high" "A high step closes the group" "split the rest of that group in half" "does not wait for approval" "existing, no work"; do
+  assert_contains "$I" "$s"
+done
+assert_before "$I" "Plan the groups" "##### 2a. Run the test"
+assert_contains "$CFG" "| step_batch |"
+grep -qE '^\| step_batch \| `` \(optional' "$CFG" && pass || fail "template step_batch row must be empty with an (optional ...) note, not <...> form"
+assert_contains "$ROOT/README.md" "| \`step_batch\` |"
+
 finish
