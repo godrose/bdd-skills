@@ -271,4 +271,11 @@ assert_contains "$CFG" "| step_batch |"
 grep -qE '^\| step_batch \| `` \(optional' "$CFG" && pass || fail "template step_batch row must be empty with an (optional ...) note, not <...> form"
 assert_contains "$ROOT/README.md" "| \`step_batch\` |"
 
+
+# step_batch classification is by what needs a run to know, not by what code is new
+for s in "you can write by reading the repo" "knowledge you cannot get by reading the repo" "the state of a rendered page"; do
+  assert_contains "$I" "$s"
+done
+assert_not_contains "$I" "needs a new element, endpoint, client method or fixture"
+
 finish

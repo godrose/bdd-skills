@@ -27,8 +27,10 @@ Alternatives rejected: keep step by step everywhere (little change in runs), bat
 ## Classification (two classes)
 
 - **existing:** a step definition already exists, or the Step status table says so. No work and no run.
-- **low:** a new step whose body only composes existing page objects, helpers or client calls.
-- **high:** a new step that needs a new element, endpoint, client method or fixture; asserts data not seen before; or consumes output an earlier step produces at run time. When unsure, classify high.
+- **low:** a new step you can write by reading the repo. It composes or wraps page objects, helpers, client calls, endpoints, fixtures or locators whose definitions are readable in the source.
+- **high:** a new step that needs knowledge you cannot get by reading the repo: the state of a rendered page at that point, a value produced at run time, a response shape or formatted value the source does not define, or a locator the source does not determine (generated ids, third-party components). When unsure, classify high.
+
+The line is what needs a run to know, not what code is new. A first version classed any step needing a new client or adapter method as high. A trial on a server-side suite then put every new step in its own group, because new code was always needed even though the endpoints were readable in the source.
 
 The keyword (Given, When, Then) is a tie-breaker only.
 
