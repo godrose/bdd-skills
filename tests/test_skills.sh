@@ -278,4 +278,11 @@ for s in "you can write by reading the repo" "knowledge you cannot get by readin
 done
 assert_not_contains "$I" "needs a new element, endpoint, client method or fixture"
 
+
+# the group plan reaches the person in the final report, which the model reliably writes
+assert_contains "$I" "add a **Groups** section"
+assert_contains "$I" "the number of test runs"
+assert_not_contains "$I" "write the plan as a message"
+assert_not_contains "$I" "Print one line per step before the first run"
+
 finish

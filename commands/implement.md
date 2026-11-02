@@ -57,7 +57,7 @@ Read the **step_batch** row. If the row is absent, empty or in `<...>` form, use
   - **low**: a new step you can write by reading the repo. It composes or wraps page objects, helpers, client calls, endpoints, fixtures or locators whose definitions are readable in the source.
   - **high**: a new step that needs knowledge you cannot get by reading the repo: the state of a rendered page at that point, a value produced at run time, a response shape or formatted value the source does not define, or a locator the source does not determine (generated ids, third-party components). If unsure, classify it high. The keyword (Given, When, Then) is a tie-breaker only.
 
-Form groups in order. Low steps accumulate. A high step closes the group. Print one line per step before the first run: step, class, reason, group. The plan does not wait for approval.
+Form groups in order. Low steps accumulate. A high step closes the group. The plan does not wait for approval. In your final report, add a **Groups** section: for each group, its steps with their class and reason, the number of test runs, and the outcome.
 
 ##### 2a. Run the test
 

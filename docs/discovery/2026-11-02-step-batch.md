@@ -20,9 +20,11 @@
 | 2 | How are groups formed? | By risk. Each new step is classified low or high. Low steps accumulate. A high step closes the group. | A run only reveals the first failure. Closing a group at a risky step wastes no guessed code after it. One rule covers UI and non-UI projects, because UI steps that touch new elements classify as high on their own. |
 | 3 | What happens when a group fails? | Fix the failing step, then split the rest of that group in half and run each half. | A wrong guess costs one run and then narrows. There is no growing back. |
 | 4 | Where is the setting? | A new optional `step_batch` config row. `auto` is the default and means the risk-based grouping. `1`, a number `N` or `all` are fixed and skip the analysis. | A project that knows its suite can opt out. Each value means one thing. |
-| 5 | Is the plan approved? | No. It is printed once before the first run (step, class, reason, group). The run does not wait. | Keeps the loop moving. The person can read it and interrupt. |
+| 5 | Is the plan approved? | No. The final report has a Groups section: for each group its steps with class and reason, the number of test runs, and the outcome. The run does not wait. | Keeps the loop moving. The person can read it and interrupt. |
 
 Alternatives rejected: keep step by step everywhere (little change in runs), batch non-UI projects only (needs a separate UI rule), halve and double the size (ignores evidence about the steps), a time threshold (a number to tune), ask the person each time (friction).
+
+A first version said to print the plan before the first run. A trial showed the model skips it, also when the rule was reworded as "write the plan as a message". A section in the final report is reliable, because the model always writes one.
 
 ## Classification (two classes)
 
