@@ -129,7 +129,7 @@ Example:
 
 **Resolve every ⚠ row before requesting approval** — either by rewording to the existing analog, or by documenting why the new wording is intentionally different. Then present:
 
-1. The proposed feature file(s) with full Gherkin text
+1. The proposed feature file(s) with full Gherkin text. Write every scenario out in full, with all of its steps. Do not abbreviate a scenario with "same set-up as scenario 1" or a similar shortcut, even when scenarios repeat steps. The person approving must see the exact text that will be written.
 2. The per-step audit table above (every ⚠ should be either reconciled to ✅ or annotated `🆕 intentional because: <reason>`)
 3. Which project/tag each scenario belongs to
 4. Estimated implementation complexity (how many new steps, any new POM methods?)
@@ -199,6 +199,7 @@ After all scenarios are implemented and verified:
 | Tense-shifting an existing When into a Given for Background | The Given duplicates the When, requires a new step def, drifts from how the rest of the suite establishes the same precondition | Reuse the existing When-chain in Background, even if slightly verbose |
 | Drift from established conventions (negation form, data-table column names) | The new wording looks fine in isolation but reads as inconsistent next to existing scenarios; locks in vocabulary forks | Phase 2 step 5 — sweep the inventory for vocabulary BEFORE drafting; match the project's word choice |
 | Treating planned (unautomated) scenarios as exempt from step-reuse rigor | Every planned step becomes a step def when automated; paraphrases get locked in before anyone notices | Apply identical step-reuse rules to planned and automated scenarios |
+| Abbreviating scenarios in the proposal ("same set-up as ...") | The approver signs off on text they have not seen, and the written file may differ from what they read | Phase 4 - write every scenario out in full with all of its steps |
 | Presenting scenarios for approval without a per-step audit table | User can't tell which steps are new without manually grepping; review burden falls on reviewers, not the designer | Phase 4 — produce the audit table before requesting approval; every ⚠ row must be reconciled or annotated |
 | Embedding multi-line content inside a quoted step argument | Fails Gherkin parsing | Use a single-line step with a Gherkin DocString (`"""…"""`) directly below it; the step def takes a DocString parameter |
 | Issue-tracker tag only on the Feature header | The cucumber.json reporter writes Feature tags and Scenario tags into separate arrays. Test-management integrations that route per-scenario results to issue tickets read Scenario-level tags — Feature-level tags don't propagate. Results land without the issue link | Repeat the issue-tracker tag (`@PROJ-XXXX`) on every scenario it covers, in addition to the Feature header |

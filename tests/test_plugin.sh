@@ -107,6 +107,14 @@ assert_contains "$ROOT/commands/triage.md" '## BDD Triage'
 assert_not_contains "$ROOT/commands/triage.md" '## BDD Feedback'
 assert_contains "$INIT" 'run, triage or reconcile'
 
+# design shows every scenario in full before approval; discover looks for existing behavior in the code
+for s in 'Write every scenario out in full' 'Do not abbreviate' 'Abbreviating scenarios in the proposal'; do
+  assert_contains "$ROOT/commands/design.md" "$s"
+done
+for s in 'Look for existing behavior' 'unit tests' 'from code' 'acceptance scenarios for existing behavior'; do
+  assert_contains "$ROOT/commands/discover.md" "$s"
+done
+
 assert_version_bumped
 
 finish
