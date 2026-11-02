@@ -199,7 +199,7 @@ Each scenario in the log carries a stable tag such as `@spec-export-empty-list`.
 
 ```
 .claude-plugin/
-  plugin.json                   # Plugin manifest: name, version
+  plugin.json                   # Plugin manifest: name, description
   marketplace.json              # Marketplace listing for this repo
 commands/
   init.md                       # Plugin only: create .claude/bdd-config.md from the template (copy only)
@@ -246,7 +246,7 @@ In `specify-only` mode, `bdd:design` stops after the scenarios. `bdd:implement` 
 
 ## Update
 
-**Plugin.** The plugin is cached by version, so you get changes when the version goes up:
+**Plugin.** The plugin has no pinned version, so each merge to `main` is a new version. Update to get it:
 
 ```bash
 claude plugin marketplace update godrose-plugins

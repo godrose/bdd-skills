@@ -11,7 +11,7 @@ done
 
 TPL="$ROOT/.github/pull_request_template.md"
 assert_file "$TPL"
-for s in '## Summary' 'bash tests/run.sh' 'Tests failed before the change' 'Plugin version bumped' 'No project names' 'No session links'; do
+for s in '## Summary' 'bash tests/run.sh' 'Tests failed before the change' 'No project names' 'No session links'; do
   assert_contains "$TPL" "$s"
 done
 
@@ -26,5 +26,9 @@ assert_contains "$DB" 'interval: weekly'
 # GNU sed reads the empty string after -i as a file name, so CI on Linux fails. Use sedi from tests/lib.sh.
 n=$(grep -n -F --exclude=test_repo.sh "sed -i ''" "$ROOT"/tests/test_*.sh "$ROOT"/scripts/*.sh "$ROOT"/install.sh | wc -l | tr -d " ")
 assert_equals 0 "$n" "sed -i with an empty suffix"
+
+assert_not_contains "$TPL" "Plugin version bumped"
+assert_contains "$ROOT/CLAUDE.md" "## Before going public"
+assert_not_contains "$ROOT/CLAUDE.md" "needs a plugin version bump"
 
 finish
