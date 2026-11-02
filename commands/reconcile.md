@@ -5,7 +5,7 @@ allowed-tools: ["Bash", "Read", "Grep", "Glob"]
 
 ## BDD Reconcile
 
-Compare the decision log with the real `.feature` files and report what does not line up. **Reconciliation is a report, not a sync.** Nothing flows from the log into the scenarios, or back. This skill never edits a file. Changes happen only through proposals the builder approves, for example from `bdd:feedback`.
+Compare the decision log with the real `.feature` files and report what does not line up. **Reconciliation is a report, not a sync.** Nothing flows from the log into the scenarios, or back. This skill never edits a file. Changes happen only through proposals the builder approves, for example from `bdd:triage`.
 
 **Before starting**, read `.claude/bdd-config.md`. Read these rows: `decision_log`, `decisions_dir` (default `docs/decisions`), `features_dir`, `scenario_id_prefix` (default `spec-`), and the status rows (`unautomated_tag`, `manual_only_tag`, `blocked_tag`, `status_scope`, `planned_dir`, `manual_only_dir`) when present. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
 

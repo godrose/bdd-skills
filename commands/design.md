@@ -42,7 +42,7 @@ If a discovery pack is given and its Readiness says it is not ready, say so and 
    - "User can view all records" → table displays all fields non-empty
    - "Downloaded data matches displayed data exactly" → export values = UI values
    - "Supported formats: CSV, JSON" → both formats downloadable with valid content
-3. **Note ambiguities** — if an AC is vague, flag it for the user before designing scenarios
+3. **List assumptions** - a term is vague when it names a category that covers more than one distinct value you find in the system or the existing features: states, roles, formats, units. "Finished" is vague if the system has Completed, Failed and Cancelled. A term with one possible meaning is not vague: do not list it. Do not stop to ask. Design with the narrowest sensible reading and record an assumption for it: the term as written, the reading chosen, the other readings found, and where you found them. If you cannot find the possible values, list the term as "values unknown, please confirm". Skip a term the discovery pack already settled.
 
 #### Phase 2: Audit Existing Coverage
 
@@ -141,7 +141,7 @@ Example:
 3. Which project/tag each scenario belongs to
 4. Estimated implementation complexity (how many new steps, any new POM methods?)
 
-Show the scenarios in plain words first, so the person approving sees what they will get. The audit table follows.
+Show the scenarios in plain words first, so the person approving sees what they will get. The audit table follows. Start the proposal with the **Assumptions** list from Phase 1. Write "Assumptions: none" when there are none. If the person picks another reading at the approval gate, update the affected scenarios and the list.
 
 In `specify-only` mode, also produce a **spec PR summary** for a reader who has not seen the step library. Give it these sections:
 
@@ -149,6 +149,7 @@ In `specify-only` mode, also produce a **spec PR summary** for a reader who has 
 - **Cases included**: the cases the scenarios cover.
 - **Cases deliberately excluded**: cases left out, each with a reason.
 - **New terms**: words the scenarios introduce, each with a reason.
+- **Assumptions**: the approved list from Phase 1, one line per term with the reading chosen and the other readings found. Omit this section when there are none.
 - **Step status**: the audit table above, with each step marked "existing (automated)", "existing (not yet automated)" or "new (to be built)". Mark a step "existing (automated)" only when a step definition for it exists in the **steps_dir**. A step that appears only in unautomated scenarios is "existing (not yet automated)".
 
 **Wait for user approval before implementing.** The user may:
@@ -208,6 +209,7 @@ After all scenarios are implemented and verified:
 | Treating planned (unautomated) scenarios as exempt from step-reuse rigor | Every planned step becomes a step def when automated; paraphrases get locked in before anyone notices | Apply identical step-reuse rules to planned and automated scenarios |
 | Abbreviating scenarios in the proposal ("same set-up as ...") | The approver signs off on text they have not seen, and the written file may differ from what they read | Phase 4 - write every scenario out in full with all of its steps |
 | Assuming a reused Then step makes the claim the scenario needs | Same words means same claim is false: the step passes the wording audit and fails at run time on data it does not fit | Phase 2 Pass C - read the definition, record what it asserts in the `Asserts` column, flag a mismatch for the person to resolve |
+| Silently picking one meaning of a vague AC term | The other readings vanish and the person approving never sees the choice | Phase 1 step 3 - list the assumption with the other readings found, and show it first in the proposal |
 | Presenting scenarios for approval without a per-step audit table | User can't tell which steps are new without manually grepping; review burden falls on reviewers, not the designer | Phase 4 — produce the audit table before requesting approval; every ⚠ row must be reconciled or annotated |
 | Embedding multi-line content inside a quoted step argument | Fails Gherkin parsing | Use a single-line step with a Gherkin DocString (`"""…"""`) directly below it; the step def takes a DocString parameter |
 | Issue-tracker tag only on the Feature header | The cucumber.json reporter writes Feature tags and Scenario tags into separate arrays. Test-management integrations that route per-scenario results to issue tickets read Scenario-level tags — Feature-level tags don't propagate. Results land without the issue link | Repeat the issue-tracker tag (`@PROJ-XXXX`) on every scenario it covers, in addition to the Feature header |

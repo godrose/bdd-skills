@@ -285,4 +285,21 @@ assert_contains "$I" "the number of test runs"
 assert_not_contains "$I" "write the plan as a message"
 assert_not_contains "$I" "Print one line per step before the first run"
 
+
+# Vague ACs: the designer lists its assumptions instead of choosing silently
+G="$ROOT/commands/design.md"
+for s in "List assumptions" "more than one distinct value" "Do not stop to ask" "values unknown, please confirm" "Assumptions: none" "Omit this section when there are none" "Silently picking one meaning"; do
+  assert_contains "$G" "$s"
+done
+assert_not_contains "$G" "flag it for the user before designing scenarios"
+assert_contains "$G" "do not list it"
+assert_before "$G" "List assumptions" "Assumptions: none"
+assert_before "$G" "Assumptions: none" "Omit this section when there are none"
+assert_contains "$ROOT/commands/discover.md" "stop and ask"
+assert_no_added_emdash commands/design.md tests/test_skills.sh
+
+# bdd:feedback was renamed bdd:triage; no command may point at the old name
+for f in "$ROOT"/commands/*.md "$ROOT"/agents/*.md; do
+  assert_not_contains "$f" "bdd:feedback"
+done
 finish
