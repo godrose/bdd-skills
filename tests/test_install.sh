@@ -47,7 +47,7 @@ assert_contains "$T/fresh-out.txt" "jq"
 OUT=$(cd "$T/fresh" && bash .claude/scripts/decisions.sh check 2>&1); RC=$?
 assert_equals 0 "$RC" "installed decisions.sh check exits 0"
 printf '%s' "$OUT" | grep -qF "I-EMPTY" && pass || fail "installed check prints I-EMPTY: $OUT"
-for k in decision_log decisions_dir scenario_id_prefix status_scope manual_only_tag blocked_tag reconciler feedback-intake '@pending'; do
+for k in decision_log decisions_dir scenario_id_prefix status_scope manual_only_tag blocked_tag reconciler feedback-intake prepare '@pending'; do
   assert_contains "$T/old-out.txt" "$k"
 done
 assert_contains "$T/old-out.txt" "planned_dir"

@@ -6,6 +6,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 
 | Role | Command |
 |------|---------|
+| prepare | `` (optional command that builds what the tests launch, such as servers; runs before generate and test; empty to skip) |
 | generate | `<command to generate test files from .feature files; empty if the framework reads .feature files directly>` |
 | test | `<command to run tests>` |
 | typecheck | `<command to check types / compile with strict warnings>` |

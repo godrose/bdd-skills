@@ -156,6 +156,7 @@ Every row below is optional. If a row is absent, the default applies.
 | `automated_tag` | none | Tag your test-management tool keys on, added when a scenario is automated |
 | `glossary_file` | none | Domain terms for the vocabulary check |
 | `lint` | none | Project linter for tags, casing and indentation |
+| `prepare` | none | Command that builds what the tests launch, run before generate and test |
 | `discovery_dir` | `docs/discovery` | Where a saved discovery pack goes |
 
 </details>
