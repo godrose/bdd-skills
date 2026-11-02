@@ -206,4 +206,15 @@ grep -qE '^\| prepare \| `` \(optional' "$CFG" && pass || fail "template prepare
 assert_not_contains "$ROOT/commands/run.md" 'Run the install command if missing'
 assert_contains "$ROOT/commands/run.md" 'step 2 (**prepare**)'
 
+
+# Then-step assertion check: a reused Then step must make the claim the scenario needs
+G="$ROOT/commands/design.md"
+I="$ROOT/commands/implement.md"
+for s in "Pass C" "assertion check" "| Asserts |" "assertion unknown" "assertion not checkable yet" "The person chooses" "never changes fixture data" "Same words means same claim"; do
+  assert_contains "$G" "$s"
+done
+assert_before "$G" "Pass B" "Pass C"
+assert_contains "$I" "assertion does not fit"
+assert_contains "$I" "Do not edit approved scenario data"
+
 finish

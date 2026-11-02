@@ -56,6 +56,12 @@ If a discovery pack is given and its Readiness says it is not ready, say so and 
      - Negation: "does not equal X" / "should not match X" / "differs from X"
      - Action verbs: "I copy / extract / read / capture" — the same intent often appears under several verbs
      - Container references: any phrase like "from the X tab / panel / page" — the existing step may identify the container differently
+   - **Pass C - assertion check**: for EACH reused `Then` step, read its step definition and note what it asserts (exact count, contains, order, exact text). Compare that claim with the data the scenario sets up. Same words do not mean the same claim: a step that asserts an exact count fails when the scenario's data has a different count. `Given` and `When` steps are not checked.
+     - Definition cannot be read (shared or external library): record "assertion unknown" and flag it. Do not guess.
+     - Step is planned and has no definition yet: compare against the scenario text only and record "assertion not checkable yet".
+     - Step takes a parameter such as `{int}`: the parameter fits any value. Record it and pass.
+     - Definition is long or indirect: record the visible assertion and say if a helper was followed. If you cannot tell, record "assertion unknown".
+     - On a mismatch, the designer never changes fixture data and never rewrites the step silently. Flag it in the audit table and propose two fixes: (A) change the scenario's data, or (B) write a new step, marked `🆕 intentional because: <reason>`. Say which you prefer. The person chooses at the approval gate.
 5. **Sweep project conventions** — before drafting NEW steps, read existing step defs in the same domain to learn the project's vocabulary:
    - **Negation form** — `is disabled` vs `is not enabled`; `should not match` vs `should differ`
    - **Data-table column names** already used in the same assertion family (e.g., `| field | matcher |` vs `| field | expected |`)
@@ -120,12 +126,13 @@ Present the designed scenarios to the user. **Before requesting approval, produc
 
 Example:
 
-| Step Text | Status | Existing Analog |
-|-----------|--------|------------------|
-| `When I submit the form` | ✅ exact | `steps/forms.ts:42` |
-| `Then the response should contain:` (table) | ⚠ paraphrase — prefer `the response should match:` | `steps/api.ts:88` |
-| `Given the flag is not enabled` | ⚠ convention drift — codebase uses `is disabled` | `steps/flags.ts:17` |
-| `Then a toast notification appears` | 🆕 genuinely new — no toast assertions exist yet | — |
+| Step Text | Status | Existing Analog | Asserts |
+|-----------|--------|------------------|---------|
+| `When I submit the form` | ✅ exact | `steps/forms.ts:42` | n/a (When) |
+| `Then the list shows 2 experiments` | ⚠ assertion mismatch - asserts exact count, scenario data has 3 | `steps/list.ts:31` | exact count |
+| `Then the response should contain:` (table) | ⚠ paraphrase - prefer `the response should match:` | `steps/api.ts:88` | contains rows |
+| `Given the flag is not enabled` | ⚠ convention drift - codebase uses `is disabled` | `steps/flags.ts:17` | n/a (Given) |
+| `Then a toast notification appears` | 🆕 genuinely new - no toast assertions exist yet | - | n/a |
 
 **Resolve every ⚠ row before requesting approval** — either by rewording to the existing analog, or by documenting why the new wording is intentionally different. Then present:
 
@@ -200,6 +207,7 @@ After all scenarios are implemented and verified:
 | Drift from established conventions (negation form, data-table column names) | The new wording looks fine in isolation but reads as inconsistent next to existing scenarios; locks in vocabulary forks | Phase 2 step 5 — sweep the inventory for vocabulary BEFORE drafting; match the project's word choice |
 | Treating planned (unautomated) scenarios as exempt from step-reuse rigor | Every planned step becomes a step def when automated; paraphrases get locked in before anyone notices | Apply identical step-reuse rules to planned and automated scenarios |
 | Abbreviating scenarios in the proposal ("same set-up as ...") | The approver signs off on text they have not seen, and the written file may differ from what they read | Phase 4 - write every scenario out in full with all of its steps |
+| Assuming a reused Then step makes the claim the scenario needs | Same words means same claim is false: the step passes the wording audit and fails at run time on data it does not fit | Phase 2 Pass C - read the definition, record what it asserts in the `Asserts` column, flag a mismatch for the person to resolve |
 | Presenting scenarios for approval without a per-step audit table | User can't tell which steps are new without manually grepping; review burden falls on reviewers, not the designer | Phase 4 — produce the audit table before requesting approval; every ⚠ row must be reconciled or annotated |
 | Embedding multi-line content inside a quoted step argument | Fails Gherkin parsing | Use a single-line step with a Gherkin DocString (`"""…"""`) directly below it; the step def takes a DocString parameter |
 | Issue-tracker tag only on the Feature header | The cucumber.json reporter writes Feature tags and Scenario tags into separate arrays. Test-management integrations that route per-scenario results to issue tickets read Scenario-level tags — Feature-level tags don't propagate. Results land without the issue link | Repeat the issue-tracker tag (`@PROJ-XXXX`) on every scenario it covers, in addition to the Feature header |
