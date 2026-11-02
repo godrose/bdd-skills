@@ -37,4 +37,8 @@ done > "${TMPDIR:-/tmp}/readme-badlinks.$$"
 [ -s "${TMPDIR:-/tmp}/readme-badlinks.$$" ] && fail "README Contents links with no heading: $(tr '\n' ' ' < "${TMPDIR:-/tmp}/readme-badlinks.$$")" || pass
 rm -f "${TMPDIR:-/tmp}/readme-badlinks.$$"
 
+
+# The prepare row is listed with the other optional rows
+assert_contains "$R" '| `prepare` | none |'
+
 finish

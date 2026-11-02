@@ -35,9 +35,10 @@ If a spec PR summary exists for an approved spec, read its **Step status** table
 
 #### Phase 1: Prepare
 
-1. Ensure the **generate** command runs cleanly
-2. Check auth state exists (run auth setup script if missing)
-3. Identify the correct project from the **config_file** (tag-based routing)
+1. Run the **prepare** command from BDD config. If the row is absent, empty, still in `<...>` form, or a note such as `_(not needed)_`, skip this step and say so. If **prepare** fails, report the error and stop. Do not run generate or test.
+2. Ensure the **generate** command runs cleanly
+3. Check auth state exists (run auth setup script if missing)
+4. Identify the correct project from the **config_file** (tag-based routing)
 
 #### Phase 2: Step-by-Step Implementation
 
@@ -45,7 +46,7 @@ For each step in the scenario, IN ORDER:
 
 ##### 2a. Run the test
 
-Run the **generate** command followed by the **test** command with the appropriate project and scenario tag flags, plus `--headed` for visual debugging.
+Run the **prepare** command, then the **generate** command, then the **test** command with the appropriate project and scenario tag flags, plus `--headed` for visual debugging.
 
 If the step passes -> move to the next step.
 If the step fails -> go to 2b.
@@ -100,7 +101,7 @@ Tag: <scenario-tag>
 
 The verifier runs the full scenario (without `--headed`) and the strict type check. Failures must be resolved before declaring the scenario done — re-dispatch after each fix.
 
-If dispatching the agent is not possible, run manually: the **generate** command, then the **test** command, then the **typecheck** command (all from BDD config). All must pass with zero errors before the scenario is considered complete.
+If dispatching the agent is not possible, run manually: the **prepare** command, then the **generate** command, then the **test** command, then the **typecheck** command (all from BDD config). All must pass with zero errors before the scenario is considered complete.
 
 **Common typecheck failures and how to resolve them:**
 - **Unused import / local / parameter** (e.g., `TS6133 declared but never read` in TypeScript projects) — delete the offending line. Use the `_`-prefix convention ONLY when an unused function parameter must remain to satisfy an interface or callback signature; never to silence an unused top-level import.

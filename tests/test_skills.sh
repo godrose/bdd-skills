@@ -178,4 +178,27 @@ for s in 'The repository is private for now' 'read access' 'gh auth setup-git' '
   assert_contains "$R" "$s"
 done
 
+
+# prepare row: build what the tests launch, before generate and test
+line_of() { grep -nF -m1 -- "$2" "$1" | cut -d: -f1; }
+assert_before() {
+  local a b
+  a=$(line_of "$1" "$2"); b=$(line_of "$1" "$3")
+  if [ -n "$a" ] && [ -n "$b" ] && [ "$a" -lt "$b" ]; then pass; else fail "$1: '$2' (line ${a:-none}) is not before '$3' (line ${b:-none})"; fi
+}
+for f in "$ROOT/commands/run.md" "$ROOT/agents/verifier.md" "$ROOT/commands/implement.md"; do
+  assert_contains "$f" '**prepare**'
+  assert_contains "$f" 'If the row is absent, empty'
+  assert_contains "$f" 'If **prepare** fails, report the error and stop'
+  assert_contains "$f" 'Do not run generate or test'
+done
+assert_contains "$ROOT/commands/run.md" '- **prepare** command'
+assert_before "$ROOT/commands/run.md" 'run the **prepare** command' 'run the **generate** command'
+assert_before "$ROOT/agents/verifier.md" 'Run the **prepare** command' 'Run the **generate** command'
+assert_before "$ROOT/commands/implement.md" 'Run the **prepare** command' 'Ensure the **generate** command'
+assert_contains "$ROOT/commands/implement.md" 'the **prepare** command, then the **generate** command, then the **test** command'
+assert_contains "$ROOT/agents/verifier.md" 'Do not retry it'
+assert_contains "$CFG" '| prepare |'
+grep -qE '^\| prepare \| `` \(optional' "$CFG" && pass || fail "template prepare row must be empty with an (optional ...) note, not <...> form"
+
 finish
