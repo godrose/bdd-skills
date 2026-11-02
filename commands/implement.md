@@ -45,14 +45,26 @@ If a spec PR summary exists for an approved spec, read its **Step status** table
 
 #### Phase 2: Step-by-Step Implementation
 
-For each step in the scenario, IN ORDER:
+For each group, in order (a group is one step when **step_batch** is `1`):
+
+##### 2.0. Plan the groups
+
+Read the **step_batch** row. If the row is absent, empty or in `<...>` form, use `auto`. A value other than `auto`, `all` or a number is treated as `auto`, with a one-line note.
+
+- `1`: one new step per run. A number `N`: N new steps per run. `all`: every new step, then one run. These are fixed: do no analysis.
+- `auto`: classify each step before the first run, from what you read in Phase 0.
+  - **existing**: a step definition already exists, or the Step status table says so. List it as "existing, no work". It needs no run.
+  - **low**: a new step you can write by reading the repo. It composes or wraps page objects, helpers, client calls, endpoints, fixtures or locators whose definitions are readable in the source.
+  - **high**: a new step that needs knowledge you cannot get by reading the repo: the state of a rendered page at that point, a value produced at run time, a response shape or formatted value the source does not define, or a locator the source does not determine (generated ids, third-party components). If unsure, classify it high. The keyword (Given, When, Then) is a tie-breaker only.
+
+Form groups in order. Low steps accumulate. A high step closes the group. The plan does not wait for approval. In your final report, add a **Groups** section: for each group, its steps with their class and reason, the number of test runs, and the outcome.
 
 ##### 2a. Run the test
 
 Run the **prepare** command, then the **generate** command, then the **test** command with the appropriate project and scenario tag flags, plus the project's visual-debug flag if the test command has one (UI projects).
 
-If the step passes (at least one executed test, and none failed) -> move to the next step. If no tests ran, stop and report "no tests ran". Do not loop.
-If the step fails -> go to 2b.
+If the group passes (at least one executed test, and none failed) -> move to the next group. If no tests ran, stop and report "no tests ran". Do not loop.
+If the group fails -> go to 2b.
 
 ##### 2b. Explore the failure point
 
@@ -86,7 +98,7 @@ Based on what you learned from the evidence:
 
 ##### 2d. Verify the fix
 
-Re-run the test. If the step now passes, move to the next step. A run with no tests executed is not a pass. If not, repeat 2b-2d.
+Re-run the test. If the group now passes, move to the next group. If a group fails, fix the failing step, then split the rest of that group in half and run each half in turn. A run with no tests executed is not a pass. If not, repeat 2b-2d.
 
 **Max retries per step: 3.** If a step fails 3 times, stop and report what you've learned from the evidence. The user may need to provide guidance.
 

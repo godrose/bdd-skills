@@ -42,6 +42,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 |---------|-------|
 | workflow_mode | `specify-and-implement` (default) or `specify-only` (stop at the scenarios, automate later) |
 | decision_log | `off` (default) or `on` (record decisions in `decisions_dir`) |
+| step_batch | `` (optional: `auto` groups steps by risk in `implement`; `1`, a number or `all` fixes the steps per run; empty means `auto`) |
 
 ## Skill Roles
 
