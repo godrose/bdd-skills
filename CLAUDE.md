@@ -25,7 +25,18 @@ Spikes and trials on real projects still come after discovery. They find what qu
 
 ## Rules
 
-- Every change to `commands/`, `agents/`, `scripts/`, `schemas/` or `bdd-config.template.md` needs a plugin version bump. The plugin cache is keyed by version.
 - Plugin text uses plugin names (`bdd:design`). `install.sh` converts it for project installs. Do not write project-form names or `.claude/scripts` paths in the plugin tree.
 - Run `bash tests/run.sh` before every commit. A new test must fail before the change.
 - Never tell users to delete with a `bdd-*` glob. Their own skills match it.
+
+## Before going public
+
+The plugin has no `version` in `plugin.json` or `marketplace.json`, so users track commits: each merge to `main` is a new version. This suits a private, pre-release repo. It must be resolved at the first stable release:
+
+1. Pin a version in `plugin.json` and the marketplace entry.
+2. Bump it only in release PRs, not in feature PRs.
+3. Restore the bump check for releases (`assert_version_bumped` stays in `tests/lib.sh`) and replace the "no version" test in `tests/test_plugin.sh`.
+4. Restore the PR template checkbox for releases.
+5. Reword the README update section: users get changes at releases.
+
+Details: `docs/discovery/2026-11-02-track-commits.md`.

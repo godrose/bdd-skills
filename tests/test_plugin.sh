@@ -8,9 +8,10 @@ assert_file "$PJ"
 assert_file "$MK"
 
 assert_equals bdd "$(jq -r .name "$PJ" 2>/dev/null)" "plugin name"
-V=$(jq -r .version "$PJ" 2>/dev/null)
-printf '%s' "$V" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$' && pass || fail "plugin version is not semver: $V"
-assert_equals "$V" "$(jq -r '.plugins[0].version' "$MK" 2>/dev/null)" "marketplace version matches plugin version"
+# Users track commits while the plugin is pre-release. A pinned version would freeze them on a cached copy.
+# See "Before going public" in CLAUDE.md.
+[ "$(jq -r "has(\"version\")" "$PJ" 2>/dev/null)" = false ] && pass || fail "plugin.json must not set version (see Before going public in CLAUDE.md)"
+[ "$(jq -r "[.plugins[] | has(\"version\")] | any" "$MK" 2>/dev/null)" = false ] && pass || fail "marketplace.json must not set version (see Before going public in CLAUDE.md)"
 assert_equals bdd "$(jq -r '.plugins[0].name' "$MK" 2>/dev/null)" "marketplace plugin name"
 assert_equals "./" "$(jq -r '.plugins[0].source' "$MK" 2>/dev/null)" "marketplace plugin source"
 assert_equals godrose-plugins "$(jq -r .name "$MK" 2>/dev/null)" "marketplace name"
@@ -114,7 +115,5 @@ done
 for s in 'Look for existing behavior' 'unit tests' 'from code' 'acceptance scenarios for existing behavior'; do
   assert_contains "$ROOT/commands/discover.md" "$s"
 done
-
-assert_version_bumped
 
 finish
