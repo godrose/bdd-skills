@@ -3,7 +3,7 @@ description: "Turn pasted discussion (Slack, Jira, PR comments) into proposed sc
 allowed-tools: ["Agent", "Bash", "Read", "Edit", "Write", "Grep", "Glob", "AskUserQuestion"]
 ---
 
-## BDD Feedback
+## BDD Triage
 
 Take the discussion about a story and turn it into reviewed changes: scenario edits and decision records. The discussion lives in the story's channel. This skill reads it as pasted text and proposes. It writes nothing until the builder approves each item.
 

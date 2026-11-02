@@ -6,7 +6,7 @@
       "name": "bdd",
       "source": "./",
       "description": "BDD workflow skills: discover, design, implement and verify scenarios, with an optional decision log.",
-      "version": "0.1.1"
+      "version": "0.1.2"
     }
   ]
 }

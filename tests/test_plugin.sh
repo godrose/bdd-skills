@@ -103,6 +103,8 @@ done
 assert_file "$ROOT/commands/triage.md"
 [ -e "$ROOT/commands/feedback.md" ] && fail "commands/feedback.md still exists" || pass
 assert_contains "$ROOT/bdd-config.template.md" '| feedback-intake | `bdd:triage`'
+assert_contains "$ROOT/commands/triage.md" '## BDD Triage'
+assert_not_contains "$ROOT/commands/triage.md" '## BDD Feedback'
 assert_contains "$INIT" 'run, triage or reconcile'
 
 assert_version_bumped
