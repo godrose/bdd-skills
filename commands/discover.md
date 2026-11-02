@@ -45,6 +45,14 @@ Discovery is a dialogue. Ask **one question at a time**. Wait for the answer. Us
 3. If a **lint** command is configured, run it on any draft text that exists and report what it flags.
 4. List every term from the story that matches nothing the project already says. Mark each one "unknown, ask the builder". Prefer an existing term over a new one.
 
+#### Step 3b: Look for existing behavior
+
+Before you treat the story as new work, look for the behavior in the code. Search the domain and server code, API handlers and unit tests for the story's key terms (for example the action and the thing it acts on).
+
+1. If the behavior already exists, say so and name the files. Then change the story to acceptance scenarios for existing behavior. Use the code as the source for exact values and messages, and mark each one "from code". Re-check your examples and exclusions against it. An exclusion the code contradicts becomes "needs decision" for the builder.
+2. Note values in the code that look wrong (for example a message that shows an id where the others show a name). List them as possible defects to raise separately. Do not change the behavior to fit the scenario.
+3. If the repo holds no source, only features, say so and continue. Ask the builder where the behavior is defined.
+
 #### Step 4: Decide what is out
 
 List the candidate exclusions: cases you considered and propose to leave out. Give a reason for each. The builder confirms or overrules each one. An exclusion nobody confirmed is a gap.
