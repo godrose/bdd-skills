@@ -297,4 +297,9 @@ assert_before "$G" "List assumptions" "Assumptions: none"
 assert_before "$G" "Assumptions: none" "Omit this section when there are none"
 assert_contains "$ROOT/commands/discover.md" "stop and ask"
 assert_no_added_emdash commands/design.md tests/test_skills.sh
+
+# bdd:feedback was renamed bdd:triage; no command may point at the old name
+for f in "$ROOT"/commands/*.md "$ROOT"/agents/*.md; do
+  assert_not_contains "$f" "bdd:feedback"
+done
 finish
