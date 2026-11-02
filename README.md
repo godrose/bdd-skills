@@ -125,7 +125,7 @@ Drop one of these row sets into the **Tooling** table (the template ships with t
 ```markdown
 | generate | `dotnet build -c ServerWithFake` |
 | test | `dotnet test -c ServerWithFake --no-build` |
-| typecheck | `dotnet build -c ServerWithFake -warnaserror` |
+| typecheck | `dotnet build -c ServerWithFake -warnaserror --no-incremental` |
 ```
 
 **Cucumber (Java/Kotlin):**

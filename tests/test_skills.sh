@@ -201,4 +201,9 @@ assert_contains "$ROOT/agents/verifier.md" 'Do not retry it'
 assert_contains "$CFG" '| prepare |'
 grep -qE '^\| prepare \| `` \(optional' "$CFG" && pass || fail "template prepare row must be empty with an (optional ...) note, not <...> form"
 
+
+# run.md must not point at an install command that no row defines; prepare is where installing belongs
+assert_not_contains "$ROOT/commands/run.md" 'Run the install command if missing'
+assert_contains "$ROOT/commands/run.md" 'step 2 (**prepare**)'
+
 finish

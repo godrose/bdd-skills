@@ -41,4 +41,8 @@ rm -f "${TMPDIR:-/tmp}/readme-badlinks.$$"
 # The prepare row is listed with the other optional rows
 assert_contains "$R" '| `prepare` | none |'
 
+
+# The .NET typecheck example must force a recompile, or it passes after generate without judging warnings
+assert_contains "$R" 'dotnet build -c ServerWithFake -warnaserror --no-incremental'
+
 finish

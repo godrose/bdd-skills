@@ -58,7 +58,7 @@ If unclear, ask the user or use the default project.
 
 Before running, verify:
 
-1. **Dependencies** — check if the project's dependency directory exists (e.g., `node_modules/`, `bin/`, `packages/`). Run the install command if missing.
+1. **Dependencies** - check if the project's dependency directory exists (e.g., `node_modules/`, `packages/`). If it is missing, the project installs it in step 2 (**prepare**). If no prepare command is set, tell the user what is missing and ask how to install it.
 2. **Prepare** - run the **prepare** command from bdd-config, before code generation. It builds what the tests launch but the generate and test commands do not (for example server executables). If the row is absent, empty, still in `<...>` form, or a note such as `_(not needed)_`, skip this step and say so. That is not a failure. If **prepare** fails, report the error and stop. Do not run generate or test.
 3. **Code generation** - run the **generate** command from bdd-config. If the row is empty, still in `<...>` form, or a note such as `_(not needed)_`, skip this step and say so. That is not a failure: some frameworks read `.feature` files directly. If the command fails, report the error and stop.
 4. **Auth/environment state** - check if the environment requires authentication setup, credentials, or external services. Look for auth state files or config referenced by the project.
