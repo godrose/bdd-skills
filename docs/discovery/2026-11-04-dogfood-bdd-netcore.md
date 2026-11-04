@@ -29,6 +29,8 @@ The `grep -l "^# Source: ..."` found nothing, because the installer's older copi
 
 Question: should the leftover check also read `.claude/.gitignore` for the installer header, and list the old command names (`bdd-scenario-design`, `bdd-implement-scenario`)? In this run the model first called two of them "your own skills". That was wrong, and a user could act on it.
 
+A second lesson: the plugin is not installed in most sessions yet (it loads only with `--plugin-dir`). The project copies are then the only skills a normal session has. In this run they were deleted and had to be restored. The report should say that the copies are safe to delete only after the plugin is installed for that project, and that the Skill Roles table should keep naming the local skills until then.
+
 ### 3. `reconcile` is no use without a decision log
 
 With no `decision_log` row it stops at "the log is off". On a brownfield project that is the normal state, and nothing is left to run. The scenario-style audit still found real problems (below).
