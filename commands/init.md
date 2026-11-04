@@ -37,7 +37,7 @@ Both forms end by reporting leftover project-file copies (see Leftovers).
 
 ### Detect
 
-1. **Find the placeholder rows.** In the Tooling and Conventions tables, or the two placeholder roles in the Skill Roles table, collect the rows whose value is still in `<...>` form. Never change a row that already has a value, whatever it is: a command, a path, a default, or a note in `_(...)_` form. If no row is a placeholder, say so and stop.
+1. **Find the placeholder rows.** In the Tooling and Conventions tables, or the two placeholder roles in the Skill Roles table, collect the rows whose value is still in `<...>` form. Never change a row that already has a value, whatever it is: a command, a path, a default, or a note in `_(...)_` form. Always run the audit (see Audit below) first, whether or not any row is a placeholder. If no row is a placeholder, report the audit result, say there is nothing to propose, and stop.
 
 2. **Inspect the project, read-only.** Look at the build and package files (for example `package.json` scripts, `*.sln`, `*.csproj`, `pom.xml`, `go.mod`), the test framework config, the CI workflow files (for example `.github/workflows/`), the README and `CLAUDE.md`, and the `.feature` files and step definitions. CI workflow files are often the best source for the commands. Do not run the project's commands, builds or tests.
 
@@ -60,6 +60,15 @@ Both forms end by reporting leftover project-file copies (see Leftovers).
 
 Running `--detect` again later only touches rows that are still placeholders.
 
+### Audit
+
+The audit looks at rows that already have a value and reports the ones that are wrong. It reads files only. Never edit a value in the audit: the user fixes the config by hand.
+
+1. **Paths.** For every row whose value is a path (for example `features_dir`, `steps_dir`, `config_file`), check it against the disk. Report each path that does not exist, with the row name and the value.
+2. **Skill roles.** For every role in the Skill Roles table that has a value, check that it resolves. A `bdd:<name>` value resolves when the plugin has that skill. Any other value resolves when a file by that name exists in `.claude/commands/` or `.claude/skills/`. Report each value that does not resolve. When it looks like an old name from the project-file install (see Leftovers), say which plugin skill replaced it.
+3. **Skip.** Skip placeholders in `<...>` form and notes in `_(...)_` form. A fresh template has only those, so it reports nothing.
+4. **Report.** If everything resolves, print one line: `Audit: all values resolve.` Otherwise list the findings. Either way end with one line that says what was not checked: `Not checked: header text, test filters, whether commands work.`
+
 ### Skill roles
 
 The Skill Roles table has two placeholder roles, `domain-knowledge` and `requirements-sync`. Projects often already have their own skills for them. Propose these together with the other rows, and write them only on approval, like any other row. Never change a role that already has a value.
@@ -81,9 +90,9 @@ Projects that used the project-file install may hold copies of the skills next t
    find .claude -maxdepth 2 \( -name decisions.sh -o -name decision.schema.json \) 2>/dev/null
    ```
 
-   The installer writes the `# Source:` line into every skill file it creates. Also count a file as a leftover when it is named `.claude/commands/bdd-<name>.md` with name one of discover, design, implement, run, triage or reconcile, or `.claude/agents/bdd-<name>.md` with name verifier, even without the line (older installs). A file counts only if it exists on disk. A file that git shows as deleted is not a leftover, because it causes no duplicate command.
+   The installer writes the `# Source:` line into every skill file it creates. Also count a file as a leftover when it is named `.claude/commands/bdd-<name>.md` with name one of discover, design, implement, run, triage or reconcile, or `.claude/agents/bdd-<name>.md` with name verifier, even without the line (older installs). The old names `bdd-scenario-design`, `bdd-implement-scenario` and `test-feature` (as `.claude/commands/<name>.md`) count by name alone, because the installer removes them itself. A file counts only if it exists on disk. A file that git shows as deleted is not a leftover, because it causes no duplicate command.
 
-2. **Report.** If there are none, say nothing about it. Otherwise list each leftover and say the plugin provides the same commands under `bdd:`, so the old files can be deleted by hand. Any other `bdd-*` file in `.claude/commands/` is your own skill: say it stays. Remind the user that the Skill Roles table in `.claude/bdd-config.md` should name `bdd:design` and the other plugin skills.
+2. **Report.** If there are none, say nothing about it. Otherwise list each leftover and say the plugin provides the same commands under `bdd:`, so the old files can be deleted by hand. Any other `bdd-*` file in `.claude/commands/` matches no rule, so its owner cannot be proved. Report it as "origin unknown, left alone". Do not call it the user's own skill. If `.claude/.gitignore` has a comment that says the files were installed from `https://github.com/godrose/bdd`, mention it next to these files as a hint only. It never classifies a file. Remind the user that the Skill Roles table in `.claude/bdd-config.md` should name `bdd:design` and the other plugin skills.
 
 ### Rules
 
