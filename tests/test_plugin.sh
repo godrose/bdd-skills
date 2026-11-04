@@ -33,7 +33,7 @@ assert_equals 0 "$n" "files with a bdd- prefix in commands and agents"
 PLUGIN_TEXT=("$ROOT"/commands/*.md "$ROOT"/agents/*.md "$ROOT/bdd-config.template.md")
 for f in "${PLUGIN_TEXT[@]}"; do
   if grep -qE '\.claude/(scripts|schemas)/' "$f"; then fail "$f has a project-install path"; else pass; fi
-  if grep -qE 'bdd-(discover|design|implement|run|triage|reconcile|verifier)' "$f"; then fail "$f has a project-install skill name"; else pass; fi
+  if sed -e 's/bdd-implement-scenario//g' -e 's/bdd-scenario-design//g' "$f" | grep -qE 'bdd-(discover|design|implement|run|triage|reconcile|verifier)'; then fail "$f has a project-install skill name"; else pass; fi
 done
 for c in design triage reconcile; do
   assert_contains "$ROOT/commands/$c.md" '"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh'
@@ -115,5 +115,22 @@ done
 for s in 'Look for existing behavior' 'unit tests' 'from code' 'acceptance scenarios for existing behavior'; do
   assert_contains "$ROOT/commands/discover.md" "$s"
 done
+
+# /bdd:init --detect audits existing values (paths and skill roles), read-only, always
+for s in '### Audit' 'Always run the audit' 'one line' 'not checked' 'header text' 'test filters' \
+  'does not resolve' 'Skill Roles' 'Never edit a value in the audit'; do
+  assert_contains "$INIT" "$s"
+done
+assert_not_contains "$INIT" 'If no row is a placeholder, say so and stop.'
+
+# Leftovers: old install names count by name alone, unknown origin is not "your own", .gitignore is a hint only
+for s in 'bdd-scenario-design' 'bdd-implement-scenario' 'test-feature' 'origin unknown, left alone' \
+  '.claude/.gitignore' 'hint only'; do
+  assert_contains "$INIT" "$s"
+done
+assert_not_contains "$INIT" 'is your own skill: say it stays'
+assert_not_contains "$ROOT/README.md" 'Your own `bdd-*` skills are told apart'
+assert_contains "$ROOT/README.md" 'origin unknown'
+assert_contains "$ROOT/README.md" 'audits'
 
 finish
