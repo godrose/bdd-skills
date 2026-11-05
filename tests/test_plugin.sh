@@ -69,7 +69,7 @@ done
 
 
 # /bdd:init reports leftover project-file copies, report only
-for s in '### Leftovers' '# Source: https://github.com/godrose/bdd' 'bdd-<name>.md' 'your own' 'Do not delete' 'duplicate commands' 'bdd:'; do
+for s in '### Leftovers' '# Source: https://github.com/godrose/bdd-skills' 'bdd-<name>.md' 'your own' 'Do not delete' 'duplicate commands' 'bdd:'; do
   assert_contains "$INIT" "$s"
 done
 assert_contains "$ROOT/install.sh" '# Source: $REPO_URL'

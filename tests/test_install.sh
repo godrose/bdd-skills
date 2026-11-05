@@ -14,7 +14,7 @@ bash "$ROOT/install.sh" "$T" > /dev/null 2>&1
 assert_contains "$T/.claude/bdd-config.md" SENTINEL
 
 assert_file "$T/.claude/commands/bdd-discover.md"
-assert_equals "# Source: https://github.com/godrose/bdd" "$(sed -n 2p "$T/.claude/commands/bdd-discover.md" | cut -d'(' -f1 | sed 's/ *$//')" "discover source header"
+assert_equals "# Source: https://github.com/godrose/bdd-skills" "$(sed -n 2p "$T/.claude/commands/bdd-discover.md" | cut -d'(' -f1 | sed 's/ *$//')" "discover source header"
 
 mkdir -p "$T/old/.claude"
 printf 'SENTINEL\n' > "$T/old/.claude/bdd-config.md"
