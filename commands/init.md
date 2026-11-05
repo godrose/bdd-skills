@@ -37,7 +37,7 @@ Both forms end by reporting leftover project-file copies (see Leftovers).
 
 ### Detect
 
-1. **Find the placeholder rows.** In the Tooling and Conventions tables, or the two placeholder roles in the Skill Roles table, collect the rows whose value is still in `<...>` form. Never change a row that already has a value, whatever it is: a command, a path, a default, or a note in `_(...)_` form. Always run the audit (see Audit below) first, whether or not any row is a placeholder. If no row is a placeholder, report the audit result, say there is nothing to propose, and stop.
+1. **Find the placeholder rows.** In the Tooling and Conventions tables, or the two placeholder roles in the Skill Roles table, collect the rows whose value is still in `<...>` form. Never change a row that already has a value, whatever it is: a command, a path, a default, or a note in `_(...)_` form. The one exception is `decision_log`: see Hints. Always run the audit (see Audit below) first, whether or not any row is a placeholder. If no row is a placeholder, report the audit result, say there is nothing to propose, and stop.
 
 2. **Inspect the project, read-only.** Look at the build and package files (for example `package.json` scripts, `*.sln`, `*.csproj`, `pom.xml`, `go.mod`), the test framework config, the CI workflow files (for example `.github/workflows/`), the README and `CLAUDE.md`, and the `.feature` files and step definitions. CI workflow files are often the best source for the commands. Do not run the project's commands, builds or tests.
 
@@ -58,7 +58,7 @@ Both forms end by reporting leftover project-file copies (see Leftovers).
 
 6. **Write.** Put the approved values into `.claude/bdd-config.md`. Change the value cell only. Show the rows that were written and the rows that are still placeholders.
 
-Running `--detect` again later only touches rows that are still placeholders.
+Running `--detect` again later only touches rows that are still placeholders. The Hints can still apply, and the audit and the leftover check run every time.
 
 ### Audit
 
@@ -68,6 +68,13 @@ The audit looks at rows that already have a value and reports the ones that are 
 2. **Skill roles.** For every role in the Skill Roles table that has a value, check that it resolves. A `bdd:<name>` value resolves when the plugin has that skill. Any other value resolves when a file by that name exists in `.claude/commands/` or `.claude/skills/`. Report each value that does not resolve. When it looks like an old name from the project-file install (see Leftovers), say which plugin skill replaced it.
 3. **Skip.** Skip placeholders in `<...>` form and notes in `_(...)_` form. A fresh template has only those, so it reports nothing.
 4. **Report.** If everything resolves, print one line: `Audit: all values resolve.` Otherwise list the findings. Either way end with one line that says what was not checked: `Not checked: header text, test filters, whether commands work.`
+
+### Hints
+
+Two notes about rows that already have a value. Both read files only. Never edit project code.
+
+1. **Scenarios with no steps yet.** Say this only when `package.json` lists `playwright-bdd` and the Playwright config does not set `missingSteps`. Search the config file before you say it. The hint is shown only when the setting is absent. Say: Playwright-BDD's `generate` step fails on scenarios that have no steps yet, such as the `@pending` scenarios `design` writes in `specify-only` mode. Setting `missingSteps: 'fail-on-run'` in the Playwright config moves that failure to run time, and `run` already skips the unautomated tag. Do not suggest a tag filter on the `generate` command: `implement` must generate the scenario it is working on, and that scenario keeps its tag until the verifier passes. For any other framework say nothing. The setting is verified for Playwright-BDD only.
+2. **Decision log.** The one exception to never changing a filled row. When the `decision_log` row is `off` and `decisions_dir` holds no decision files (no `*.jsonl`), ask with `"AskUserQuestion"`: "Turn the decision log on?" Write `on` into the value cell of that row only with approval, using `"Edit"`. If the row is `on`, or decision files exist, say nothing. Do not remember a refusal: ask again on the next run. Change no other filled row.
 
 ### Skill roles
 
@@ -96,7 +103,7 @@ Projects that used the project-file install may hold copies of the skills next t
 
 ### Rules
 
-- Never overwrite `.claude/bdd-config.md`, and never change a row that already has a value.
+- Never overwrite `.claude/bdd-config.md`, and never change a row that already has a value, except `decision_log` with approval: see Hints.
 - Without `--detect`, do not fill in any value.
 - Writes nothing until the user approves it.
 - Do not run the project's commands, builds or tests. Read files only.
