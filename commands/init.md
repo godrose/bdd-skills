@@ -68,7 +68,7 @@ The audit looks at rows that already have a value and reports the ones that are 
 1. **Paths.** For every row whose value is a path (for example `features_dir`, `steps_dir`, `config_file`), check it against the disk. A value may list several paths, comma-separated: check each entry. Report each path that does not exist, with the row name and the value.
 2. **Skill roles.** For every role in the Skill Roles table that has a value, check that it resolves. A `bdd:<name>` value resolves when the plugin has that skill. Any other value resolves when a file by that name exists in `.claude/commands/` or `.claude/skills/`. Report each value that does not resolve. When it looks like an old name from the project-file install (see Leftovers), say which plugin skill replaced it.
 3. **Skip.** Skip placeholders in `<...>` form and notes in `_(...)_` form. A fresh template has only those, so it reports nothing.
-4. **Report.** If everything resolves, print one line: `Audit: all values resolve.` Otherwise list the findings. Either way end with one line that says what was not checked: `Not checked: header text, test filters, whether commands work.`
+4. **Report.** If everything resolves, print one line: `Audit: all values resolve.` Otherwise list the findings. Either way end with one line that says what was not checked. Print it word for word, as the last line of the audit: `Not checked: header text, test filters, whether commands work.` Nothing follows it.
 
 ### Hints
 
