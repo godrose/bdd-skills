@@ -1,0 +1,37 @@
+schema_version: "1.0"
+name: design-vague-ac
+description: design flags a vague term in an acceptance criterion and shows scenarios in full, writing nothing before approval
+tags: [design, ambiguity, spike]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: >
+    /bdd:design experiments-delete: Acceptance criterion: "A finished experiment can be deleted too."
+    The statuses of this app are listed in STATUSES.txt. Show me the scenarios for approval.
+  max_turns: 20
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill]
+runs: 3
+graders:
+  - type: llm
+    name: flags-finished-as-ambiguous
+    focus: last_message
+    criteria: >
+      The answer treats the word "finished" as an open assumption or question. It names at least two
+      different statuses that "finished" could mean (for example Completed and Failed). It either
+      states which one it assumed or asks the user which one is meant, and asks the user to confirm.
+  - type: llm
+    name: scenarios-in-full
+    focus: last_message
+    criteria: >
+      The answer shows each scenario written out in full as Gherkin, with Given, When and Then steps.
+      It does not only list scenario titles or summaries.
+  - type: regex
+    name: has-given-when-then-lines
+    target: last_message
+    pattern: "Given [^\\n]*\\n\\s*When [^\\n]*\\n\\s*Then "
+    match: contains
+  - type: file_exists
+    name: no-feature-file-before-approval
+    path: features/experiments-delete*.feature
+    exists: false

@@ -1,0 +1,30 @@
+schema_version: "1.0"
+name: init-audit
+description: init --detect reports an existing value that does not resolve, and writes nothing
+tags: [init, audit, spike]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: /bdd:init --detect
+  max_turns: 12
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill]
+runs: 3
+graders:
+  - type: regex
+    name: names-the-missing-path
+    target: last_message
+    pattern: src/step-defs
+    match: contains
+  - type: regex
+    name: ends-with-not-checked-line
+    target: last_message
+    pattern: "Not checked: header text, test filters, whether commands work"
+    match: contains
+  - type: llm
+    name: reports-only-and-asks
+    focus: last_message
+    criteria: >
+      The answer reports that the steps_dir value does not exist on disk. It does not claim to have
+      written or changed any file. If it proposes anything, it asks the user which rows to write
+      before writing.
