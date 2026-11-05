@@ -150,7 +150,7 @@ Project files have no plugin namespace, so the commands use a hyphen: `/bdd-disc
 
 ## Configure
 
-Edit `.claude/bdd-config.md` in your project, or let `/bdd:init --detect` propose the values. Skills reference each other by **role** (from the Skill Roles table in that file), not by name, so you swap an implementation by editing the config.
+Edit `.claude/bdd-config.md` in your project, or let `/bdd:init --detect` propose the values. Skills reference each other by **role** (from the Skill Roles table in that file), not by name, so you swap an implementation by editing the config. If your step code sits in more than one folder, list them in `steps_dir`, comma-separated, for example `src/Steps, src/Adapters`.
 
 <details>
 <summary><b>Tooling rows by framework</b></summary>
@@ -198,7 +198,7 @@ Every row below is optional. If a row is absent, the default applies.
 | `scenario_id_prefix` | `spec-` | Prefix of the stable scenario id tag |
 | `automated_tag` | none | Tag your test-management tool keys on, added when a scenario is automated |
 | `glossary_file` | none | Domain terms for the vocabulary check |
-| `lint` | none | Project linter for tags, casing and indentation |
+| `lint` | none | Project linter for tags, casing and indentation. `design` runs it on the draft before showing it, using a temp `.bdd-draft-*` file in `features_dir`. It acts only on findings in the draft, and warns and continues if the linter cannot run |
 | `prepare` | none | Command that builds what the tests launch, run before generate and test |
 | `step_batch` | `auto` | Steps per test run in `implement`: `auto` groups by risk, or `1`, a number or `all` |
 | `discovery_dir` | `docs/discovery` | Where a saved discovery pack goes |

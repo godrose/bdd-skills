@@ -30,7 +30,7 @@ Work on scenarios that carry the planned marker. Never edit or implement a scena
 If a spec PR summary exists for an approved spec, read its **Step status** table first. Look for it beside the feature file as `<feature>.spec-summary.md`. If it is not there, ask for it. Treat the "new (to be built)" and "existing (not yet automated)" rows as the work list. Stop and report if an "existing (automated)" step can no longer be found, or if the wording of a new step differs from the approved scenario text. Do not reword approved scenarios silently.
 
 1. Read the `.feature` file to get the full scenario with all steps
-2. Read existing step definitions in the **steps_dir** to see which steps are already implemented
+2. Read existing step definitions in every folder of the **steps_dir** (one path, or several comma-separated) to see which steps are already implemented
 3. Read the page objects or helpers the steps use to understand current selectors or calls
 4. Read environment config for target URLs and auth
 5. Identify which steps need new implementation vs which already exist. For EACH apparently-new step, also run a paraphrase grep against the **steps_dir** - generate 2–3 natural paraphrases of the same assertion and search for each. If any paraphrase hits an existing step def, **stop and report back**: the `.feature` should be reworded to use the existing step text, not a new step def created. Do not author a duplicate step def silently - paraphrase blindness at implementation time is the last line of defense before a duplicate ships.

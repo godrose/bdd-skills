@@ -1,6 +1,6 @@
 # Evals
 
-A spike with `claude plugin eval`. Four single-turn cases, each from a failure found in a real trial. Each ends at the command's first approval gate. See `docs/discovery/2026-11-05-eval-spike.md`.
+A spike with `claude plugin eval`. Five single-turn cases. Four come from failures found in a real trial. `design-lint-draft` checks the lint step added from the cross-project review (see `docs/discovery/2026-11-05-lint-in-design-and-layered-steps.md`). Each ends at the command's first approval gate. See `docs/discovery/2026-11-05-eval-spike.md`.
 
 | Case | Command | What it checks |
 |---|---|---|
@@ -8,6 +8,7 @@ A spike with `claude plugin eval`. Four single-turn cases, each from a failure f
 | `design-vague-ac` | `/bdd:design` | Flags "finished" as vague. Shows scenarios in full. No feature file yet. |
 | `triage-approval-gate` | `/bdd:triage` | Asks for approval. Writes no record or feature file first. |
 | `run-zero-tests` | `/bdd:run` | A run of zero tests is not a pass. |
+| `design-lint-draft` | `/bdd:design` | Lints the draft before showing it. Acts only on findings in the draft, reports the old one untouched, and leaves no `.bdd-draft-*` file. |
 
 Each case copies its `fixture/` into the run folder with `scaffold.sh`, so every run starts in the same state.
 
@@ -24,6 +25,15 @@ claude plugin eval . --scaffold --runs 1 --ablation none --model haiku --judge-m
 - `--no-publish` keeps the report local. It holds prompts and outputs.
 - Drop `--runs 1` for the default of 3 runs, and drop `--ablation none` to add the no-plugin baseline. Both multiply the usage.
 - `evals/results/` is ignored by git.
+
+`design-lint-draft` runs the lint row, writes a temp draft file and deletes it. The agent chains commands (`cd x && sh ./fake-lint.sh`), and narrow `Bash(...)` grants deny them, so the lint step never runs. Give it plain `Bash`, only for this case:
+
+```bash
+claude plugin eval . --scaffold --runs 1 --ablation none --model haiku --judge-model sonnet --no-publish \
+  --case design-lint-draft --allow-tools Write Edit Bash
+```
+
+The grant lets the agent run any shell command as you. Use it only for this case, which you wrote, and never together with a glob that selects other cases. The run happens in a throwaway directory with its own home.
 - The evals are not part of `bash tests/run.sh`. `tests/test_evals.sh` only checks the folder's structure.
 
 ## What the spike found
@@ -46,3 +56,5 @@ Run on 2026-11-05 with Claude Code 2.1.318, `--model haiku`, one run per case, n
 - **Baseline with plugin-only graders: delta +0.48.** After adding three graders taken from `design.md` (a per-step reuse audit, an "Asserts" column in it, and the `@pending` tag in `specify-only` mode), `design-vague-ac` scored 1.00 with the plugin and 0.52 without it, over 3 runs per arm. Read this with care. Those three are checks for the plugin's own artifacts, which a plain agent cannot know about, so the delta shows that the plugin produces its required output. It does not show that the plugin's answers are better. One plain run also failed to flag "finished" as an open question, which is a small sign of better quality, but 1 of 3 is not a measurement.
 
 Not measured: the baseline for the other three cases, and any comparison of answer quality that a plain agent could also pass.
+
+- **`design-lint-draft`: 8 of 8 runs at 1.00 after splitting the judge** (Haiku agent, Sonnet judge, no baseline, plain `Bash` grant). Before the split, the one compound judge criterion failed compliant answers in 3 of 8 runs, 3 to 0, and its reasons are not exposed. Following the grader design in a production eval suite (one statement per criterion, exact facts in deterministic checks), the criterion became two regex graders (Given, When and Then in order, and the old finding tied to the old scenario) and one single-clause judge ("does not claim to have tagged the old scenario"). Both regexes were tested offline on 34 saved answers first. They matched 33, and the one miss was a run where lint was denied and never ran. A regex that missed "didn't touch" was fixed. One clean batch of 8 fits the explanation but does not prove it: earlier batches ranged from 4 to 7 of 8. With narrow `Bash(...)` grants the case scored 0.71, because chained commands were denied and the lint step never ran (the plugin warned and went on, as designed). The plugin cannot set the judge's prompt, so a judge failure still shows votes only.

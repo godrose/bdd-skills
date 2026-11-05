@@ -1,6 +1,6 @@
 schema_version: "1.0"
 name: design-vague-ac
-description: design flags a vague term in an acceptance criterion and shows scenarios in full, writing nothing before approval
+description: design flags a vague term in an acceptance criterion and shows scenarios in full, writing nothing before approval (a temp .bdd-draft-* file may exist while a lint row runs and is gone before the draft is shown)
 tags: [design, ambiguity, spike]
 context:
   scaffold_script: scaffold.sh

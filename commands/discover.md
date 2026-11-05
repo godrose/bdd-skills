@@ -40,7 +40,7 @@ Discovery is a dialogue. Ask **one question at a time**. Wait for the answer. Us
 
 #### Step 3: Check the vocabulary
 
-1. Mine the **features_dir** and **steps_dir** for the terms the project already uses: names of things, casing, wording of similar steps. If the directories are empty, report "nothing to mine" and continue.
+1. Mine the **features_dir** and every folder of the **steps_dir** (one path, or several comma-separated) for the terms the project already uses: names of things, casing, wording of similar steps. If the directories are empty, report "nothing to mine" and continue.
 2. If a **glossary_file** is configured, read it too.
 3. If a **lint** command is configured, run it on any draft text that exists and report what it flags.
 4. List every term from the story that matches nothing the project already says. Mark each one "unknown, ask the builder". Prefer an existing term over a new one.
