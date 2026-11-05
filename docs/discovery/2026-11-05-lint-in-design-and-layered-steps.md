@@ -4,8 +4,8 @@ Input: a read-only review of four existing BDD suites in other stacks, and a tri
 
 The four suites:
 
-- Two Go suites that run through godog. They enforce house rules with a gherkin linter and custom rules, and require a ticket tag on every scenario.
-- Two layered SpecFlow solutions on .NET Framework with `packages.config`. Step code is split into an intent layer and an adapter layer, and generated `.feature.cs` files are committed.
+- Two suites that enforce house rules with a gherkin linter and custom rules, and require a ticket tag on every scenario.
+- Two layered solutions. Step code is split into an intent layer and an adapter layer, and the framework generates code in the IDE, with the generated files committed.
 
 ## Story
 

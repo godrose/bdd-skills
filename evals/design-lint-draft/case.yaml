@@ -26,7 +26,7 @@ graders:
   - type: regex
     name: reports-old-findings-untouched
     target: last_message
-    pattern: "(existing[^\\n]{0,120}(not touched|did not touch|untouched)|(\\d+|one) findings?[^\\n]{0,40}not touched)"
+    pattern: "(existing[^\\n]{0,120}(not touched|did not touch|didn't touch|untouched)|(\\d+|one) findings?[^\\n]{0,40}not touched)"
     flags: i
     match: contains
   - type: regex
@@ -53,6 +53,6 @@ graders:
     focus: last_message
     criteria: >
       The answer shows each scenario for archiving a report written out in full as Gherkin, with
-      Given, When and Then steps. It reports that the existing "An open report can be shared"
-      scenario has a lint finding and says it did not change that scenario. It does not claim to
-      have added a tag to the existing scenario.
+      Given, When and Then steps. It reports that the existing scenario "An open report can be
+      shared" has a lint finding and says it did not change it. The scenario may be named by its
+      title or by its file and line. It does not claim to have added a tag to the existing scenario.
