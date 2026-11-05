@@ -67,3 +67,38 @@ assert_contains "$ROOT/evals/README.md" '--case design-lint-draft --allow-tools 
 assert_contains "$ROOT/evals/README.md" 'only for this case'
 
 finish
+
+# One statement per judge criterion. A compound name ("-and-") marks a bundled criterion.
+for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft; do
+  if awk '/type: llm/{getline; print}' "$ROOT/evals/$c/case.yaml" | grep -q -- '-and-'; then
+    fail "$c has a judge grader with a compound name"
+  else
+    pass
+  fi
+done
+
+# Exact facts are regex graders. Only judgment is left to the judge.
+D="$ROOT/evals/design-vague-ac/case.yaml"
+for s in "name: names-two-statuses" "name: treats-finished-as-open"; do assert_contains "$D" "$s"; done
+assert_not_contains "$D" "name: flags-finished-as-ambiguous"
+I="$ROOT/evals/init-audit/case.yaml"
+for s in "name: says-path-does-not-exist" "name: no-claim-of-writing" "name: asks-before-writing"; do assert_contains "$I" "$s"; done
+assert_not_contains "$I" "name: reports-only-and-asks"
+R="$ROOT/evals/run-zero-tests/case.yaml"
+for s in "name: not-reported-as-pass" "name: treats-as-a-problem"; do assert_contains "$R" "$s"; done
+T="$ROOT/evals/triage-approval-gate/case.yaml"
+for s in "name: asks-per-item" "name: no-claim-of-writing-records" "name: ok-not-counted-as-the-rules"; do assert_contains "$T" "$s"; done
+assert_not_contains "$T" "name: asks-per-item-and-does-not-claim-writes"
+
+# Judge counts: one per clause that needs judgment
+for pair in design-vague-ac:1 init-audit:2 run-zero-tests:2 triage-approval-gate:3 design-lint-draft:1; do
+  c=${pair%%:*}; want=${pair##*:}
+  n=$(grep -c "type: llm" "$ROOT/evals/$c/case.yaml")
+  [ "$n" = "$want" ] && pass || fail "$c has $n judge graders, expected $want"
+done
+
+# run-zero-tests: the agent chains echo, ls and cat with the test command, so the narrow grant needs them (read-only)
+assert_contains "$ROOT/evals/README.md" '--case run-zero-tests'
+assert_contains "$ROOT/evals/README.md" '"Bash(echo:*)"'
+
+finish

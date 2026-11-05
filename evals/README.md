@@ -33,6 +33,13 @@ claude plugin eval . --scaffold --runs 1 --ablation none --model haiku --judge-m
   --case design-lint-draft --allow-tools Write Edit Bash
 ```
 
+`run-zero-tests` runs the fake test command, and the agent chains `echo`, `ls` and `cat` with it. Give it those read-only commands, not plain `Bash`:
+
+```bash
+claude plugin eval . --scaffold --runs 1 --ablation none --model haiku --judge-model sonnet --no-publish \
+  --case run-zero-tests --allow-tools Write Edit "Bash(sh ./fake-test.sh:*)" "Bash(echo:*)" "Bash(ls:*)" "Bash(cat:*)"
+```
+
 The grant lets the agent run any shell command as you. Use it only for this case, which you wrote, and never together with a glob that selects other cases. The run happens in a throwaway directory with its own home.
 - The evals are not part of `bash tests/run.sh`. `tests/test_evals.sh` only checks the folder's structure.
 
@@ -58,3 +65,8 @@ Run on 2026-11-05 with Claude Code 2.1.318, `--model haiku`, one run per case, n
 Not measured: the baseline for the other three cases, and any comparison of answer quality that a plain agent could also pass.
 
 - **`design-lint-draft`: 8 of 8 runs at 1.00 after splitting the judge** (Haiku agent, Sonnet judge, no baseline, plain `Bash` grant). Before the split, the one compound judge criterion failed compliant answers in 3 of 8 runs, 3 to 0, and its reasons are not exposed. Following the grader design in a production eval suite (one statement per criterion, exact facts in deterministic checks), the criterion became two regex graders (Given, When and Then in order, and the old finding tied to the old scenario) and one single-clause judge ("does not claim to have tagged the old scenario"). Both regexes were tested offline on 34 saved answers first. They matched 33, and the one miss was a run where lint was denied and never ran. A regex that missed "didn't touch" was fixed. One clean batch of 8 fits the explanation but does not prove it: earlier batches ranged from 4 to 7 of 8. With narrow `Bash(...)` grants the case scored 0.71, because chained commands were denied and the lint step never ran (the plugin warned and went on, as designed). The plugin cannot set the judge's prompt, so a judge failure still shows votes only.
+
+- **Judge audit of the other four cases** (Haiku agent, Sonnet judge, 4 runs each). Four of the five judge graders bundled several clauses, and one duplicated a regex. They were split to one statement per criterion, with exact facts in regex graders. Results: `triage-approval-gate` 4 of 4 at 1.00, `design-vague-ac` 4 of 4, `init-audit` 2 of 4, `run-zero-tests` 6 of 6 after the fixes below.
+  - `run-zero-tests` failed 3 of 4 first because the agent chained `echo "exit=$?"` onto the test command and the narrow `Bash(...)` grant denied it, so no run happened. The judge was right to fail those answers. The fix is a grant that also allows `echo`, `ls` and `cat`. One later miss came from a criterion anchored on an example ("the filter must change"), and the example was dropped.
+  - `init-audit` misses are the model drifting from the exact closing line the command prescribes (it wrote "and whether the commands work" or added text after). That regex is unchanged and checks the spec, so it stays.
+  - A run from the wrong folder loads no plugin and scores the baseline. Check for `Plugin under test: "bdd"` in the first lines of the output.
