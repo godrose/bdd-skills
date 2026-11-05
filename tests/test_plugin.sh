@@ -133,4 +133,12 @@ assert_not_contains "$ROOT/README.md" 'Your own `bdd-*` skills are told apart'
 assert_contains "$ROOT/README.md" 'origin unknown'
 assert_contains "$ROOT/README.md" 'audits'
 
+
+# the template is copied into user projects, so it must not carry an em-dash
+assert_not_contains "$ROOT/bdd-config.template.md" "$(printf '\xe2\x80\x94')"
+
+# README says headless runs may need the .claude/ write approved by hand
+assert_contains "$ROOT/README.md" "claude -p"
+assert_contains "$ROOT/README.md" "approve the write"
+
 finish

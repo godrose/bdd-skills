@@ -597,4 +597,15 @@ OUT=$(cd "$p" && bash "$SCRIPT" check --features features --dir docs/decisions 2
 lacks "spec-fake"
 lacks "I-LEGACY"
 
+
+# a ref that is not a URL is shown as plain text, not as a broken link
+p=$(new_project)
+printf 'Feature: F\n  @spec-a @pending\n  Scenario: A\n    Given a\n' > "$p/features/s.feature"
+FA=$(real_fp "$p" spec-a)
+log_add "$p" S "$(dec S-01 2026-10-01 'Alpha is exported.' '"effects":[{"op":"adds","scenario":"spec-a","fp":"'$FA'"}],"sources":[{"kind":"slack","ref":"Slack thread, Monday","role":"agreed"}]')"
+show_in "$p" S --dir docs/decisions --features features
+assert_equals 0 "$RC" "show exits 0 for a plain-text ref"
+has "Alpha is exported. (planned) (source: Slack thread, Monday)"
+lacks "[source]("
+
 finish
