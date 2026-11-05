@@ -54,6 +54,14 @@ for s in "name: runs-the-lint-row" "name: draft-passes-lint" "name: reports-old-
 done
 assert_contains "$ROOT/evals/README.md" "design-lint-draft"
 
+# the judge grades one statement per criterion; exact facts are regex graders
+for s in "name: scenarios-in-full" "name: names-the-old-finding" "name: no-claim-of-tagging-old-scenario"; do
+  assert_contains "$L/case.yaml" "$s"
+done
+assert_not_contains "$L/case.yaml" "scenarios-in-full-and-old-finding-not-fixed"
+n=$(grep -c "type: llm" "$L/case.yaml")
+[ "$n" = 1 ] && pass "design-lint-draft has one judge grader" || fail "design-lint-draft has $n judge graders, expected 1"
+
 # design-lint-draft needs general Bash (the agent chains commands); the README says so and limits the grant to this case
 assert_contains "$ROOT/evals/README.md" '--case design-lint-draft --allow-tools Write Edit Bash'
 assert_contains "$ROOT/evals/README.md" 'only for this case'

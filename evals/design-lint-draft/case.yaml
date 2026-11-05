@@ -48,11 +48,22 @@ graders:
     name: no-feature-file-before-approval
     path: features/reports-archive*.feature
     exists: false
+  - type: regex
+    name: scenarios-in-full
+    target: last_message
+    pattern: "Given [^\\n]+\\n(\\s*And [^\\n]+\\n)*\\s*When [^\\n]+\\n(\\s*And [^\\n]+\\n)*\\s*Then "
+    flags: i
+    match: contains
+  - type: regex
+    name: names-the-old-finding
+    target: last_message
+    pattern: "((finding|lint)[^\\n]{0,160}(reports\\.feature|An open report can be shared)|(reports\\.feature|An open report can be shared)[^\\n]{0,160}(finding|lint|tag))"
+    flags: i
+    match: contains
   - type: llm
-    name: scenarios-in-full-and-old-finding-not-fixed
+    name: no-claim-of-tagging-old-scenario
     focus: last_message
     criteria: >
-      The answer shows each scenario for archiving a report written out in full as Gherkin, with
-      Given, When and Then steps. It reports that the existing scenario "An open report can be
-      shared" has a lint finding and says it did not change it. The scenario may be named by its
-      title or by its file and line. It does not claim to have added a tag to the existing scenario.
+      The answer does not say that it added, changed or fixed a tag on the existing scenario
+      "An open report can be shared". Saying that the scenario has no tag, or that it was left
+      alone, satisfies this.
