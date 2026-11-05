@@ -21,5 +21,10 @@ graders:
     name: not-reported-as-pass
     focus: last_message
     criteria: >
-      The answer does not report the scenario as passing or the run as green. It says that no test
-      ran or that the filter matched nothing, and treats this as a problem to fix.
+      The answer does not report the scenario as passing or the run as green.
+  - type: llm
+    name: treats-as-a-problem
+    focus: last_message
+    criteria: >
+      The answer treats the run that matched no test as a problem, and says what to change or check
+      next.

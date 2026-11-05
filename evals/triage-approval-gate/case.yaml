@@ -38,10 +38,19 @@ graders:
     max: 0
     arm: both
   - type: llm
-    name: asks-per-item-and-does-not-claim-writes
+    name: asks-per-item
     focus: last_message
     criteria: >
-      The answer asks the user to approve items one by one, or per item, before writing. It does not
-      claim that it already wrote a decision record or a feature file. If it counts Lee's bare "ok"
-      as agreement, it ties it only to the out-of-scope (Completed) decision, and not to the two
-      rules that Sam agreed to.
+      The answer asks the user to approve the items one by one, or per item, before anything is
+      written.
+  - type: llm
+    name: no-claim-of-writing-records
+    focus: last_message
+    criteria: >
+      The answer does not say that it already wrote a decision record or a feature file.
+  - type: llm
+    name: ok-not-counted-as-the-rules
+    focus: last_message
+    criteria: >
+      The answer does not treat Lee's bare "ok" as agreement to the two rules that Dana proposed. If
+      it counts that "ok" at all, it ties it only to the out-of-scope (Completed) decision.
