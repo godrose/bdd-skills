@@ -1,0 +1,60 @@
+name: evals
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evals
+  cancel-in-progress: false
+
+jobs:
+  evals:
+    if: github.event_name == 'workflow_dispatch' || vars.EVALS_NIGHTLY == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install -g @anthropic-ai/claude-code@2.1.318
+      # design-lint-draft needs plain Bash, which would hand the API key to the agent. Run it by hand.
+      - name: Run the evals
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          status=0
+          for c in init-audit design-vague-ac triage-approval-gate run-zero-tests; do
+            grants=(Write Edit)
+            if [ "$c" = run-zero-tests ]; then
+              grants+=("Bash(sh ./fake-test.sh:*)" "Bash(echo:*)" "Bash(ls:*)" "Bash(cat:*)")
+            fi
+            claude plugin eval . --trust-plugin --scaffold --runs 3 --ablation none \
+              --model haiku --judge-model sonnet --no-publish \
+              --max-cost-usd 1 --threshold 0.8 \
+              --output-dir "results/$c" --case "$c" \
+              --allow-tools "${grants[@]}" || status=1
+          done
+          exit $status
+      - name: Summary
+        if: always()
+        run: |
+          echo "| Case | Mean score | Runs |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          for f in results/*/aggregate-result.json; do
+            [ -f "$f" ] || continue
+            jq -r '.cases[] | select(.arms.with != null) | "| \(.name) | \(([.arms.with[].score|select(.!=null)] | if length>0 then (add/length*100|round/100) else "n/a" end)) | \(.arms.with|length) |"' "$f" >> "$GITHUB_STEP_SUMMARY"
+          done
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: results
+          retention-days: 14
+          if-no-files-found: ignore

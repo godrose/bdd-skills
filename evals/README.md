@@ -70,3 +70,18 @@ Not measured: the baseline for the other three cases, and any comparison of answ
   - `run-zero-tests` failed 3 of 4 first because the agent chained `echo "exit=$?"` onto the test command and the narrow `Bash(...)` grant denied it, so no run happened. The judge was right to fail those answers. The fix is a grant that also allows `echo`, `ls` and `cat`. One later miss came from a criterion anchored on an example ("the filter must change"), and the example was dropped.
   - `init-audit` missed 2 of 4 because the model reworded the closing line the command prescribes or added text after it. `commands/init.md` now says to print it word for word, last, with nothing after. After that, 8 of 8 runs scored 1.00. One batch is not proof, and it was before-and-after on a small model.
   - A run from the wrong folder loads no plugin and scores the baseline. Check for `Plugin under test: "bdd"` in the first lines of the output.
+
+## In CI
+
+`.github/workflows/evals.yml` runs four of the five cases: `init-audit`, `design-vague-ac`, `triage-approval-gate` and `run-zero-tests`. It has two triggers.
+
+- **Manual (`workflow_dispatch`):** run it from the Actions tab. Do this first. It is the only way to learn whether the login, the Linux sandbox and the grants work on a runner, because the docs do not cover `claude plugin eval` in CI.
+- **Nightly (`schedule`):** it does nothing until you set the repository variable `EVALS_NIGHTLY` to `true`. Set it after one good manual run.
+
+Setup:
+
+1. Add the repository secret `ANTHROPIC_API_KEY`. Use a dedicated key with a spend cap. The workflow caps one case at $1 (`--max-cost-usd`) and fails below a mean score of 0.8 (`--threshold`).
+2. Run the workflow by hand and read the summary and the `eval-results` artifact.
+3. Set `EVALS_NIGHTLY` to `true`.
+
+`design-lint-draft` stays out of CI. It needs plain `Bash`, and any `ANTHROPIC_`-prefixed variable reaches the agent's shell (tested with a canary variable on 2026-11-05), so the key would be readable. The narrow grants of the other cases keep the same risk in a smaller form: `Bash(echo:*)` in `run-zero-tests` could print the key. Only our own fixtures and plugin text drive the agent, the workflow does not run on pull requests, and the key is capped. The artifact holds prompts and outputs and is kept for 14 days.

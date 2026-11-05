@@ -101,4 +101,24 @@ done
 assert_contains "$ROOT/evals/README.md" '--case run-zero-tests'
 assert_contains "$ROOT/evals/README.md" '"Bash(echo:*)"'
 
+
+# Nightly evals workflow: manual first, the schedule is gated by a repo variable, and no plain Bash or PR trigger
+W="$ROOT/.github/workflows/evals.yml"
+assert_file "$W"
+for s in "workflow_dispatch:" "schedule:" "cron:" "vars.EVALS_NIGHTLY" "--trust-plugin" "--max-cost-usd" "--threshold" "--ablation none" "secrets.ANTHROPIC_API_KEY" "contents: read" "timeout-minutes" "upload-artifact" "design-lint-draft"; do
+  assert_contains "$W" "$s"
+done
+assert_not_contains "$W" "pull_request"
+assert_not_contains "$W" "push:"
+# the key is set on the step that runs the evals, not for the whole job
+if grep -qE "^ {0,8}ANTHROPIC_API_KEY" "$W"; then fail "ANTHROPIC_API_KEY is set above the step level in evals.yml"; else pass; fi
+# plain Bash would hand the key to the agent; only the narrow grants are allowed
+assert_not_contains "$W" "--allow-tools Write Edit Bash "
+assert_contains "$W" 'Bash(sh ./fake-test.sh:*)'
+# the lint case needs plain Bash, so it stays out of the loop
+assert_not_contains "$W" "for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft"
+assert_contains "$ROOT/evals/README.md" "## In CI"
+assert_contains "$ROOT/evals/README.md" "EVALS_NIGHTLY"
+assert_no_added_emdash tests/test_evals.sh .github/workflows/evals.yml
+
 finish
