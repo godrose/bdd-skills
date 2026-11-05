@@ -79,7 +79,9 @@ If you run a command before `/bdd:init`, it stops and tells you to run it.
 
 ## Modes
 
-The default mode is `specify-and-implement`. For teams there is `specify-only`: design and approve the scenarios, then stop. The scenarios are written as `.feature` files and tagged `@pending`, or `@manual-only` when a scenario stays manual by design. A product manager can review them in a pull request before any automation exists. Automate them later with `/bdd:implement`. `/bdd:run` and `bdd:verifier` skip scenarios tagged `@pending` or `@manual-only`, and undefined steps under those tags are never an error.
+The default mode is `specify-and-implement`. For teams there is `specify-only`: design and approve the scenarios, then stop. The scenarios are written as `.feature` files and tagged `@pending`, or `@manual-only` when a scenario stays manual by design. A product manager can review them in a pull request before any automation exists. Automate them later with `/bdd:implement`.
+
+`/bdd:run` and `bdd:verifier` skip scenarios tagged `@pending` or `@manual-only`, and undefined steps under those tags are never an error.
 
 Choose the mode with the `workflow_mode` row in `.claude/bdd-config.md`, or per run with `--specify-only` or `--specify-and-implement`. If the row is absent, the default applies.
 
@@ -99,7 +101,9 @@ A plugin cannot create files in your project, so run `/bdd:init` once in each pr
 
 To get proposed values instead of filling the file in by hand, run `/bdd:init --detect`. It reads your build files, CI workflows, README and `.feature` files, and proposes a value for each placeholder row, with the file it came from and a confidence level. It writes only the rows you approve, never changes a row that already has a value, never runs your commands, and says `unknown` where the files do not answer. Check the commands it proposes before you rely on them. It also proposes your own skills for the `domain-knowledge` and `requirements-sync` roles, matched by the name and one-line description in `.claude/commands/` and `.claude/skills/`. If several fit, it names the runners-up, and if none fit, it leaves the row alone. It is plugin only.
 
-`/bdd:init` also lists leftover project-file copies of the skills, which give duplicate commands next to the plugin. It only reports them and never deletes. The installer's files are found by the `# Source:` line it writes, and by the old command names it replaced. A `bdd-*` file that matches neither is reported as "origin unknown, left alone". With `--detect`, the command also audits the values already in your config. It reports paths that do not exist and skill roles that do not resolve, and it never edits them.
+`/bdd:init` also lists leftover project-file copies of the skills, which give duplicate commands next to the plugin. It only reports them and never deletes. The installer's files are found by the `# Source:` line it writes, and by the old command names it replaced. A `bdd-*` file that matches neither is reported as "origin unknown, left alone".
+
+With `--detect`, the command also audits the values already in your config. It reports paths that do not exist and skill roles that do not resolve, and it never edits them.
 
 > 🔒 **Never deletes:** `/bdd:init` only reports leftovers and bad values. You decide what to remove or fix.
 
@@ -194,7 +198,7 @@ Every row below is optional. If a row is absent, the default applies.
 <details>
 <summary><b>Optional skills (project-specific)</b></summary>
 
-These are NOT included. Create them in your project's `.claude/commands/`:
+The plugin does not include these. Create them in your project's `.claude/commands/`:
 
 - **Domain knowledge** (`bdd-<project>-knowledge.md`): project-specific selectors, patterns, gotchas
 - **Requirements sync** (`bdd-jira-sync.md`, `bdd-azdo-sync.md`, etc.): fetch ACs from issue tracker, publish results
@@ -294,7 +298,7 @@ cd /tmp/bdd-skills && git pull
 
 ## Related projects
 
-BDD tools this plugin works with, not ones it replaces:
+The plugin works with these BDD tools:
 
 - [Playwright-BDD](https://github.com/vitalets/playwright-bdd) - run Gherkin features on Playwright.
 - [Cucumber](https://github.com/cucumber/cucumber-js) - the reference Gherkin runner for JavaScript.
