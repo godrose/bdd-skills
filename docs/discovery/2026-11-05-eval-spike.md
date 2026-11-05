@@ -33,10 +33,10 @@ Almost every plugin failure so far was found by trying the plugin on a real proj
 |---|----------|----------|--------|
 | 1 | Scope | Four single-turn cases, each ending at the first approval gate. | The rules that matter most sit at the gates. Multi-turn support is unverified. |
 | 2 | Which cases | A, B, C, D. `discover` existing behavior is out. | A and D are deterministic, C tests tool use, B tests LLM judgment. `discover` overlaps with B. |
-| 3 | Fixtures | Committed under `evals/fixtures/<case>/`, copied in by each case's `scaffold_script`. Run with `--scaffold`. | Clean, reviewable, repeatable starting states. We author the scripts. |
+| 3 | Fixtures | Committed under `evals/<case>/fixture/`, copied in by each case's `scaffold.sh` (the `scaffold_script` field). Changed from `evals/fixtures/<case>/` to keep each case self-contained. Run with `--scaffold`. | Clean, reviewable, repeatable starting states. We author the scripts. |
 | 4 | Results | `evals/results/` goes into `.gitignore`. Runs use `--no-publish`. | Results are run output. The repo is private and the report holds prompts. |
-| 5 | Cost and gating | 3 runs per case, a 5-dollar cap on the whole run, no pass threshold. | We do not know yet what a score means. A gate would be a guess. |
-| 6 | Baseline | Keep the with-without ablation. | It shows whether the plugin beats a plain agent. |
+| 5 | Cost and gating | The budget is runs, not dollars. The owner is on a monthly plan with no API credits, so eval runs draw on the plan usage limit. Pilot: 4 cases, 1 run each, no baseline arm (`--ablation none`), `--model haiku`, concurrency 1. No pass threshold. Then decide from the usage meter whether to go to 3 runs and to add the baseline for one case. | The spike is about the tool. Plan limits are the real ceiling. Gemini credit cannot be used, because the tool runs only Claude Code sessions. This replaces "3 runs per case and a 5-dollar cap". |
+| 6 | Baseline | Off in the pilot. Turn it on for one case only after the pilot, if usage allows. | The baseline arm doubles the runs. |
 
 ## Existing users
 
@@ -54,7 +54,7 @@ A contributor runs `claude plugin eval .` from the repo root and gets a local re
 4. Real frameworks in the fixtures.
 5. Publishing the report.
 6. Replacing the text-assertion tests.
-7. A pass threshold.
+7. A pass threshold, and the 5-dollar cap (replaced by the run budget in decision 5).
 
 ## What the spike must find out (not open questions)
 

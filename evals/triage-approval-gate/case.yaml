@@ -1,0 +1,46 @@
+schema_version: "1.0"
+name: triage-approval-gate
+description: triage asks for approval per item and writes no scenario or decision record before it
+tags: [triage, approval-gate, spike]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    /bdd:triage experiments-lifecycle  #experiments-page, Monday.
+    Dana (PM): For the experiments page I want two rules. A Failed experiment can be re-run. A Running experiment cannot be edited, run or deleted. Reason: the results must match exactly what we started.
+    Lee (QA): What about Completed ones? Can those be re-run too?
+    Dana (PM): Out of scope for this story. We will revisit it later.
+    Lee (QA): ok
+    Sam (dev): Agreed on the two rules then. I will build it this sprint.
+  max_turns: 20
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+runs: 3
+graders:
+  - type: file_exists
+    name: no-decision-record-written
+    path: docs/decisions/*.jsonl
+    exists: false
+  - type: file_exists
+    name: no-feature-file-written
+    path: features/*.feature
+    exists: false
+  - type: regex
+    name: asks-for-approval
+    target: last_message
+    pattern: approv
+    flags: i
+    match: contains
+  - type: tool_used
+    name: no-write-or-edit
+    tool: Write
+    min: 0
+    max: 0
+    arm: both
+  - type: llm
+    name: asks-per-item-and-does-not-claim-writes
+    focus: last_message
+    criteria: >
+      The answer asks the user to approve items one by one, or per item, before writing. It does not
+      claim that it already wrote a decision record or a feature file. Lee's bare "ok" is not counted
+      as agreement to the two rules.

@@ -1,0 +1,25 @@
+schema_version: "1.0"
+name: run-zero-tests
+description: a test run that executes zero tests is not reported as a pass
+tags: [run, zero-tests, spike]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: /bdd:run the "Export an empty list" scenario
+  max_turns: 15
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill, Bash]
+runs: 3
+graders:
+  - type: regex
+    name: says-nothing-ran
+    target: last_message
+    pattern: (no tests|zero tests|0 tests|nothing (ran|was run|executed)|no test matches|did not run)
+    flags: i
+    match: contains
+  - type: llm
+    name: not-reported-as-pass
+    focus: last_message
+    criteria: >
+      The answer does not report the scenario as passing or the run as green. It says that no test
+      ran or that the filter matched nothing, and treats this as a problem to fix.
