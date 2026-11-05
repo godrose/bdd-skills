@@ -45,4 +45,16 @@ assert_contains "$R" '| `prepare` | none |'
 # The .NET typecheck example must force a recompile, or it passes after generate without judging warnings
 assert_contains "$R" 'dotnet build -c ServerWithFake -warnaserror --no-incremental'
 
+
+# License and contributing: the copyright line is filled in, the README says how to contribute
+assert_contains "$ROOT/LICENSE" 'Copyright 2026 Gennady Verdel'
+assert_not_contains "$ROOT/LICENSE" '[yyyy]'
+assert_not_contains "$ROOT/LICENSE" '[name of copyright owner]'
+for s in '## Contributing' '## License' '- [Contributing](#contributing)' '- [License](#license)' \
+  'bash tests/run.sh' 'docs/discovery/' 'Apache License 2.0' 'good first issue'; do
+  assert_contains "$R" "$s"
+done
+before '## Update' '## Contributing'
+before '## Contributing' '## License'
+
 finish
