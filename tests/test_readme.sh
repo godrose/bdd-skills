@@ -54,6 +54,7 @@ for s in '## Contributing' '## License' '- [Contributing](#contributing)' '- [Li
   'bash tests/run.sh' 'docs/discovery/' 'Apache License 2.0' 'good first issue'; do
   assert_contains "$R" "$s"
 done
+assert_equals 'Copyright 2026 Gennady Verdel' "$(tr -d '\r' < "$R" | grep -v '^$' | tail -1)" "last README line"
 before '## Update' '## Contributing'
 before '## Contributing' '## License'
 

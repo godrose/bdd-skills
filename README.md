@@ -277,3 +277,5 @@ Contributions from individuals and from teams are welcome. No sign-off form is n
 ## License
 
 [Apache License 2.0](LICENSE). Use it, change it and ship it in commercial or open projects.
+
+Copyright 2026 Gennady Verdel
