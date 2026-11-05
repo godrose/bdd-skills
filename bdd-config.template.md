@@ -62,7 +62,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 
 | Rule | Details |
 |------|---------|
-| Typecheck must pass | Run **typecheck** command — zero errors required |
+| Typecheck must pass | Run **typecheck** command - zero errors required |
 | No unused code | Remove unused imports, locals, parameters; prefix intentional unused with `_` |
 | State properties declared | New properties on **state_fixture** must be added to **state_type** |
 | Dead code | Delete entirely, don't comment out |

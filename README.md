@@ -61,6 +61,8 @@ Then, once in each project:
 
 This creates `.claude/bdd-config.md` and proposes values for it from your build files, CI and `.feature` files. It writes only the rows you approve. Plain `/bdd:init` copies the template and fills in nothing.
 
+In a headless run (`claude -p`), writes into `.claude/` may be refused. `/bdd:init` then prepares the file and prints the command to run. Run it yourself, or approve the write in an interactive session.
+
 > 💡 **Tip:** Commit `.claude/bdd-config.md` once it is filled in, so the whole team shares one setup.
 
 Then start with a story:

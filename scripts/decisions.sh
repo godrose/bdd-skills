@@ -450,7 +450,7 @@ SHOW_TAIL=$(cat <<'JQ'
   def srcs($id): (([$recs[] | select(.rec.id == $id) | arr(.rec.sources)] + [$recs[] | select(.rec.kind == "confirms" and .rec.of == $id) | arr(.rec.sources)]) | add // []) | map(select(type == "object"));
   def link($id): srcs($id) as $s
     | (($s | map(select(.role == "agreed")) | .[0]) // $s[0]) as $x
-    | if ($x | type) == "object" and ($x.ref | type) == "string" then " ([source](\($x.ref)))" else "" end;
+    | if ($x | type) == "object" and ($x.ref | type) == "string" then (if ($x.ref | test("^https?://")) then " ([source](\($x.ref)))" else " (source: \($x.ref))" end) else "" end;
   def sec($h; $lines): if ($lines | length) == 0 then empty else "", $h, "", $lines[] end;
   def words($id): ([$liveeff[] | select(.id == $id) | $status[0][.scenario] // empty]) as $w
     | ["automated", "planned", "checked by hand", "waiting on the product"] | map(select(. as $o | any($w[]; . == $o)));
