@@ -76,4 +76,10 @@ assert_file "$ROOT/docs/demo/story.gif"
 assert_contains "$R" "<img src=\"docs/demo/story.gif\""
 before "docs/demo/story.gif" "## Contents"
 
+
+# README: the generate hint and the decision_log question
+for s in 'missingSteps' 'fail-on-run' 'asks whether to turn it on'; do
+  assert_contains "$R" "$s"
+done
+
 finish

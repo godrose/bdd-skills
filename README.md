@@ -91,6 +91,8 @@ The default mode is `specify-and-implement`. For teams there is `specify-only`: 
 
 `/bdd:run` and `bdd:verifier` skip scenarios tagged `@pending` or `@manual-only`, and undefined steps under those tags are never an error.
 
+> 💡 **Playwright-BDD:** its `generate` step still fails on scenarios that have no steps yet. Set `missingSteps: 'fail-on-run'` in your Playwright config so a `specify-only` branch stays green. `/bdd:init --detect` and `/bdd:design` tell you when it is missing.
+
 Choose the mode with the `workflow_mode` row in `.claude/bdd-config.md`, or per run with `--specify-only` or `--specify-and-implement`. If the row is absent, the default applies.
 
 ## Install
@@ -191,7 +193,7 @@ Every row below is optional. If a row is absent, the default applies.
 | `status_scope` | `scenario` | Where the planned marker sits: `scenario`, `feature` or `directory` |
 | `blocked_tag` | none | Scenarios waiting on the product |
 | `planned_dir`, `manual_only_dir` | none | Path components that mark status with directory scope |
-| `decision_log` | `off` | `on` records decisions in `decisions_dir` |
+| `decision_log` | `off` | `on` records decisions in `decisions_dir`. `/bdd:init --detect` asks whether to turn it on |
 | `decisions_dir` | `docs/decisions` | Where the decision log lives |
 | `scenario_id_prefix` | `spec-` | Prefix of the stable scenario id tag |
 | `automated_tag` | none | Tag your test-management tool keys on, added when a scenario is automated |

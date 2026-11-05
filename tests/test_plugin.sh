@@ -141,4 +141,12 @@ assert_not_contains "$ROOT/bdd-config.template.md" "$(printf '\xe2\x80\x94')"
 assert_contains "$ROOT/README.md" "claude -p"
 assert_contains "$ROOT/README.md" "approve the write"
 
+
+# /bdd:init --detect: a hint for generate failing on scenarios with no steps, and the decision_log question
+for s in '### Hints' 'playwright-bdd' 'missingSteps' 'fail-on-run' 'Never edit project code' \
+  'only when the setting is absent' 'no decision files' 'Turn the decision log on?' \
+  'The one exception to never changing a filled row' 'only with approval' 'Do not remember a refusal'; do
+  assert_contains "$INIT" "$s"
+done
+
 finish

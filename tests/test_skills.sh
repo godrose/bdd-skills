@@ -46,7 +46,12 @@ for s in 'bdd-discover' 'specify-only' 'workflow_mode' '## The flow'; do
 done
 
 # Final review fixes
-for s in 'undefined steps' 'excluding the unautomated tag' 'existing (not yet automated)' '.spec-summary.md' 'unautomated_tag'; do
+for s in 'undefined steps' 'existing (not yet automated)' '.spec-summary.md' 'unautomated_tag'; do
+  assert_contains "$G" "$s"
+done
+# Reversed: the generate row no longer gets a tag filter, because implement needs the scenario being implemented. The hint names the framework setting instead.
+assert_not_contains "$G" 'excluding the unautomated tag'
+for s in 'missingSteps' 'fail-on-run' 'Do not add a tag filter to the generate row' 'defers'; do
   assert_contains "$G" "$s"
 done
 for s in 'existing (not yet automated)' '.spec-summary.md' 'unautomated_tag' 'automated_tag' 'Do this only after the verifier'; do
