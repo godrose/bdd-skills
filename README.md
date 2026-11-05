@@ -13,9 +13,9 @@
 **🥒 Agree the examples first, then automate them**
 *A Claude Code plugin that takes a story through discussion, scenarios and step definitions to a verified run. Works with Playwright-BDD, SpecFlow, Cucumber or any Gherkin runner.*
 
-[![CI](https://github.com/godrose/bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/godrose/bdd/actions/workflows/ci.yml)
+[![CI](https://github.com/godrose/bdd-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/godrose/bdd-skills/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/godrose/bdd?style=flat)](https://github.com/godrose/bdd/stargazers)
+[![Stars](https://img.shields.io/github/stars/godrose/bdd-skills?style=flat)](https://github.com/godrose/bdd-skills/stargazers)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
 <img src="docs/demo/story.gif" alt="Terminal recording: /bdd:triage, /bdd:design and /bdd:implement on a small demo app" width="800" />
@@ -47,9 +47,11 @@ You need read access to this repository. It is private for now, so see Access un
 In Claude Code:
 
 ```
-/plugin marketplace add godrose/bdd
+/plugin marketplace add godrose/bdd-skills
 /plugin install bdd@godrose-plugins
 ```
+
+The repo is `bdd-skills`. The plugin is `bdd`, so its commands are `/bdd:*`.
 
 Then, once in each project:
 
@@ -97,7 +99,7 @@ There are two ways to install. The plugin is the recommended one.
 
 ### As a plugin
 
-The commands are in the Quick start. On Claude Code 2.1.275 or later, one step also works: `/plugin install bdd --marketplace godrose/bdd`.
+The commands are in the Quick start. On Claude Code 2.1.275 or later, one step also works: `/plugin install bdd --marketplace godrose/bdd-skills`.
 
 The plugin namespaces its commands: `/bdd:discover`, `/bdd:design`, `/bdd:implement`, `/bdd:run`, `/bdd:triage` and `/bdd:reconcile`.
 
@@ -118,10 +120,10 @@ Use this when you do not want a plugin, or when you want the skills committed in
 
 ```bash
 # Remote install (no clone needed):
-curl -sL https://raw.githubusercontent.com/godrose/bdd/main/install.sh | bash -s -- /path/to/your/project
+curl -sL https://raw.githubusercontent.com/godrose/bdd-skills/main/install.sh | bash -s -- /path/to/your/project
 
 # Or from a local clone:
-git clone https://github.com/godrose/bdd.git /tmp/bdd-skills
+git clone https://github.com/godrose/bdd-skills.git /tmp/bdd-skills
 /tmp/bdd-skills/install.sh /path/to/your/project
 ```
 

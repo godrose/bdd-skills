@@ -74,7 +74,7 @@ The audit looks at rows that already have a value and reports the ones that are 
 The Skill Roles table has two placeholder roles, `domain-knowledge` and `requirements-sync`. Projects often already have their own skills for them. Propose these together with the other rows, and write them only on approval, like any other row. Never change a role that already has a value.
 
 1. **Find candidates.** List the skill files in `.claude/commands/` and `.claude/skills/`. Read only the name and the one-line description in each header. Do not read skill bodies, and do not look in `~/.claude/` or in other plugins.
-2. **Skip the installer's files.** A file with the `# Source: https://github.com/godrose/bdd` line is the installer's copy of a plugin skill. It is never a candidate. The same goes for the files listed under Leftovers.
+2. **Skip the installer's files.** A file with the `# Source: https://github.com/godrose/bdd-skills` line is the installer's copy of a plugin skill. It is never a candidate. The same goes for the files listed under Leftovers.
 3. **Match.** `domain-knowledge` fits a skill about the project's selectors, patterns or gotchas, often named `*-knowledge`. `requirements-sync` fits a skill that fetches stories from, or publishes results to, an issue tracker or test-management tool, often named `*-sync`. A name hint raises confidence. A description that clearly fits can match on its own, at lower confidence.
 4. **Propose.** Give the skill name, the evidence (its file and description) and a confidence. If several skills fit one role, propose the best one and name the runners-up in the evidence. The table holds one skill per role.
 5. **Nothing found.** Leave the row as it is. Write `no local skill found for <role>` and name the places you searched. The role is optional.
@@ -86,13 +86,13 @@ Projects that used the project-file install may hold copies of the skills next t
 1. **Find them.** Run:
 
    ```
-   grep -l "^# Source: https://github.com/godrose/bdd" .claude/commands/bdd-*.md .claude/agents/bdd-*.md 2>/dev/null
+   grep -l "^# Source: https://github.com/godrose/bdd-skills" .claude/commands/bdd-*.md .claude/agents/bdd-*.md 2>/dev/null
    find .claude -maxdepth 2 \( -name decisions.sh -o -name decision.schema.json \) 2>/dev/null
    ```
 
    The installer writes the `# Source:` line into every skill file it creates. Also count a file as a leftover when it is named `.claude/commands/bdd-<name>.md` with name one of discover, design, implement, run, triage or reconcile, or `.claude/agents/bdd-<name>.md` with name verifier, even without the line (older installs). The old names `bdd-scenario-design`, `bdd-implement-scenario` and `test-feature` (as `.claude/commands/<name>.md`) count by name alone, because the installer removes them itself. A file counts only if it exists on disk. A file that git shows as deleted is not a leftover, because it causes no duplicate command.
 
-2. **Report.** If there are none, say nothing about it. Otherwise list each leftover and say the plugin provides the same commands under `bdd:`, so the old files can be deleted by hand. Any other `bdd-*` file in `.claude/commands/` matches no rule, so its owner cannot be proved. Report it as "origin unknown, left alone". Do not call it the user's own skill. If `.claude/.gitignore` has a comment that says the files were installed from `https://github.com/godrose/bdd`, mention it next to these files as a hint only. It never classifies a file. Remind the user that the Skill Roles table in `.claude/bdd-config.md` should name `bdd:design` and the other plugin skills.
+2. **Report.** If there are none, say nothing about it. Otherwise list each leftover and say the plugin provides the same commands under `bdd:`, so the old files can be deleted by hand. Any other `bdd-*` file in `.claude/commands/` matches no rule, so its owner cannot be proved. Report it as "origin unknown, left alone". Do not call it the user's own skill. If `.claude/.gitignore` has a comment that says the files were installed from `https://github.com/godrose/bdd-skills`, mention it next to these files as a hint only. It never classifies a file. Remind the user that the Skill Roles table in `.claude/bdd-config.md` should name `bdd:design` and the other plugin skills.
 
 ### Rules
 

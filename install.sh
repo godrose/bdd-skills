@@ -3,13 +3,13 @@
 #
 # Usage:
 #   # Remote install (no clone needed):
-#   curl -sL https://raw.githubusercontent.com/godrose/bdd/main/install.sh | bash -s -- [target-dir]
+#   curl -sL https://raw.githubusercontent.com/godrose/bdd-skills/main/install.sh | bash -s -- [target-dir]
 #
 #   # From a local clone:
 #   ./install.sh [target-dir]
 #
 # What it does:
-#   1. If no local source, clones godrose/bdd to a temp dir
+#   1. If no local source, clones godrose/bdd-skills to a temp dir
 #   2. Copies commands/ and agents/ into .claude/ with a source header and project names (bdd-design),
 #      plus scripts/ and schemas/ for the decision log
 #   3. Copies bdd-config.template.md as .claude/bdd-config.md (if not exists)
@@ -17,7 +17,7 @@
 
 set -e
 
-REPO_URL="https://github.com/godrose/bdd"
+REPO_URL="https://github.com/godrose/bdd-skills"
 REPO_BRANCH="main"
 
 # Determine source directory

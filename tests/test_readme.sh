@@ -15,7 +15,7 @@ done
 
 before '## Contents' '## Quick start'
 before '## Quick start' '## The flow'
-before '/plugin marketplace add godrose/bdd' '## The flow'
+before '/plugin marketplace add godrose/bdd-skills' '## The flow'
 before '/bdd:init' '## The flow'
 before '/bdd:discover <story>' '## The flow'
 before '## The flow' '## Install'
@@ -58,7 +58,7 @@ assert_equals 'Copyright 2026 Gennady Verdel' "$(tr -d '\r' < "$R" | grep -v '^$
 
 # Hero block: centered banner, tagline, badges; emoji tips; related projects. Headings stay plain.
 for s in '<div align="center">' '<pre>' '</pre>' '**🥒 Agree the examples first, then automate them**' \
-  'actions/workflows/ci.yml/badge.svg' 'img.shields.io/badge/license-Apache--2.0' 'img.shields.io/github/stars/godrose/bdd' \
+  'actions/workflows/ci.yml/badge.svg' 'img.shields.io/badge/license-Apache--2.0' 'img.shields.io/github/stars/godrose/bdd-skills' \
   '> 💡 **Tip:**' '> 🧪 **Trivial change?**' '> 🔒 **Never deletes:**' \
   '## Related projects' '- [Related projects](#related-projects)' \
   '[Playwright-BDD](https://github.com/vitalets/playwright-bdd)' '[Cucumber](https://github.com/cucumber/cucumber-js)' '[Reqnroll](https://github.com/reqnroll/Reqnroll)'; do
