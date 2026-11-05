@@ -23,6 +23,13 @@ jobs:
         with:
           node-version: "22"
       - run: npm install -g @anthropic-ai/claude-code@2.1.318
+      - name: Install the Linux sandbox backend
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap socat
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          bwrap --version
+          sysctl kernel.apparmor_restrict_unprivileged_userns || true
       # design-lint-draft needs plain Bash, which would hand the token to the agent. Run it by hand.
       - name: Run the evals
         env:

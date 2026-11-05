@@ -124,4 +124,10 @@ assert_contains "$ROOT/evals/README.md" "## In CI"
 assert_contains "$ROOT/evals/README.md" "EVALS_NIGHTLY"
 assert_no_added_emdash tests/test_evals.sh .github/workflows/evals.yml
 
+# The Linux runner needs the sandbox backend before a shell tool is granted (first CI run: "cannot confine it")
+assert_contains "$W" "bubblewrap"
+assert_contains "$W" "socat"
+assert_contains "$W" "apparmor_restrict_unprivileged_userns"
+assert_contains "$W" "bwrap --version"
+
 finish
