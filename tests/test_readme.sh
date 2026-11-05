@@ -55,6 +55,19 @@ for s in '## Contributing' '## License' '- [Contributing](#contributing)' '- [Li
   assert_contains "$R" "$s"
 done
 assert_equals 'Copyright 2026 Gennady Verdel' "$(tr -d '\r' < "$R" | grep -v '^$' | tail -1)" "last README line"
+
+# Hero block: centered banner, tagline, badges; emoji tips; related projects. Headings stay plain.
+for s in '<div align="center">' '<pre>' '</pre>' '**🥒 Agree the examples first, then automate them**' \
+  'actions/workflows/ci.yml/badge.svg' 'img.shields.io/badge/license-Apache--2.0' 'img.shields.io/github/stars/godrose/bdd' \
+  '> 💡 **Tip:**' '> 🧪 **Trivial change?**' '> 🔒 **Never deletes:**' \
+  '## Related projects' '- [Related projects](#related-projects)' \
+  '[Playwright-BDD](https://github.com/vitalets/playwright-bdd)' '[Cucumber](https://github.com/cucumber/cucumber-js)' '[Reqnroll](https://github.com/reqnroll/Reqnroll)'; do
+  assert_contains "$R" "$s"
+done
+before '<div align="center">' '## Contents'
+before '## Update' '## Related projects'
+before '## Related projects' '## Contributing'
+[ "$(tr -d '\r' < "$R" | grep -c '^## .*[^ -~]')" -eq 0 ] && pass || fail "README has a heading with a non-ASCII character"
 before '## Update' '## Contributing'
 before '## Contributing' '## License'
 

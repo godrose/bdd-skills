@@ -1,6 +1,26 @@
+<div align="center">
+
+<pre>
+ _         _       _  
+| |__    __| |  __| |
+| '_ \  / _` | / _` |
+| |_) || (_| || (_| |
+|_.__/  \__,_| \__,_|
+</pre>
+
 # BDD Skills for Claude Code
 
-Agree the examples first, then automate them. A Claude Code plugin that takes a story through discussion, scenarios and step definitions to a verified run. Framework-agnostic: works with Playwright-BDD, SpecFlow, Cucumber, or any Gherkin runner.
+**🥒 Agree the examples first, then automate them**
+*A Claude Code plugin that takes a story through discussion, scenarios and step definitions to a verified run. Works with Playwright-BDD, SpecFlow, Cucumber or any Gherkin runner.*
+
+[![CI](https://github.com/godrose/bdd/actions/workflows/ci.yml/badge.svg)](https://github.com/godrose/bdd/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/godrose/bdd?style=flat)](https://github.com/godrose/bdd/stargazers)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+
+</div>
+
+<br />
 
 ## Contents
 
@@ -12,6 +32,7 @@ Agree the examples first, then automate them. A Claude Code plugin that takes a 
 - [Decision log](#decision-log)
 - [What's included](#whats-included)
 - [Update](#update)
+- [Related projects](#related-projects)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -34,6 +55,8 @@ Then, once in each project:
 
 This creates `.claude/bdd-config.md` and proposes values for it from your build files, CI and `.feature` files. It writes only the rows you approve. Plain `/bdd:init` copies the template and fills in nothing.
 
+> 💡 **Tip:** Commit `.claude/bdd-config.md` once it is filled in, so the whole team shares one setup.
+
 Then start with a story:
 
 ```
@@ -49,6 +72,8 @@ For an individual builder:
 3. `/bdd:implement` automates the scenarios and `bdd:verifier` checks them.
 
 The agreed scenarios become automated checks, so later changes cannot silently break them.
+
+> 🧪 **Trivial change?** A one-line fix, a rename or a copy edit skips discovery. The plugin says so in one sentence and moves on.
 
 If you run a command before `/bdd:init`, it stops and tells you to run it.
 
@@ -75,6 +100,8 @@ A plugin cannot create files in your project, so run `/bdd:init` once in each pr
 To get proposed values instead of filling the file in by hand, run `/bdd:init --detect`. It reads your build files, CI workflows, README and `.feature` files, and proposes a value for each placeholder row, with the file it came from and a confidence level. It writes only the rows you approve, never changes a row that already has a value, never runs your commands, and says `unknown` where the files do not answer. Check the commands it proposes before you rely on them. It also proposes your own skills for the `domain-knowledge` and `requirements-sync` roles, matched by the name and one-line description in `.claude/commands/` and `.claude/skills/`. If several fit, it names the runners-up, and if none fit, it leaves the row alone. It is plugin only.
 
 `/bdd:init` also lists leftover project-file copies of the skills, which give duplicate commands next to the plugin. It only reports them and never deletes. The installer's files are found by the `# Source:` line it writes, and by the old command names it replaced. A `bdd-*` file that matches neither is reported as "origin unknown, left alone". With `--detect`, the command also audits the values already in your config. It reports paths that do not exist and skill roles that do not resolve, and it never edits them.
+
+> 🔒 **Never deletes:** `/bdd:init` only reports leftovers and bad values. You decide what to remove or fix.
 
 <details>
 <summary><b>As project files</b></summary>
@@ -264,6 +291,14 @@ Restart Claude Code to apply the update.
 cd /tmp/bdd-skills && git pull
 /tmp/bdd-skills/install.sh /path/to/your/project
 ```
+
+## Related projects
+
+BDD tools this plugin works with, not ones it replaces:
+
+- [Playwright-BDD](https://github.com/vitalets/playwright-bdd) - run Gherkin features on Playwright.
+- [Cucumber](https://github.com/cucumber/cucumber-js) - the reference Gherkin runner for JavaScript.
+- [Reqnroll](https://github.com/reqnroll/Reqnroll) - BDD for .NET, the open-source successor to SpecFlow.
 
 ## Contributing
 
