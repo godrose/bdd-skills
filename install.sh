@@ -26,7 +26,7 @@ if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && 
   SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   CLEANUP=""
 else
-  # Running via curl pipe — clone to temp dir
+  # Running via curl pipe - clone to temp dir
   SOURCE_DIR="$(mktemp -d)"
   CLEANUP="$SOURCE_DIR"
   echo "Cloning $REPO_URL ($REPO_BRANCH)..."
@@ -61,18 +61,18 @@ install_skill() {
 
   # Read the file, inject source comment after the frontmatter opening ---
   if head -1 "$src" | grep -q "^---"; then
-    # Has frontmatter — inject after opening ---
+    # Has frontmatter - inject after opening ---
     {
       head -1 "$src"
       echo "# Source: $REPO_URL (${VERSION:-unknown})"
-      echo "# Installed: $INSTALLED_AT — update by re-running install.sh"
+      echo "# Installed: $INSTALLED_AT - update by re-running install.sh"
       tail -n +2 "$src"
     } > "$dst"
   else
-    # No frontmatter — prepend as comment block
+    # No frontmatter - prepend as comment block
     {
       echo "<!-- Source: $REPO_URL (${VERSION:-unknown}) -->"
-      echo "<!-- Installed: $INSTALLED_AT — update by re-running install.sh -->"
+      echo "<!-- Installed: $INSTALLED_AT - update by re-running install.sh -->"
       echo ""
       cat "$src"
     } > "$dst"
@@ -81,7 +81,7 @@ install_skill() {
 }
 
 # Clean legacy filenames from any prior install (rename pass 2026-06-22).
-# Remove this block six months after PR-1 merges — by then every consumer
+# Remove this block six months after PR-1 merges - by then every consumer
 # has re-installed and the legacy files no longer exist anywhere.
 for legacy in \
   "$CLAUDE_DIR/commands/bdd-scenario-design.md" \
@@ -113,13 +113,13 @@ echo "  $CLAUDE_DIR/scripts/decisions.sh"
 echo "  $CLAUDE_DIR/schemas/decision.schema.json"
 echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
-# Config template — only copy if no config exists yet
+# Config template - only copy if no config exists yet
 if [ ! -f "$CLAUDE_DIR/bdd-config.md" ]; then
   to_project < "$SOURCE_DIR/bdd-config.template.md" > "$CLAUDE_DIR/bdd-config.md"
-  echo "  $CLAUDE_DIR/bdd-config.md (from template — edit this for your project)"
+  echo "  $CLAUDE_DIR/bdd-config.md (from template - edit this for your project)"
 else
   echo ""
-  echo "bdd-config.md already exists — skipped (not overwritten)."
+  echo "bdd-config.md already exists - skipped (not overwritten)."
 fi
 
 # Report newer config rows that an older bdd-config.md does not have yet

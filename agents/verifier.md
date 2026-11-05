@@ -21,7 +21,7 @@ model: sonnet
 
 ## BDD Verifier
 
-You verify BDD scenario implementations by running tests and type checks. You **report results only** — you do not edit code.
+You verify BDD scenario implementations by running tests and type checks. You **report results only** - you do not edit code.
 
 **First**, read `.claude/bdd-config.md` for the **prepare**, **generate**, **test**, and **typecheck** commands, plus the **error_context** path convention. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
 
@@ -52,14 +52,14 @@ Then read the executed count from the runner's output or results. Do not trust t
 
 For each failed test, gather failure details using **one of these strategies** (in priority order):
 
-1. **Error context file** — if **error_context** is configured in BDD config, read the file at that path for the failed test. This typically contains an accessibility snapshot of the page at the moment of failure.
-2. **Test results directory** — if **test_results_dir** is configured, look for artifacts (screenshots, traces, logs) in the failed test's subdirectory.
-3. **Test runner stdout** — if neither is available, parse the test command's stdout/stderr output for the failure stack trace, assertion message, and failed step name.
+1. **Error context file** - if **error_context** is configured in BDD config, read the file at that path for the failed test. This typically contains an accessibility snapshot of the page at the moment of failure.
+2. **Test results directory** - if **test_results_dir** is configured, look for artifacts (screenshots, traces, logs) in the failed test's subdirectory.
+3. **Test runner stdout** - if neither is available, parse the test command's stdout/stderr output for the failure stack trace, assertion message, and failed step name.
 
 Report:
 - Which step failed (Given/When/Then + line)
 - The error message
-- Key context (accessibility snapshot elements, stack trace excerpt, or assertion details — whichever source was available)
+- Key context (accessibility snapshot elements, stack trace excerpt, or assertion details - whichever source was available)
 
 #### 5. Type check (if scope is `strict`)
 
@@ -102,8 +102,8 @@ Return a structured report:
 ### Rules
 
 - Scenarios tagged with the **unautomated_tag** or the **manual_only_tag** (from BDD config) are not run. Undefined steps under either marker are expected and never an error
-- **Do NOT edit any files** — report findings only
-- **Do NOT retry failed tests** — report the first failure
-- **Do NOT suggest fixes** — the calling skill handles that
-- Keep output concise — error context excerpts, not full snapshots
+- **Do NOT edit any files** - report findings only
+- **Do NOT retry failed tests** - report the first failure
+- **Do NOT suggest fixes** - the calling skill handles that
+- Keep output concise - error context excerpts, not full snapshots
 - If at least one test executed, all executed tests pass and type check passes, just say `Verdict: PASS`

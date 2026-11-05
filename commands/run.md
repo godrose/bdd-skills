@@ -1,9 +1,9 @@
 ---
-description: "Run BDD feature tests — select environment, scenarios by tag/name/suite, inspect results"
+description: "Run BDD feature tests - select environment, scenarios by tag/name/suite, inspect results"
 allowed-tools: ["Agent", "Bash", "Read", "Write", "Grep", "Glob", "AskUserQuestion"]
 ---
 
-## Test Feature — Run BDD Scenarios
+## Test Feature - Run BDD Scenarios
 
 Run BDD feature tests against any configured environment. Framework-agnostic - reads tooling commands and conventions from `.claude/bdd-config.md`. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
 
@@ -25,9 +25,9 @@ Read `.claude/bdd-config.md` for:
 - **prepare** command (optional)
 - **generate** command
 - **test** command
-- **features_dir** — where to scan for scenarios
-- **test_results_dir** — where to find artifacts
-- **error_context** — path pattern for failure details (if available)
+- **features_dir** - where to scan for scenarios
+- **test_results_dir** - where to find artifacts
+- **error_context** - path pattern for failure details (if available)
 
 ### Step 2: Environment Selection
 
@@ -68,11 +68,11 @@ Before running, verify:
 
 Run the **test** command from bdd-config with the appropriate filter flags for the framework:
 
-- **By tag** — pass the tag as a filter argument
-- **By scenario name** — pass as a name/grep filter
-- **Multiple scenarios** — combine filters with OR logic
-- **Single feature file** — pass the file path
-- **All** — run without filters
+- **By tag** - pass the tag as a filter argument
+- **By scenario name** - pass as a name/grep filter
+- **Multiple scenarios** - combine filters with OR logic
+- **Single feature file** - pass the file path
+- **All** - run without filters
 
 The exact flag syntax depends on the framework (read from test command conventions or config_file).
 
@@ -90,9 +90,9 @@ The exact flag syntax depends on the framework (read from test command conventio
 - Open the test report if the framework generates one
 
 **On failure, collect evidence** using the priority chain:
-1. **Error context file** — if **error_context** is configured, read it for the failed test
-2. **Test results directory** — check **test_results_dir** for artifacts (screenshots, traces, logs, TRX files)
-3. **Test runner stdout** — parse the failure output for step name, error message, and stack trace
+1. **Error context file** - if **error_context** is configured, read it for the failed test
+2. **Test results directory** - check **test_results_dir** for artifacts (screenshots, traces, logs, TRX files)
+3. **Test runner stdout** - parse the failure output for step name, error message, and stack trace
 
 **Report the outcome:**
 - Which scenarios passed/failed
