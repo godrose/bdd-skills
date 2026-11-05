@@ -31,6 +31,22 @@ graders:
     target: last_message
     pattern: "Given [^\\n]*\\n\\s*When [^\\n]*\\n\\s*Then "
     match: contains
+  - type: regex
+    name: has-step-reuse-audit
+    target: last_message
+    pattern: reuse audit
+    flags: i
+    match: contains
+  - type: regex
+    name: audit-has-asserts-column
+    target: last_message
+    pattern: "\\| *Asserts *\\|"
+    match: contains
+  - type: regex
+    name: tags-unautomated-in-specify-only
+    target: last_message
+    pattern: "@pending"
+    match: contains
   - type: file_exists
     name: no-feature-file-before-approval
     path: features/experiments-delete*.feature

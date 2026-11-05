@@ -29,8 +29,14 @@ assert_contains "$ROOT/evals/run-zero-tests/fixture/fake-test.sh" "No test match
 
 # Cost-aware defaults live in the README of the folder
 assert_file "$ROOT/evals/README.md"
-for s in "claude plugin eval" "--scaffold" "--no-publish" "--ablation none" "--runs 1" "usage" "--judge-model sonnet" "## What the spike found" "Not measured" "Full run: 4 cases" "A rubric must state the property"; do
+for s in "claude plugin eval" "--scaffold" "--no-publish" "--ablation none" "--runs 1" "usage" "--judge-model sonnet" "## What the spike found" "Not measured" "Full run: 4 cases" "Baseline run" "Baseline with plugin-only graders" "A rubric must state the property"; do
   assert_contains "$ROOT/evals/README.md" "$s"
+done
+
+
+# design-vague-ac also grades what only the plugin does (from design.md), so the baseline arm can differ
+for s in "name: has-step-reuse-audit" "name: audit-has-asserts-column" "name: tags-unautomated-in-specify-only"; do
+  assert_contains "$ROOT/evals/design-vague-ac/case.yaml" "$s"
 done
 
 finish
