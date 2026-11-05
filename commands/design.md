@@ -5,7 +5,7 @@ allowed-tools: ["Agent", "Bash", "Read", "Grep", "Glob", "AskUserQuestion"]
 
 ## BDD Scenario Design
 
-Design and formulate BDD scenarios from user stories, acceptance criteria, or feature requests. This is a **methodology skill** — it drives the what and why of scenario creation, then delegates implementation to the **implementer** skill.
+Design and formulate BDD scenarios from user stories, acceptance criteria, or feature requests. This is a **methodology skill** - it drives the what and why of scenario creation, then delegates implementation to the **implementer** skill.
 
 Framework-agnostic: the design process works regardless of whether the underlying framework is Playwright, Cypress, Selenium, or any BDD runner.
 
@@ -37,8 +37,8 @@ Read `workflow_mode` from `.claude/bdd-config.md`.
 
 If a discovery pack is given and its Readiness says it is not ready, say so and list what is missing before you design. Otherwise take its confirmed examples, edge cases and answered questions as the AC source. Skip the fetch and the ambiguity flag for anything the pack already settled.
 
-1. **Fetch the source** — check if a **requirements-sync** skill is configured in the BDD config. If the input is an issue tracker key/URL, invoke it to fetch ACs, subtasks, comments, and linked issues. If no sync skill exists or the user provides AC text directly, use that as-is.
-2. **Extract testable assertions** — for each AC bullet, identify concrete verifiable claims:
+1. **Fetch the source** - check if a **requirements-sync** skill is configured in the BDD config. If the input is an issue tracker key/URL, invoke it to fetch ACs, subtasks, comments, and linked issues. If no sync skill exists or the user provides AC text directly, use that as-is.
+2. **Extract testable assertions** - for each AC bullet, identify concrete verifiable claims:
    - "User can view all records" → table displays all fields non-empty
    - "Downloaded data matches displayed data exactly" → export values = UI values
    - "Supported formats: CSV, JSON" → both formats downloadable with valid content
@@ -46,34 +46,34 @@ If a discovery pack is given and its Readiness says it is not ready, say so and 
 
 #### Phase 2: Audit Existing Coverage
 
-1. **Scan feature files** — search the **features_dir** (from BDD config) for existing scenarios
-2. **Map AC to existing scenarios** — which assertions are already tested?
-3. **Identify gaps** — which AC bullets have no scenario coverage?
-4. **Check step inventory (two passes — both required):**
-   - **Pass A — exact match**: grep each drafted step verbatim against the **steps_dir** and existing `.feature` files
-   - **Pass B — paraphrase audit**: for EACH new step, generate 2–3 natural paraphrases of the same assertion and grep them too. If any paraphrase hits, USE the existing wording. Paraphrase families to consider:
+1. **Scan feature files** - search the **features_dir** (from BDD config) for existing scenarios
+2. **Map AC to existing scenarios** - which assertions are already tested?
+3. **Identify gaps** - which AC bullets have no scenario coverage?
+4. **Check step inventory (two passes - both required):**
+   - **Pass A - exact match**: grep each drafted step verbatim against the **steps_dir** and existing `.feature` files
+   - **Pass B - paraphrase audit**: for EACH new step, generate 2–3 natural paraphrases of the same assertion and grep them too. If any paraphrase hits, USE the existing wording. Paraphrase families to consider:
      - Success: "completes without error" / "exits cleanly" / "succeeds" / "returns no error"
      - Negation: "does not equal X" / "should not match X" / "differs from X"
-     - Action verbs: "I copy / extract / read / capture" — the same intent often appears under several verbs
-     - Container references: any phrase like "from the X tab / panel / page" — the existing step may identify the container differently
+     - Action verbs: "I copy / extract / read / capture" - the same intent often appears under several verbs
+     - Container references: any phrase like "from the X tab / panel / page" - the existing step may identify the container differently
    - **Pass C - assertion check**: for EACH reused `Then` step, read its step definition and note what it asserts (exact count, contains, order, exact text). Compare that claim with the data the scenario sets up. Same words do not mean the same claim: a step that asserts an exact count fails when the scenario's data has a different count. `Given` and `When` steps are not checked.
      - Definition cannot be read (shared or external library): record "assertion unknown" and flag it. Do not guess.
      - Step is planned and has no definition yet: compare against the scenario text only and record "assertion not checkable yet".
      - Step takes a parameter such as `{int}`: the parameter fits any value. Record it and pass.
      - Definition is long or indirect: record the visible assertion and say if a helper was followed. If you cannot tell, record "assertion unknown".
      - On a mismatch, the designer never changes fixture data and never rewrites the step silently. Flag it in the audit table and propose two fixes: (A) change the scenario's data, or (B) write a new step, marked `🆕 intentional because: <reason>`. Say which you prefer. The person chooses at the approval gate.
-5. **Sweep project conventions** — before drafting NEW steps, read existing step defs in the same domain to learn the project's vocabulary:
-   - **Negation form** — `is disabled` vs `is not enabled`; `should not match` vs `should differ`
+5. **Sweep project conventions** - before drafting NEW steps, read existing step defs in the same domain to learn the project's vocabulary:
+   - **Negation form** - `is disabled` vs `is not enabled`; `should not match` vs `should differ`
    - **Data-table column names** already used in the same assertion family (e.g., `| field | matcher |` vs `| field | expected |`)
-   - **Given-vs-When tense** for shared facts — if `When I open X` exists everywhere, don't invent `Given I have opened X` for a Background
-   - **Composite-Given vs explicit-When-chain** patterns for `I have <state>` preconditions — prefer whichever pattern the rest of the suite already uses
+   - **Given-vs-When tense** for shared facts - if `When I open X` exists everywhere, don't invent `Given I have opened X` for a Background
+   - **Composite-Given vs explicit-When-chain** patterns for `I have <state>` preconditions - prefer whichever pattern the rest of the suite already uses
 6. **Present coverage matrix** to the user:
 
 ```
 | AC Assertion                      | Covered by              | Gap? |
 |-----------------------------------|-------------------------|------|
 | Table shows all required fields   | (none)                  | YES  |
-| Download matches UI exactly       | download.feature (partial) | YES — checks presence, not values |
+| Download matches UI exactly       | download.feature (partial) | YES - checks presence, not values |
 | CSV and JSON supported            | download.feature        | No   |
 ```
 
@@ -82,24 +82,24 @@ If a discovery pack is given and its Readiness says it is not ready, say so and 
 For each gap, formulate a scenario following these principles:
 
 **Scenario structure rules:**
-- **One assertion per scenario** — don't combine "field completeness" and "download fidelity" in one scenario
-- **Descriptive name** — the name should tell you what passes/fails without reading steps (e.g., "User profile displays all required fields")
-- **Background for shared setup** — if 3+ scenarios share the same Given/When, extract to Background
-- **Informational Background step for out-of-band prerequisites** — for setup the test ASSUMES but does not perform (long-lived state provisioned by another process: a configuration record, a seeded user, a deployed service version), declare an empty-bodied `Given <prerequisite> exists` step. The body is intentionally a no-op — the value is in the `.feature` file documenting what the scenario depends on, so a reader can tell at a glance what must be in place before the suite can run. Pair with the env-agnostic-identifiers rule below: the step should describe the prerequisite by KIND, not by real name
-- **Scenario Outline for parameterized** — if the same flow is tested with different inputs (CSV vs JSON), use Outline + Examples
-- **Data Tables for lists** — field names, expected values, allowed statuses → DataTable, not hardcoded steps
-- **Tags for routing** — `@PROJ-XXXX` for issue tracker linking, `@e2e`/`@smoke`/`@deep` for suite membership, scenario-specific tag for individual runs, automation-type tag (e.g. `@automated` / `@manual`) when the test-management tool keys its automation badge on tags
-- **Issue-tracker tags MUST repeat at the scenario level, not just on the Feature header** — Gherkin reporters (cucumber.json included) emit Feature-level tags and Scenario-level tags as **separate arrays** in the output; they do not merge. Test-management integrations that publish per-scenario results back to issue-tracker tickets read Scenario-level tags. A Feature header that carries `@PROJ-123` but whose scenarios don't will produce results that land without the link, even though the scenarios visibly inherit the tag at runtime. Always repeat the relevant issue-tracker tag on each scenario it covers — duplication with the Feature header is intentional
-- **Automation-status tag, when the tool uses one, is a tag — not a side effect of pushing results** — many test-management tools decide whether a scenario shows as "Automated" vs "Manual" in the UI based on a scenario-level tag in the `.feature` file, NOT on whether a results upload exists for that scenario. Pushing a green run for a scenario that lacks the automation-type tag still leaves it badged "Manual". Audit the tool's convention once, add the tag to every executable scenario before the first sync, and re-sync the `.feature` (not just push results) after adding the tag
+- **One assertion per scenario** - don't combine "field completeness" and "download fidelity" in one scenario
+- **Descriptive name** - the name should tell you what passes/fails without reading steps (e.g., "User profile displays all required fields")
+- **Background for shared setup** - if 3+ scenarios share the same Given/When, extract to Background
+- **Informational Background step for out-of-band prerequisites** - for setup the test ASSUMES but does not perform (long-lived state provisioned by another process: a configuration record, a seeded user, a deployed service version), declare an empty-bodied `Given <prerequisite> exists` step. The body is intentionally a no-op - the value is in the `.feature` file documenting what the scenario depends on, so a reader can tell at a glance what must be in place before the suite can run. Pair with the env-agnostic-identifiers rule below: the step should describe the prerequisite by KIND, not by real name
+- **Scenario Outline for parameterized** - if the same flow is tested with different inputs (CSV vs JSON), use Outline + Examples
+- **Data Tables for lists** - field names, expected values, allowed statuses → DataTable, not hardcoded steps
+- **Tags for routing** - `@PROJ-XXXX` for issue tracker linking, `@e2e`/`@smoke`/`@deep` for suite membership, scenario-specific tag for individual runs, automation-type tag (e.g. `@automated` / `@manual`) when the test-management tool keys its automation badge on tags
+- **Issue-tracker tags MUST repeat at the scenario level, not just on the Feature header** - Gherkin reporters (cucumber.json included) emit Feature-level tags and Scenario-level tags as **separate arrays** in the output; they do not merge. Test-management integrations that publish per-scenario results back to issue-tracker tickets read Scenario-level tags. A Feature header that carries `@PROJ-123` but whose scenarios don't will produce results that land without the link, even though the scenarios visibly inherit the tag at runtime. Always repeat the relevant issue-tracker tag on each scenario it covers - duplication with the Feature header is intentional
+- **Automation-status tag, when the tool uses one, is a tag - not a side effect of pushing results** - many test-management tools decide whether a scenario shows as "Automated" vs "Manual" in the UI based on a scenario-level tag in the `.feature` file, NOT on whether a results upload exists for that scenario. Pushing a green run for a scenario that lacks the automation-type tag still leaves it badged "Manual". Audit the tool's convention once, add the tag to every executable scenario before the first sync, and re-sync the `.feature` (not just push results) after adding the tag
 - **Manual by design** - for each scenario that needs a human (a GUI-only client, a physical device, a manual runbook), propose the **manual_only_tag** and let the builder confirm. Everything else is unautomated until implemented.
 
 **Step formulation rules:**
 - **Reuse existing steps verbatim** - if a step (or a paraphrase you generated in Phase 2 Pass B) already exists, use that exact text. **Treat planned (unautomated) scenarios with the same rigor** - today's planned paraphrase becomes tomorrow's duplicate step def the moment it gets automated.
-- **Collapse parallel string Thens into one DataTable Then** — if you're about to write ≥3 Thens of the form `the X should contain "Y"` (or any other parallel pattern), replace them with a single Then that takes a DataTable column listing the values. N+1 string Thens become 1 table-driven Then with N rows.
-- **Match established data-table shapes** — if existing assertion steps in the same family use one set of column headers (e.g., `| field | matcher |`), use the same headers for the same fact. Don't invent a parallel convention (e.g., `| field | expected |`) — readers and step regex both fragment.
-- **Don't tense-shift existing Whens into new Givens for Background** — if `When I open X` exists, REUSE that When in Background (even chained with sibling Whens that establish the precondition). Don't paraphrase as `Given I have opened X` just because Background slots typically carry Givens.
-- **Match the project's negation convention** — read the inventory before drafting. If the codebase says `is disabled`, don't write `is not enabled`. If it says `should not point at`, don't write `does not point at`.
-- **Multi-line content — use a DocString, never inline line breaks** — Gherkin step text is single-line. If a step needs a multi-line payload, place the payload in a Gherkin DocString (`"""…"""`) directly below a single-line step, never as line breaks inside a quoted step argument. Line breaks inside a quoted step argument fail Gherkin parsing.
+- **Collapse parallel string Thens into one DataTable Then** - if you're about to write ≥3 Thens of the form `the X should contain "Y"` (or any other parallel pattern), replace them with a single Then that takes a DataTable column listing the values. N+1 string Thens become 1 table-driven Then with N rows.
+- **Match established data-table shapes** - if existing assertion steps in the same family use one set of column headers (e.g., `| field | matcher |`), use the same headers for the same fact. Don't invent a parallel convention (e.g., `| field | expected |`) - readers and step regex both fragment.
+- **Don't tense-shift existing Whens into new Givens for Background** - if `When I open X` exists, REUSE that When in Background (even chained with sibling Whens that establish the precondition). Don't paraphrase as `Given I have opened X` just because Background slots typically carry Givens.
+- **Match the project's negation convention** - read the inventory before drafting. If the codebase says `is disabled`, don't write `is not enabled`. If it says `should not point at`, don't write `does not point at`.
+- **Multi-line content - use a DocString, never inline line breaks** - Gherkin step text is single-line. If a step needs a multi-line payload, place the payload in a Gherkin DocString (`"""…"""`) directly below a single-line step, never as line breaks inside a quoted step argument. Line breaks inside a quoted step argument fail Gherkin parsing.
 
   ```gherkin
   When I submit the following input:
@@ -109,11 +109,11 @@ For each gap, formulate a scenario following these principles:
     """
   ```
 
-  The step def signature takes a DocString parameter, not a quoted-string parameter. When a single-line form of the same input exists, prefer it — the scenario can reuse an existing single-argument step verbatim.
-- **New steps should be generic** — `Then the most recent row should have non-empty values for:` (reusable with DataTable) vs `Then the row should have name, email, status` (hardcoded)
-- **Avoid implementation details in Gherkin** — `When I click the Download button` (good) vs `When I click [data-testid="download-btn"]` (bad)
-- **Match the user's vocabulary** — use domain terms from the AC, not internal UI component names
-- **Don't hardcode environment-specific identifiers in step arguments** — when a step references a real-world artefact (a record name, a hostname, a file path, a customer ID, an account label), the `.feature` should refer to it abstractly via a KIND token plus a POSITIONAL or SEMANTIC selector, and the step impl should resolve the actual identifier from env/profile config at runtime. Hardcoded identifiers (`"prod-db-east"`, `"host-42.example.com"`, `"customer 1289"`) lock the scenario to one environment — the same `.feature` can't run against staging, prod, or a CI sandbox without editing Gherkin. Good: `When I open the first record of kind "<kind>"`. Bad: `When I open the record named "<env-coupled-identifier>"`
+  The step def signature takes a DocString parameter, not a quoted-string parameter. When a single-line form of the same input exists, prefer it - the scenario can reuse an existing single-argument step verbatim.
+- **New steps should be generic** - `Then the most recent row should have non-empty values for:` (reusable with DataTable) vs `Then the row should have name, email, status` (hardcoded)
+- **Avoid implementation details in Gherkin** - `When I click the Download button` (good) vs `When I click [data-testid="download-btn"]` (bad)
+- **Match the user's vocabulary** - use domain terms from the AC, not internal UI component names
+- **Don't hardcode environment-specific identifiers in step arguments** - when a step references a real-world artefact (a record name, a hostname, a file path, a customer ID, an account label), the `.feature` should refer to it abstractly via a KIND token plus a POSITIONAL or SEMANTIC selector, and the step impl should resolve the actual identifier from env/profile config at runtime. Hardcoded identifiers (`"prod-db-east"`, `"host-42.example.com"`, `"customer 1289"`) lock the scenario to one environment - the same `.feature` can't run against staging, prod, or a CI sandbox without editing Gherkin. Good: `When I open the first record of kind "<kind>"`. Bad: `When I open the record named "<env-coupled-identifier>"`
 
 **Ordering principles:**
 - Start with the highest-value gap (most important AC, most likely to catch bugs)
@@ -122,7 +122,7 @@ For each gap, formulate a scenario following these principles:
 
 #### Phase 4: Review with User
 
-Present the designed scenarios to the user. **Before requesting approval, produce a per-step reuse audit table — this is mandatory, not optional. It is the artifact that forces conscious reconciliation of every new step against the existing inventory.**
+Present the designed scenarios to the user. **Before requesting approval, produce a per-step reuse audit table - this is mandatory, not optional. It is the artifact that forces conscious reconciliation of every new step against the existing inventory.**
 
 Example:
 
@@ -134,7 +134,7 @@ Example:
 | `Given the flag is not enabled` | ⚠ convention drift - codebase uses `is disabled` | `steps/flags.ts:17` | n/a (Given) |
 | `Then a toast notification appears` | 🆕 genuinely new - no toast assertions exist yet | - | n/a |
 
-**Resolve every ⚠ row before requesting approval** — either by rewording to the existing analog, or by documenting why the new wording is intentionally different. Then present:
+**Resolve every ⚠ row before requesting approval** - either by rewording to the existing analog, or by documenting why the new wording is intentionally different. Then present:
 
 1. The proposed feature file(s) with full Gherkin text. Write every scenario out in full, with all of its steps. Do not abbreviate a scenario with "same set-up as scenario 1" or a similar shortcut, even when scenarios repeat steps. The person approving must see the exact text that will be written.
 2. The per-step audit table above (every ⚠ should be either reconciled to ✅ or annotated `🆕 intentional because: <reason>`)
@@ -180,7 +180,7 @@ For each approved scenario, invoke the **implementer** skill (from BDD config):
 3. Invoke the **implementer** with the scenario tag
 4. After each scenario passes, move to the next
 
-If implementing multiple scenarios in the same feature file, implement them **in order** — Background steps are validated by the first scenario, subsequent ones build on that foundation.
+If implementing multiple scenarios in the same feature file, implement them **in order** - Background steps are validated by the first scenario, subsequent ones build on that foundation.
 
 #### Phase 6: Summary
 
@@ -188,8 +188,8 @@ In `specify-only` mode, report the scenarios written and where the spec PR summa
 
 After all scenarios are implemented and verified:
 1. Report final pass/fail status per scenario
-2. **Publish** — if a **requirements-sync** skill is configured, invoke it to push features and results to the test management tool. Verify the new scenarios appear linked to the source issue.
-3. Update coverage matrix — all gaps should now be filled
+2. **Publish** - if a **requirements-sync** skill is configured, invoke it to push features and results to the test management tool. Verify the new scenarios appear linked to the source issue.
+3. Update coverage matrix - all gaps should now be filled
 4. Note any remaining gaps that require manual testing or backend changes
 
 ### Anti-Patterns
@@ -202,17 +202,17 @@ After all scenarios are implemented and verified:
 | Skip coverage audit | May duplicate existing tests | Always check what exists first |
 | Design scenarios without reading existing steps | Will create redundant step definitions | Audit step inventory in Phase 2 |
 | Implement without user approval | User may have different priorities or wording preferences | Present and wait for approval in Phase 4 |
-| Paraphrasing an existing step into new wording | Creates duplicate step defs with overlapping behavior; PR reviewers waste cycles spotting them | Phase 2 Pass B — generate 2–3 paraphrases of each drafted step and grep them against the inventory before finalizing |
+| Paraphrasing an existing step into new wording | Creates duplicate step defs with overlapping behavior; PR reviewers waste cycles spotting them | Phase 2 Pass B - generate 2–3 paraphrases of each drafted step and grep them against the inventory before finalizing |
 | Multi-string Thens for an ordered/list assertion | N+1 step defs to maintain, each asserting one element of a fact that could be one DataTable assertion | Collapse ≥3 parallel `... should contain "X" ...` Thens into one DataTable Then |
 | Tense-shifting an existing When into a Given for Background | The Given duplicates the When, requires a new step def, drifts from how the rest of the suite establishes the same precondition | Reuse the existing When-chain in Background, even if slightly verbose |
-| Drift from established conventions (negation form, data-table column names) | The new wording looks fine in isolation but reads as inconsistent next to existing scenarios; locks in vocabulary forks | Phase 2 step 5 — sweep the inventory for vocabulary BEFORE drafting; match the project's word choice |
+| Drift from established conventions (negation form, data-table column names) | The new wording looks fine in isolation but reads as inconsistent next to existing scenarios; locks in vocabulary forks | Phase 2 step 5 - sweep the inventory for vocabulary BEFORE drafting; match the project's word choice |
 | Treating planned (unautomated) scenarios as exempt from step-reuse rigor | Every planned step becomes a step def when automated; paraphrases get locked in before anyone notices | Apply identical step-reuse rules to planned and automated scenarios |
 | Abbreviating scenarios in the proposal ("same set-up as ...") | The approver signs off on text they have not seen, and the written file may differ from what they read | Phase 4 - write every scenario out in full with all of its steps |
 | Assuming a reused Then step makes the claim the scenario needs | Same words means same claim is false: the step passes the wording audit and fails at run time on data it does not fit | Phase 2 Pass C - read the definition, record what it asserts in the `Asserts` column, flag a mismatch for the person to resolve |
 | Silently picking one meaning of a vague AC term | The other readings vanish and the person approving never sees the choice | Phase 1 step 3 - list the assumption with the other readings found, and show it first in the proposal |
-| Presenting scenarios for approval without a per-step audit table | User can't tell which steps are new without manually grepping; review burden falls on reviewers, not the designer | Phase 4 — produce the audit table before requesting approval; every ⚠ row must be reconciled or annotated |
+| Presenting scenarios for approval without a per-step audit table | User can't tell which steps are new without manually grepping; review burden falls on reviewers, not the designer | Phase 4 - produce the audit table before requesting approval; every ⚠ row must be reconciled or annotated |
 | Embedding multi-line content inside a quoted step argument | Fails Gherkin parsing | Use a single-line step with a Gherkin DocString (`"""…"""`) directly below it; the step def takes a DocString parameter |
-| Issue-tracker tag only on the Feature header | The cucumber.json reporter writes Feature tags and Scenario tags into separate arrays. Test-management integrations that route per-scenario results to issue tickets read Scenario-level tags — Feature-level tags don't propagate. Results land without the issue link | Repeat the issue-tracker tag (`@PROJ-XXXX`) on every scenario it covers, in addition to the Feature header |
+| Issue-tracker tag only on the Feature header | The cucumber.json reporter writes Feature tags and Scenario tags into separate arrays. Test-management integrations that route per-scenario results to issue tickets read Scenario-level tags - Feature-level tags don't propagate. Results land without the issue link | Repeat the issue-tracker tag (`@PROJ-XXXX`) on every scenario it covers, in addition to the Feature header |
 | Hardcoding real environment identifiers in `.feature` files (record names, hostnames, customer IDs, file paths, account labels) | The same `.feature` can no longer run against a second environment without editing Gherkin; profile-driven test runs become impossible; reviewers can't tell which arguments are environment-coupled vs scenario-essential | Use a KIND + positional/semantic selector in the step text ("the first record of kind X"); resolve real identifiers from env/profile config inside the step impl |
-| Out-of-band prerequisite mentioned only in commit messages or PR descriptions | A reader of the `.feature` file alone can't tell what state the scenario relies on; first-time runners hit confusing assertion failures from missing setup | Declare an empty-bodied `Given <prerequisite> exists` Background step — body is a no-op, value is in self-documenting what must already exist |
+| Out-of-band prerequisite mentioned only in commit messages or PR descriptions | A reader of the `.feature` file alone can't tell what state the scenario relies on; first-time runners hit confusing assertion failures from missing setup | Declare an empty-bodied `Given <prerequisite> exists` Background step - body is a no-op, value is in self-documenting what must already exist |
 | Assuming a `push-results` upload flips the test-management UI to "Automated" | Many test-management tools key the automation badge on a scenario-level tag in the `.feature` file, not on whether results have been pushed; result data lands fine but the badge stays "Manual" | Tag executable scenarios with the tool's automation-type tag (e.g. `@automated`) and re-sync the `.feature` after adding the tag |

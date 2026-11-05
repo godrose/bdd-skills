@@ -149,4 +149,9 @@ for s in '### Hints' 'playwright-bdd' 'missingSteps' 'fail-on-run' 'Never edit p
   assert_contains "$INIT" "$s"
 done
 
+
+# No em-dash anywhere in the plugin, installer or tests (the older guard only checked added lines)
+n=$(grep -rIl "$(printf '\xe2\x80\x94')" "$ROOT" --exclude-dir=.git --exclude-dir=docs --exclude=test_plugin.sh --exclude=test_readme.sh --exclude=lib.sh --exclude=test_lib.sh | wc -l | tr -d ' ')
+assert_equals 0 "$n" "files with an em-dash outside docs"
+
 finish
