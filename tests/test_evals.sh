@@ -130,4 +130,14 @@ assert_contains "$W" "socat"
 assert_contains "$W" "apparmor_restrict_unprivileged_userns"
 assert_contains "$W" "bwrap --version"
 
+# Quiet when green: a short summary, and the artifact only on failure
+assert_contains "$W" "id: evals"
+assert_contains "$W" "EVAL_OUTCOME"
+assert_contains "$W" "if: failure()"
+assert_contains "$W" "All "
+assert_contains "$W" "Failed graders"
+n=$(grep -c "if: always()" "$W")
+[ "$n" = 1 ] && pass || fail "evals.yml has $n always() steps, expected only the summary"
+assert_contains "$ROOT/evals/README.md" "only when the job fails"
+
 finish
