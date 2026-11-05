@@ -32,6 +32,7 @@ jobs:
           sysctl kernel.apparmor_restrict_unprivileged_userns || true
       # design-lint-draft needs plain Bash, which would hand the token to the agent. Run it by hand.
       - name: Run the evals
+        id: evals
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
@@ -50,15 +51,30 @@ jobs:
           exit $status
       - name: Summary
         if: always()
+        env:
+          EVAL_OUTCOME: ${{ steps.evals.outcome }}
         run: |
-          echo "| Case | Mean score | Runs |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
-          for f in results/*/aggregate-result.json; do
-            [ -f "$f" ] || continue
-            jq -r '.cases[] | select(.arms.with != null) | "| \(.name) | \(([.arms.with[].score|select(.!=null)] | if length>0 then (add/length*100|round/100) else "n/a" end)) | \(.arms.with|length) |"' "$f" >> "$GITHUB_STEP_SUMMARY"
-          done
+          shopt -s nullglob
+          files=(results/*/aggregate-result.json)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No results were written. The run failed before any case finished." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [ "$EVAL_OUTCOME" = "success" ]; then
+            jq -rs '[.[].cases[] | select(.arms.with != null) | {n: .name, m: ([.arms.with[].score | select(. != null)] | add / length)}] as $c
+              | "All \($c | length) cases passed the 0.8 threshold. Lowest: \($c | min_by(.m) | .n) at \($c | min_by(.m) | .m * 100 | round / 100). Cost: $\([.[].costUsd] | add * 100 | round / 100)."' "${files[@]}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "| Case | Mean score | Runs |" >> "$GITHUB_STEP_SUMMARY"
+            echo "|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+            jq -r '.cases[] | select(.arms.with != null) | "| \(.name) | \(([.arms.with[].score | select(. != null)] | if length > 0 then (add / length * 100 | round / 100) else "n/a" end)) | \(.arms.with | length) |"' "${files[@]}" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Failed graders:" >> "$GITHUB_STEP_SUMMARY"
+            jq -r '.cases[] | .name as $n | .arms.with | to_entries[] | .key as $r | .value.graders[]? | select(.passed == false) | "- \($n) run \($r + 1): \(.name)"' "${files[@]}" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "The agent answers are in the eval-results artifact." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Upload results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: eval-results
