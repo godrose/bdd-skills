@@ -23,10 +23,10 @@ jobs:
         with:
           node-version: "22"
       - run: npm install -g @anthropic-ai/claude-code@2.1.318
-      # design-lint-draft needs plain Bash, which would hand the API key to the agent. Run it by hand.
+      # design-lint-draft needs plain Bash, which would hand the token to the agent. Run it by hand.
       - name: Run the evals
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
           status=0
           for c in init-audit design-vague-ac triage-approval-gate run-zero-tests; do

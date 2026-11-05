@@ -105,14 +105,17 @@ assert_contains "$ROOT/evals/README.md" '"Bash(echo:*)"'
 # Nightly evals workflow: manual first, the schedule is gated by a repo variable, and no plain Bash or PR trigger
 W="$ROOT/.github/workflows/evals.yml"
 assert_file "$W"
-for s in "workflow_dispatch:" "schedule:" "cron:" "vars.EVALS_NIGHTLY" "--trust-plugin" "--max-cost-usd" "--threshold" "--ablation none" "secrets.ANTHROPIC_API_KEY" "contents: read" "timeout-minutes" "upload-artifact" "design-lint-draft"; do
+for s in "workflow_dispatch:" "schedule:" "cron:" "vars.EVALS_NIGHTLY" "--trust-plugin" "--max-cost-usd" "--threshold" "--ablation none" "secrets.CLAUDE_CODE_OAUTH_TOKEN" "contents: read" "timeout-minutes" "upload-artifact" "design-lint-draft"; do
   assert_contains "$W" "$s"
 done
 assert_not_contains "$W" "pull_request"
+# an API key would take precedence over the subscription token
+assert_not_contains "$W" "ANTHROPIC_API_KEY"
+assert_contains "$ROOT/evals/README.md" "setup-token"
 assert_not_contains "$W" "push:"
-# the key is set on the step that runs the evals, not for the whole job
-if grep -qE "^ {0,8}ANTHROPIC_API_KEY" "$W"; then fail "ANTHROPIC_API_KEY is set above the step level in evals.yml"; else pass; fi
-# plain Bash would hand the key to the agent; only the narrow grants are allowed
+# the token is set on the step that runs the evals, not for the whole job
+if grep -qE "^ {0,8}CLAUDE_CODE_OAUTH_TOKEN" "$W"; then fail "CLAUDE_CODE_OAUTH_TOKEN is set above the step level in evals.yml"; else pass; fi
+# plain Bash would hand the token to the agent; only the narrow grants are allowed
 assert_not_contains "$W" "--allow-tools Write Edit Bash "
 assert_contains "$W" 'Bash(sh ./fake-test.sh:*)'
 # the lint case needs plain Bash, so it stays out of the loop

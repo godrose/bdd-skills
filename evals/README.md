@@ -80,8 +80,15 @@ Not measured: the baseline for the other three cases, and any comparison of answ
 
 Setup:
 
-1. Add the repository secret `ANTHROPIC_API_KEY`. Use a dedicated key with a spend cap. The workflow caps one case at $1 (`--max-cost-usd`) and fails below a mean score of 0.8 (`--threshold`).
-2. Run the workflow by hand and read the summary and the `eval-results` artifact.
-3. Set `EVALS_NIGHTLY` to `true`.
+1. Run `claude setup-token` on your machine and copy the token it prints. It lasts one year, and it is tied to the subscription of the person who ran it. It can only make model requests.
+2. Add it as the repository secret `CLAUDE_CODE_OAUTH_TOKEN`.
+3. Run the workflow by hand and read the summary and the `eval-results` artifact.
+4. Set `EVALS_NIGHTLY` to `true`.
 
-`design-lint-draft` stays out of CI. It needs plain `Bash`, and any `ANTHROPIC_`-prefixed variable reaches the agent's shell (tested with a canary variable on 2026-11-05), so the key would be readable. The narrow grants of the other cases keep the same risk in a smaller form: `Bash(echo:*)` in `run-zero-tests` could print the key. Only our own fixtures and plugin text drive the agent, the workflow does not run on pull requests, and the key is capped. The artifact holds prompts and outputs and is kept for 14 days.
+The runs use that subscription, not API billing, so they cost no extra money. They do draw on the plan's usage limits, shared with your own Claude Code use. The workflow caps one case at $1 of notional cost (`--max-cost-usd`) and fails below a mean score of 0.8 (`--threshold`). The workflow must not set `ANTHROPIC_API_KEY`: the docs rank it above the token.
+
+The token expires after a year. Renew it with `claude setup-token` and replace the secret before it does. GitHub runs scheduled workflows only from the default branch, attributes them to whoever last changed the `cron` line, and disables them in public repositories after 60 days without activity.
+
+`design-lint-draft` stays out of CI. It needs plain `Bash`, and the agent's shell receives `ANTHROPIC_`-prefixed and `CLAUDE_CODE_` variables (tested with a canary variable on 2026-11-05), so the token is probably readable. The narrow grants of the other cases keep the same risk in a smaller form: `Bash(echo:*)` in `run-zero-tests` could print it. Only our own fixtures and plugin text drive the agent, and the workflow does not run on pull requests. The artifact holds prompts and outputs and is kept for 14 days.
+
+Not verified: that `claude plugin eval` accepts `CLAUDE_CODE_OAUTH_TOKEN` and passes it to its child sessions. The docs do not cover `plugin eval` in CI. The first manual run decides it.
