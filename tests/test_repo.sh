@@ -27,8 +27,13 @@ assert_contains "$DB" 'interval: weekly'
 n=$(grep -n -F --exclude=test_repo.sh "sed -i ''" "$ROOT"/tests/test_*.sh "$ROOT"/scripts/*.sh "$ROOT"/install.sh | wc -l | tr -d " ")
 assert_equals 0 "$n" "sed -i with an empty suffix"
 
-assert_not_contains "$TPL" "Plugin version bumped"
-assert_contains "$ROOT/CLAUDE.md" "## Before going public"
+assert_contains "$TPL" "Release PR"
+assert_contains "$ROOT/CLAUDE.md" "## Releasing"
+assert_not_contains "$ROOT/CLAUDE.md" "## Before going public"
 assert_not_contains "$ROOT/CLAUDE.md" "needs a plugin version bump"
+assert_contains "$ROOT/.github/workflows/ci.yml" "startsWith(github.event.pull_request.title, 'release:')"
+assert_contains "$ROOT/.github/workflows/ci.yml" "tests/check_release.sh"
+assert_not_contains "$ROOT/README.md" 'each merge to `main` is a new version'
+assert_contains "$ROOT/README.md" "CHANGELOG.md"
 
 finish

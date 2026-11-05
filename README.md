@@ -290,7 +290,7 @@ In `specify-only` mode, `bdd:design` stops after the scenarios. `bdd:implement` 
 
 ## Update
 
-**Plugin.** The plugin has no pinned version, so each merge to `main` is a new version. Update to get it:
+**Plugin.** The plugin is versioned, and a change reaches you when a new version is released. `CHANGELOG.md` lists what each version changed. Update to get the latest release:
 
 ```bash
 claude plugin marketplace update godrose-plugins
@@ -298,6 +298,8 @@ claude plugin update bdd@godrose-plugins
 ```
 
 Restart Claude Code to apply the update.
+
+A fresh install gets `main` as it is at that moment, which can be newer than the last release. A release is what the tag and the changelog name.
 
 **Project files.** Re-run the install script. Your `bdd-config.md` won't be overwritten. The installer prints a note for each newer row your config lacks, with its default.
 
