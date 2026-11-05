@@ -12,6 +12,8 @@ Agree the examples first, then automate them. A Claude Code plugin that takes a 
 - [Decision log](#decision-log)
 - [What's included](#whats-included)
 - [Update](#update)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Quick start
 
@@ -262,3 +264,16 @@ Restart Claude Code to apply the update.
 cd /tmp/bdd-skills && git pull
 /tmp/bdd-skills/install.sh /path/to/your/project
 ```
+
+## Contributing
+
+Contributions from individuals and from teams are welcome. No sign-off form is needed. Under the Apache License 2.0, what you contribute is licensed the same way as the rest of the repo, unless you say otherwise.
+
+- Look for issues labeled `good first issue` or `help wanted`, or open an issue with your idea first.
+- This repo uses its own method. A larger change (a new command, a config row, anything in install) starts with a discovery pack in `docs/discovery/`. A small fix, rename or copy edit does not. `CLAUDE.md` has the details.
+- Run `bash tests/run.sh` before you open a pull request. A new test must fail before your change and pass after it.
+- Fill in the pull request template.
+
+## License
+
+[Apache License 2.0](LICENSE). Use it, change it and ship it in commercial or open projects.
