@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 assert_contains "$ROOT/.gitignore" "evals/results/"
 
-for c in init-audit design-vague-ac triage-approval-gate run-zero-tests; do
+for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft; do
   d="$ROOT/evals/$c"
   assert_file "$d/case.yaml"
   assert_file "$d/scaffold.sh"
@@ -38,5 +38,24 @@ done
 for s in "name: has-step-reuse-audit" "name: audit-has-asserts-column" "name: tags-unautomated-in-specify-only"; do
   assert_contains "$ROOT/evals/design-vague-ac/case.yaml" "$s"
 done
+
+
+# design-lint-draft: a lint row, an old finding in an existing file, and a draft that must pass the lint
+L="$ROOT/evals/design-lint-draft"
+assert_file "$L/case.yaml"
+assert_file "$L/scaffold.sh"
+assert_file "$L/fixture/fake-lint.sh"
+assert_file "$L/fixture/features/reports.feature"
+assert_contains "$L/fixture/.claude/bdd-config.md" 'fake-lint.sh'
+assert_contains "$L/fixture/fake-lint.sh" '@TKT-'
+assert_not_contains "$L/fixture/features/reports.feature" '@TKT-'
+for s in "name: runs-the-lint-row" "name: draft-passes-lint" "name: reports-old-findings-untouched" "name: no-edit-of-existing-files" "name: no-draft-file-left" ".bdd-draft-"; do
+  assert_contains "$L/case.yaml" "$s"
+done
+assert_contains "$ROOT/evals/README.md" "design-lint-draft"
+
+# design-lint-draft needs general Bash (the agent chains commands); the README says so and limits the grant to this case
+assert_contains "$ROOT/evals/README.md" '--case design-lint-draft --allow-tools Write Edit Bash'
+assert_contains "$ROOT/evals/README.md" 'only for this case'
 
 finish

@@ -1,0 +1,58 @@
+schema_version: "1.0"
+name: design-lint-draft
+description: design lints the draft before showing it, acts only on findings in the draft, leaves old findings alone, and leaves no .bdd-draft-* file behind
+tags: [design, lint, spike]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: >
+    /bdd:design reports-archive: Acceptance criterion: "A user can archive an open report."
+    The ticket is TKT-42. Show me the scenarios for approval.
+  max_turns: 25
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Bash]
+runs: 3
+graders:
+  - type: tool_used
+    name: runs-the-lint-row
+    tool: Bash
+    min: 1
+  - type: regex
+    name: draft-passes-lint
+    target: last_message
+    pattern: "(draft[^\\n]{0,80}(no|0|zero) findings|(no|0|zero) findings[^\\n]{0,40}draft)"
+    flags: i
+    match: contains
+  - type: regex
+    name: reports-old-findings-untouched
+    target: last_message
+    pattern: "(existing[^\\n]{0,120}(not touched|did not touch|untouched)|(\\d+|one) findings?[^\\n]{0,40}not touched)"
+    flags: i
+    match: contains
+  - type: regex
+    name: draft-carries-the-ticket-tag
+    target: last_message
+    pattern: "@TKT-42"
+    match: contains
+  - type: tool_used
+    name: no-edit-of-existing-files
+    tool: Edit
+    min: 0
+    max: 0
+    arm: both
+  - type: file_exists
+    name: no-draft-file-left
+    path: features/.bdd-draft-*
+    exists: false
+  - type: file_exists
+    name: no-feature-file-before-approval
+    path: features/reports-archive*.feature
+    exists: false
+  - type: llm
+    name: scenarios-in-full-and-old-finding-not-fixed
+    focus: last_message
+    criteria: >
+      The answer shows each scenario for archiving a report written out in full as Gherkin, with
+      Given, When and Then steps. It reports that the existing "An open report can be shared"
+      scenario has a lint finding and says it did not change that scenario. It does not claim to
+      have added a tag to the existing scenario.

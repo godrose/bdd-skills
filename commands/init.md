@@ -50,7 +50,8 @@ Both forms end by reporting leftover project-file copies (see Leftovers).
    - Write the full path from the project root. Use a full path, never an abbreviation of a project or folder name.
    - Check each path value against the disk. If a value in the config or the files points at a path that does not exist, say so.
    - If the files do not answer the question, write `unknown`. Do not guess. When you write `unknown`, name the files you searched. A default that is not found in a project file is your own suggestion: label it as yours and give it low confidence. For a path pattern, propose a literal glob such as `test-results/**/error-context.md`, never a value in `<...>` form (the config reads that as empty).
-   - If a row does not apply (for example `generate` for a framework that reads `.feature` files directly), propose `_(not needed: <reason>)_`.
+   - If a row does not apply (for example `generate` for a framework that reads `.feature` files directly), propose `_(not needed: <reason>)_`. Use `_(not needed)_` only for a framework that reads .feature files directly. If the framework generates code in the IDE (for example SpecFlow with committed `.feature.cs` files) and no command is in the project files, propose `unknown` for `generate`, name the files searched, and add a note that the generated files may go stale.
+   - Step code can sit in more than one folder (for example an intent layer and an adapter layer). Propose **steps_dir** as one path, or several comma-separated, each with its evidence.
    - If a command is for another platform than this machine (for example a `.bat` script on macOS), say so in a note.
    - Note anything that stops a command from working locally (a private dependency, a service that must be running).
 
@@ -64,7 +65,7 @@ Running `--detect` again later only touches rows that are still placeholders. Th
 
 The audit looks at rows that already have a value and reports the ones that are wrong. It reads files only. Never edit a value in the audit: the user fixes the config by hand.
 
-1. **Paths.** For every row whose value is a path (for example `features_dir`, `steps_dir`, `config_file`), check it against the disk. Report each path that does not exist, with the row name and the value.
+1. **Paths.** For every row whose value is a path (for example `features_dir`, `steps_dir`, `config_file`), check it against the disk. A value may list several paths, comma-separated: check each entry. Report each path that does not exist, with the row name and the value.
 2. **Skill roles.** For every role in the Skill Roles table that has a value, check that it resolves. A `bdd:<name>` value resolves when the plugin has that skill. Any other value resolves when a file by that name exists in `.claude/commands/` or `.claude/skills/`. Report each value that does not resolve. When it looks like an old name from the project-file install (see Leftovers), say which plugin skill replaced it.
 3. **Skip.** Skip placeholders in `<...>` form and notes in `_(...)_` form. A fresh template has only those, so it reports nothing.
 4. **Report.** If everything resolves, print one line: `Audit: all values resolve.` Otherwise list the findings. Either way end with one line that says what was not checked: `Not checked: header text, test filters, whether commands work.`

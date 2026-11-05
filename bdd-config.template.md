@@ -18,7 +18,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | Convention | Value |
 |-----------|-------|
 | features_dir | `<path to .feature files>` |
-| steps_dir | `<path to step definitions>` |
+| steps_dir | `<path to step definitions, or several paths, comma-separated>` |
 | config_file | `<path to test framework config>` |
 | test_results_dir | `<path to test output artifacts>` |
 | error_context | `<path pattern for failure context, or empty if using stdout>` |

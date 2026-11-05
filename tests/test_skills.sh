@@ -307,4 +307,26 @@ assert_no_added_emdash commands/design.md tests/test_skills.sh
 for f in "$ROOT"/commands/*.md "$ROOT"/agents/*.md; do
   assert_not_contains "$f" "bdd:feedback"
 done
+
+# design lints the draft before showing it (docs/discovery/2026-11-05-lint-in-design-and-layered-steps.md)
+for s in 'before it is shown' '.bdd-draft-' 'deleted before' 'lint did not run' 'The scenarios are unchecked' \
+  'findings in existing files, not touched' 'ask the user for the value' 'two rounds' 'leftover' 'its own name'; do
+  assert_contains "$G" "$s"
+done
+
+# steps_dir takes several paths, comma-separated
+for f in "$G" "$I" "$ROOT/commands/discover.md" "$ROOT/commands/init.md" "$CFG" "$ROOT/README.md"; do
+  assert_contains "$f" 'comma-separated'
+done
+assert_contains "$ROOT/commands/init.md" 'each entry'
+
+# generate: IDE-generated frameworks get unknown, never "not needed"
+assert_contains "$ROOT/commands/init.md" 'generates code in the IDE'
+assert_contains "$ROOT/commands/init.md" 'only for a framework that reads .feature files directly'
+
+# no new rows for these changes
+for row in required_tags adapters_dir domain_dir; do
+  assert_not_contains "$CFG" "$row"
+done
+assert_no_added_emdash tests/test_skills.sh docs/discovery/2026-11-05-lint-in-design-and-layered-steps.md
 finish

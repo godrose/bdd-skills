@@ -50,7 +50,7 @@ If a discovery pack is given and its Readiness says it is not ready, say so and 
 2. **Map AC to existing scenarios** - which assertions are already tested?
 3. **Identify gaps** - which AC bullets have no scenario coverage?
 4. **Check step inventory (two passes - both required):**
-   - **Pass A - exact match**: grep each drafted step verbatim against the **steps_dir** and existing `.feature` files
+   - **Pass A - exact match**: grep each drafted step verbatim against every folder in the **steps_dir** (one path, or several comma-separated) and existing `.feature` files
    - **Pass B - paraphrase audit**: for EACH new step, generate 2–3 natural paraphrases of the same assertion and grep them too. If any paraphrase hits, USE the existing wording. Paraphrase families to consider:
      - Success: "completes without error" / "exits cleanly" / "succeeds" / "returns no error"
      - Negation: "does not equal X" / "should not match X" / "differs from X"
@@ -140,6 +140,15 @@ Example:
 2. The per-step audit table above (every ⚠ should be either reconciled to ✅ or annotated `🆕 intentional because: <reason>`)
 3. Which project/tag each scenario belongs to
 4. Estimated implementation complexity (how many new steps, any new POM methods?)
+
+**Lint the draft before it is shown.** Skip this when the **lint** row is empty. Otherwise:
+
+1. Write the draft to a temp file inside **features_dir**, named `.bdd-draft-<feature>.feature`. If a leftover `.bdd-draft-*` file from an interrupted run is there, report it first and ask whether to delete it.
+2. Run the **lint** row. The row may scan the whole folder, so keep only the findings in the draft file. Say in one line "N findings in existing files, not touched". Never edit those files.
+3. Fix the draft's findings. When a finding needs a value you cannot know (for example a ticket id), ask the user for the value, then add it. Stop after two rounds and list the findings that remain. Ignore a finding that is only about the temp file and its own name (the `.bdd-draft-` prefix), and report that you did.
+4. The temp file is deleted before the draft is shown. Delete only the file you created in this run.
+5. If the lint run fails for a reason other than findings (for example, missing tooling), warn and continue. Show one line: "lint did not run: <error>. The scenarios are unchecked." Do not install tooling.
+6. Show "lint: no findings", or the findings that remain, with the draft.
 
 Show the scenarios in plain words first, so the person approving sees what they will get. The audit table follows. Start the proposal with the **Assumptions** list from Phase 1. Write "Assumptions: none" when there are none. If the person picks another reading at the approval gate, update the affected scenarios and the list.
 
