@@ -329,4 +329,8 @@ for row in required_tags adapters_dir domain_dir; do
   assert_not_contains "$CFG" "$row"
 done
 assert_no_added_emdash tests/test_skills.sh docs/discovery/2026-11-05-lint-in-design-and-layered-steps.md
+
+# the audit's closing line is printed word for word and is the last line (the init-audit eval checks it)
+assert_contains "$ROOT/commands/init.md" 'word for word'
+assert_contains "$ROOT/commands/init.md" 'Nothing follows it'
 finish
