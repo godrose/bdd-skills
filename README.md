@@ -18,6 +18,10 @@
 [![Stars](https://img.shields.io/github/stars/godrose/bdd?style=flat)](https://github.com/godrose/bdd/stargazers)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
+<img src="docs/demo/story.gif" alt="Terminal recording: /bdd:triage, /bdd:design and /bdd:implement on a small demo app" width="800" />
+
+<sub>A real session, cut for length: triage, design, implement.</sub>
+
 </div>
 
 <br />

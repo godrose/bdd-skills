@@ -71,4 +71,9 @@ before '## Related projects' '## Contributing'
 before '## Update' '## Contributing'
 before '## Contributing' '## License'
 
+# Demo GIF sits in the hero block and the file exists
+assert_file "$ROOT/docs/demo/story.gif"
+assert_contains "$R" "<img src=\"docs/demo/story.gif\""
+before "docs/demo/story.gif" "## Contents"
+
 finish
