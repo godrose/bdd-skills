@@ -38,4 +38,7 @@ Run on 2026-11-05 with Claude Code 2.1.318, `--model haiku`, one run per case, n
 - **`--case` takes one glob.** Repeating it keeps only the last one.
 - **No plugin bug found.** The runs showed no plugin defect. In the design case the plugin flagged "finished" as an open assumption on its own, and its step audit noticed that the existing step bodies are empty.
 
-Not measured: the baseline difference (`--ablation with-without`), and the variance of repeated runs for the cases other than `design-vague-ac`. Both need more usage.
+- **Full run: 4 cases, 3 runs each** (Haiku agent, Sonnet judge, no baseline): 418 seconds and about 23 cents notional. `design-vague-ac`, `init-audit` and `run-zero-tests` scored 1.00 on all 3 runs. `triage-approval-gate` scored 0.87 at first, because the rubric said Lee's "ok" is not agreement to the two rules, while the agent (correctly) tied it to the out-of-scope decision. After rewording the rubric to that property it scored 1.00 on 3 of 3.
+- **A rubric must state the property you mean.** Both rubric fixes in this spike came from a vaguely worded claim, not from the plugin. Read the agent's output before blaming either side, and say in the PR when a rubric is reworded.
+
+Not measured: the baseline difference (`--ablation with-without`), which would show whether the plugin beats a plain agent. It doubles the runs.
