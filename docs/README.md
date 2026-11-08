@@ -26,6 +26,11 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-05-lint-in-design-and-layered-steps.md` | Lint on the draft, several step folders, `generate` for IDE frameworks |
 | `2026-11-05-pending-generate-and-decision-log.md` | `@pending` scenarios, `generate`, and the decision log from `init --detect` |
 | `2026-11-05-rename-repo-bdd-skills.md` | Rename the repo to `bdd-skills` (marketplace name superseded in part) |
+| `2026-11-08-red-first-and-known-gaps.md` | The red-first check in `implement`, and a known-gaps file |
+
+## known-gaps.md
+
+What the plugin does not check, or checks only in part. Each gap says why it is still open and what would close it. A test checks the shape of every entry.
 
 ## superpowers/
 

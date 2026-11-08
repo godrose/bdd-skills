@@ -66,6 +66,8 @@ Run the **prepare** command, then the **generate** command, then the **test** co
 If the group passes (at least one executed test, and none failed) -> move to the next group. If no tests ran, stop and report "no tests ran". Do not loop.
 If the group fails -> go to 2b.
 
+**Natural red.** Look at the first run of the scenario, before any step code is written for it. If a step fails on its assertion with an expected-versus-actual message, keep the step name and a short form of that message. It is the natural red for the red-first check in Phase 2.5. A run that reports only undefined steps is not a natural red.
+
 ##### 2b. Explore the failure point
 
 Gather failure details using the best available source (in priority order):
@@ -102,11 +104,27 @@ Re-run the test. If the group now passes, move to the next group. If a group fai
 
 **Max retries per step: 3.** If a step fails 3 times, stop and report what you've learned from the evidence. The user may need to provide guidance.
 
+#### Phase 2.5: Red-first check
+
+The red-first check shows that a scenario can fail for the reason it states. A green that was never seen red is not evidence. Run it once per scenario, after every group has passed and before the verifier is dispatched.
+
+1. If a natural red was kept in 2a, the check is done. Report it and go to Phase 3.
+2. Otherwise make a forced red. Take the last `Then` step of the scenario. Hold the original text of the file or helper you will change, in the loop and not from git. Change one thing so that the assertion must fail, for example the expected value in a comparison. The change goes in step code or in a helper that step uses. Never break a `.feature` file or a data file.
+3. Run the **test** command for the scenario, as in 2a. The break is a red only if the scenario fails on an assertion in that step, with an expected-versus-actual message. An undefined step, a timeout, a setup or auth error, or a compile or type error is not a red. Undo the break and try once with a smaller break. If that is not a red either, stop trying.
+4. When the run is done, restore the original text and check that the diff against it is empty. If you cannot confirm that, stop and name the file. The verifier's run in Phase 3 is the green after the restore.
+5. If there was no red, the scenario is "not seen red". Say why in one line, for example "the break did not change the result", "the assertion is in generated code" or "no assertion step".
+
+Report one line per scenario: `Red-first: natural, failed in <step>: <short message>`, `Red-first: forced, failed in <step>: <short message>`, or `Red-first: not seen red: <reason>`.
+
+At the start of a run, if a file under the **steps_dir** has uncommitted changes you did not make, list them before you begin. One of them may be a break left behind by an interrupted run. Do not revert anything yourself.
+
 #### Phase 3: Full Scenario Verification
 
 After the verifier reports PASS for a scenario from an approved spec, remove the unautomated tag (the **unautomated_tag** row, default `@pending`) from it. If an **automated_tag** is configured, add it. Do this only after the verifier step below has passed. Never touch spec id tags (`@<scenario_id_prefix>...`). If implementing changes a scenario's text, say that its fingerprint will drift and that a `rewords` record is needed when the decision log is on.
 
 A verifier verdict of "no tests ran" or "executed count unknown" is a FAIL: do not change any tag.
+
+Remove the unautomated tag only when the scenario also has a red-first line that is not "not seen red". A scenario that was not seen red keeps the unautomated tag, and the report says why.
 
 **Defaults when config rows are absent.** A value in `<...>` form counts as empty.
 
