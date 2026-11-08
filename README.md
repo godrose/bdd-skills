@@ -223,6 +223,9 @@ Opt in with `decision_log` set to `on`. Each story gets a file, `docs/decisions/
 
 The log needs `jq`. Add `docs/decisions/*.jsonl merge=union` to `.gitattributes` so parallel branches can append to one file.
 
+
+The script that checks the log, `decisions.sh`, comes with the project-file install (`install.sh`). The marketplace plugin does not ship it, because the directory refuses scripts. With the plugin alone, `design` and `triage` go on without records and say so, and `reconcile` says it needs the project install.
+
 Each scenario in the log carries a stable tag such as `@spec-export-empty-list`. Scenarios without one are legacy and not tracked. They get an id the first time a decision touches them.
 
 <details>
@@ -258,12 +261,12 @@ plugin/                         # The plugin. Claude Code installs this folder
     reconcile.md                # Report drift between the decision log and the scenarios
   agents/
     verifier.md                 # Run tests + type check, report results (read-only, no edits)
-  scripts/decisions.sh          # Check, fingerprint, status and story page for the decision log (needs jq)
-  schemas/decision.schema.json  # Record schema read by decisions.sh
   bdd-config.template.md        # Project config template - fill in your tooling and conventions
-  evals/                        # Eval cases for claude plugin eval
   README.md                     # The plugin's listing text
   LICENSE                       # A copy of the licence, so the plugin folder is complete on its own
+scripts/decisions.sh             # Check, fingerprint, status and story page for the decision log (needs jq). Copied by install.sh
+schemas/decision.schema.json    # Record schema read by decisions.sh. Copied by install.sh
+evals/                          # Eval cases and evals/run.sh. Not part of the plugin
 install.sh                      # Copy the skills into a project's .claude/ directory as bdd-<name> files
 tests/                          # The repo's own test suite
 docs/                           # Discovery packs, the known gaps, the demo recording
@@ -331,7 +334,7 @@ Contributions from individuals and from teams are welcome. No sign-off form is n
 - Look for issues labeled `good first issue` or `help wanted`, or open an issue with your idea first.
 - This repo uses its own method. A larger change (a new command, a config row, anything in install) starts with a discovery pack in `docs/discovery/`. A small fix, rename or copy edit does not. `CLAUDE.md` has the details.
 - Run `bash tests/run.sh` before you open a pull request. A new test must fail before your change and pass after it.
-- Try the plugin from a clone with `claude --plugin-dir <clone>/plugin`. Check it with `claude plugin validate plugin` and run its evals with `claude plugin eval plugin`.
+- Try the plugin from a clone with `claude --plugin-dir <clone>/plugin`. Check it with `claude plugin validate plugin` and run its evals with `bash evals/run.sh`.
 - Fill in the pull request template.
 - What the plugin does not check is listed in [`docs/known-gaps.md`](docs/known-gaps.md). When you close a gap, remove its entry in the same change.
 

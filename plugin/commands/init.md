@@ -1,6 +1,5 @@
 ---
 description: "Create .claude/bdd-config.md from the plugin's template. With --detect, also propose values for the placeholder rows from the project's own files and write only what you approve."
-allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "AskUserQuestion"]
 ---
 
 ## BDD Init
@@ -71,6 +70,8 @@ The audit looks at rows that already have a value and reports the ones that are 
 4. **Report.** If everything resolves, print one line: `Audit: all values resolve.` Otherwise list the findings. Either way end with one line that says what was not checked. Print it word for word, as the last line of the audit: `Not checked: header text, test filters, whether commands work.` Nothing follows it.
 
 ### Hints
+
+> Plugin note: the decision log script is not part of the plugin, so in a plugin install skip the second note below and say nothing about the log. The log needs the project install of this repository.
 
 Two notes about rows that already have a value. Both read files only. Never edit project code.
 

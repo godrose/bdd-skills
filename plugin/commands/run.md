@@ -1,6 +1,5 @@
 ---
 description: "Run BDD feature tests - select environment, scenarios by tag/name/suite, inspect results"
-allowed-tools: ["Agent", "Bash", "Read", "Write", "Grep", "Glob", "AskUserQuestion"]
 ---
 
 ## Test Feature - Run BDD Scenarios

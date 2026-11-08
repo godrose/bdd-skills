@@ -22,6 +22,6 @@ The full guide, the config reference, the changelog and the list of known gaps a
 
 ## Tool permissions
 
-The commands pre-approve `Bash`, and some also pre-approve `Write` and `Edit`. They do this because they run the commands you put in `bdd-config.md` (prepare, generate, test and lint), and those differ for each project, so a fixed list cannot name them. Apart from those, the plugin's own shell use is its `decisions.sh` script, `git merge-base`, and in `init` a file copy and a `find` over `.claude`. File writes go to the folders that `bdd-config.md` names. `design` writes no scenarios and `init` writes no config values until you approve them. The grants are listed in [known-gaps.md](https://github.com/godrose/bdd-skills/blob/main/docs/known-gaps.md).
+The commands pre-approve nothing. Claude Code asks before each shell command and each file write, unless your own settings allow them. The commands run the test, lint, generate and prepare commands from `bdd-config.md`, and write the files in the folders that file names. `design` writes no scenarios and `init` writes no config values until you approve them. The decision log script is not part of this plugin. It comes with the project-file install, and the plugin says so when it needs it. The list of known gaps is in [known-gaps.md](https://github.com/godrose/bdd-skills/blob/main/docs/known-gaps.md).
 
 Licensed under Apache-2.0.

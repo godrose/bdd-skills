@@ -25,9 +25,9 @@ for c in discover design implement run triage reconcile init; do
 done
 assert_file "$PLUGIN/agents/verifier.md"
 assert_contains "$PLUGIN/agents/verifier.md" "name: verifier"
-assert_file "$PLUGIN/schemas/decision.schema.json"
+assert_file "$ROOT/schemas/decision.schema.json"
 assert_file "$PLUGIN/bdd-config.template.md"
-[ -x "$PLUGIN/scripts/decisions.sh" ] && pass || fail "scripts/decisions.sh is not executable"
+[ -x "$ROOT/scripts/decisions.sh" ] && pass || fail "scripts/decisions.sh is not executable"
 
 n=$(ls "$PLUGIN"/commands "$PLUGIN"/agents 2>/dev/null | grep -c '^bdd-')
 assert_equals 0 "$n" "files with a bdd- prefix in commands and agents"
@@ -45,7 +45,7 @@ done
 
 for c in design triage reconcile; do
   assert_contains "$PLUGIN/commands/$c.md" "> Plugin note:"
-  assert_contains "$PLUGIN/commands/$c.md" "say the plugin root was not set"
+  assert_contains "$PLUGIN/commands/$c.md" "the decision log script is not part of the plugin"
 done
 
 for c in design implement run triage reconcile; do
@@ -158,4 +158,12 @@ done
 n=$(grep -rIl "$(printf '\xe2\x80\x94')" "$ROOT" --exclude-dir=.git --exclude-dir=docs --exclude-dir=results --exclude=test_plugin.sh --exclude=test_readme.sh --exclude=lib.sh --exclude=test_lib.sh | wc -l | tr -d ' ')
 assert_equals 0 "$n" "files with an em-dash outside docs"
 
+
+# without the script, the commands say so: design and triage go on without records, reconcile stops, init skips the log hint
+assert_contains "$PLUGIN/commands/design.md" "Nothing was recorded"
+assert_contains "$PLUGIN/commands/triage.md" "Nothing was recorded"
+assert_contains "$PLUGIN/commands/triage.md" "go on without records"
+assert_contains "$PLUGIN/commands/reconcile.md" "and stop"
+assert_contains "$PLUGIN/commands/init.md" "the decision log script is not part of the plugin"
+assert_contains "$PLUGIN/commands/init.md" "skip the second note below"
 finish

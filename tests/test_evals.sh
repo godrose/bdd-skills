@@ -3,10 +3,10 @@
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 . "$ROOT/tests/lib.sh"
 
-assert_contains "$ROOT/.gitignore" "plugin/evals/results/"
+assert_contains "$ROOT/.gitignore" "evals/results/"
 
 for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft; do
-  d="$PLUGIN/evals/$c"
+  d="$EVALS/$c"
   assert_file "$d/case.yaml"
   assert_file "$d/scaffold.sh"
   [ -d "$d/fixture" ] && pass || fail "missing $d/fixture"
@@ -22,26 +22,26 @@ done
 assert_not_contains "$ROOT/install.sh" "evals"
 
 # Fixtures hold what each case needs
-assert_file "$PLUGIN/evals/init-audit/fixture/.claude/bdd-config.md"
-[ -e "$PLUGIN/evals/init-audit/fixture/src/step-defs" ] && fail "init-audit fixture must lack src/step-defs" || pass
-assert_file "$PLUGIN/evals/run-zero-tests/fixture/fake-test.sh"
-assert_contains "$PLUGIN/evals/run-zero-tests/fixture/fake-test.sh" "No test matches"
+assert_file "$EVALS/init-audit/fixture/.claude/bdd-config.md"
+[ -e "$EVALS/init-audit/fixture/src/step-defs" ] && fail "init-audit fixture must lack src/step-defs" || pass
+assert_file "$EVALS/run-zero-tests/fixture/fake-test.sh"
+assert_contains "$EVALS/run-zero-tests/fixture/fake-test.sh" "No test matches"
 
 # Cost-aware defaults live in the README of the folder
-assert_file "$PLUGIN/evals/README.md"
+assert_file "$EVALS/README.md"
 for s in "claude plugin eval" "--scaffold" "--no-publish" "--ablation none" "--runs 1" "usage" "--judge-model sonnet" "## What the spike found" "Not measured" "Full run: 4 cases" "Baseline run" "Baseline with plugin-only graders" "A rubric must state the property"; do
-  assert_contains "$PLUGIN/evals/README.md" "$s"
+  assert_contains "$EVALS/README.md" "$s"
 done
 
 
 # design-vague-ac also grades what only the plugin does (from design.md), so the baseline arm can differ
 for s in "name: has-step-reuse-audit" "name: audit-has-asserts-column" "name: tags-unautomated-in-specify-only"; do
-  assert_contains "$PLUGIN/evals/design-vague-ac/case.yaml" "$s"
+  assert_contains "$EVALS/design-vague-ac/case.yaml" "$s"
 done
 
 
 # design-lint-draft: a lint row, an old finding in an existing file, and a draft that must pass the lint
-L="$PLUGIN/evals/design-lint-draft"
+L="$EVALS/design-lint-draft"
 assert_file "$L/case.yaml"
 assert_file "$L/scaffold.sh"
 assert_file "$L/fixture/fake-lint.sh"
@@ -52,7 +52,7 @@ assert_not_contains "$L/fixture/features/reports.feature" '@TKT-'
 for s in "name: runs-the-lint-row" "name: draft-passes-lint" "name: reports-old-findings-untouched" "name: no-edit-of-existing-files" "name: no-draft-file-left" ".bdd-draft-"; do
   assert_contains "$L/case.yaml" "$s"
 done
-assert_contains "$PLUGIN/evals/README.md" "design-lint-draft"
+assert_contains "$EVALS/README.md" "design-lint-draft"
 
 # the judge grades one statement per criterion; exact facts are regex graders
 for s in "name: scenarios-in-full" "name: names-the-old-finding" "name: no-claim-of-tagging-old-scenario"; do
@@ -63,14 +63,40 @@ n=$(grep -c "type: llm" "$L/case.yaml")
 [ "$n" = 1 ] && pass "design-lint-draft has one judge grader" || fail "design-lint-draft has $n judge graders, expected 1"
 
 # design-lint-draft needs general Bash (the agent chains commands); the README says so and limits the grant to this case
-assert_contains "$PLUGIN/evals/README.md" '--case design-lint-draft --allow-tools Write Edit Bash'
-assert_contains "$PLUGIN/evals/README.md" 'only for this case'
+assert_contains "$EVALS/README.md" '--case design-lint-draft --allow-tools Write Edit Bash'
+assert_contains "$EVALS/README.md" 'only for this case'
 
+
+# evals/run.sh builds a temporary plugin copy with the cases inside it, and CI uses it
+assert_file "$EVALS/run.sh"
+assert_contains "$EVALS/run.sh" "claude plugin eval"
+assert_contains "$EVALS/run.sh" "mktemp -d"
+assert_contains "$ROOT/.github/workflows/evals.yml" "evals/run.sh"
+assert_not_contains "$ROOT/.github/workflows/evals.yml" "claude plugin eval plugin"
+
+# run.sh puts every case folder under the temporary plugin copy, and nothing else from evals/
+RS=$(mktemp -d)
+mkdir -p "$RS/bin"
+cat > "$RS/bin/claude" <<'STUB'
+#!/bin/bash
+# stands in for the eval tool: list what it would read
+echo "ARGS: $*" > "$RUNSH_OUT"
+ls "$3/evals" >> "$RUNSH_OUT"
+ls "$3" >> "$RUNSH_OUT"
+STUB
+chmod +x "$RS/bin/claude"
+RUNSH_OUT="$RS/out.txt" PATH="$RS/bin:$PATH" bash "$EVALS/run.sh" --runs 1 >/dev/null 2>&1
+for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft; do
+  grep -qx "$c" "$RS/out.txt" && pass || fail "run.sh does not place the $c case under the plugin copy: $(tr '\n' ' ' < "$RS/out.txt")"
+done
+grep -qx "case.yaml" "$RS/out.txt" && fail "run.sh copied a case's files into evals/ directly" || pass
+grep -qx "commands" "$RS/out.txt" && pass || fail "run.sh did not copy the plugin"
+rm -rf "$RS"
 finish
 
 # One statement per judge criterion. A compound name ("-and-") marks a bundled criterion.
 for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft; do
-  if awk '/type: llm/{getline; print}' "$PLUGIN/evals/$c/case.yaml" | grep -q -- '-and-'; then
+  if awk '/type: llm/{getline; print}' "$EVALS/$c/case.yaml" | grep -q -- '-and-'; then
     fail "$c has a judge grader with a compound name"
   else
     pass
@@ -78,28 +104,28 @@ for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-l
 done
 
 # Exact facts are regex graders. Only judgment is left to the judge.
-D="$PLUGIN/evals/design-vague-ac/case.yaml"
+D="$EVALS/design-vague-ac/case.yaml"
 for s in "name: names-two-statuses" "name: treats-finished-as-open"; do assert_contains "$D" "$s"; done
 assert_not_contains "$D" "name: flags-finished-as-ambiguous"
-I="$PLUGIN/evals/init-audit/case.yaml"
+I="$EVALS/init-audit/case.yaml"
 for s in "name: says-path-does-not-exist" "name: no-claim-of-writing" "name: asks-before-writing"; do assert_contains "$I" "$s"; done
 assert_not_contains "$I" "name: reports-only-and-asks"
-R="$PLUGIN/evals/run-zero-tests/case.yaml"
+R="$EVALS/run-zero-tests/case.yaml"
 for s in "name: not-reported-as-pass" "name: treats-as-a-problem"; do assert_contains "$R" "$s"; done
-T="$PLUGIN/evals/triage-approval-gate/case.yaml"
+T="$EVALS/triage-approval-gate/case.yaml"
 for s in "name: asks-per-item" "name: no-claim-of-writing-records" "name: ok-not-counted-as-the-rules"; do assert_contains "$T" "$s"; done
 assert_not_contains "$T" "name: asks-per-item-and-does-not-claim-writes"
 
 # Judge counts: one per clause that needs judgment
 for pair in design-vague-ac:1 init-audit:2 run-zero-tests:2 triage-approval-gate:3 design-lint-draft:1; do
   c=${pair%%:*}; want=${pair##*:}
-  n=$(grep -c "type: llm" "$PLUGIN/evals/$c/case.yaml")
+  n=$(grep -c "type: llm" "$EVALS/$c/case.yaml")
   [ "$n" = "$want" ] && pass || fail "$c has $n judge graders, expected $want"
 done
 
 # run-zero-tests: the agent chains echo, ls and cat with the test command, so the narrow grant needs them (read-only)
-assert_contains "$PLUGIN/evals/README.md" '--case run-zero-tests'
-assert_contains "$PLUGIN/evals/README.md" '"Bash(echo:*)"'
+assert_contains "$EVALS/README.md" '--case run-zero-tests'
+assert_contains "$EVALS/README.md" '"Bash(echo:*)"'
 
 
 # Nightly evals workflow: manual first, the schedule is gated by a repo variable, and no plain Bash or PR trigger

@@ -88,4 +88,26 @@ out=$(cd "$B" && PATH="$B/bin:$PATH" bash install.sh proj 2>&1); st=$?
 echo "$out" | grep -qF "no plugin/ folder" && pass || fail "a source without plugin/ does not say so: $out"
 [ -e "$B/proj/.claude" ] && fail "a source without plugin/ left files in the project" || pass
 
+
+# A project install keeps the pre-approved tools the plugin carried up to 0.5.0. The plugin itself carries none.
+while IFS='|' read -r cmd want; do
+  got=$(tr -d '\r' < "$T/fresh/.claude/commands/bdd-$cmd.md" | grep '^allowed-tools:')
+  assert_equals "allowed-tools: $want" "$got" "bdd-$cmd keeps its allowed-tools in a project install"
+  n=$(tr -d '\r' < "$T/fresh/.claude/commands/bdd-$cmd.md" | grep -c '^allowed-tools:')
+  assert_equals 1 "$n" "bdd-$cmd has one allowed-tools line"
+  after=$(tr -d "\r" < "$T/fresh/.claude/commands/bdd-$cmd.md" | awk '/^description:/{getline; print; exit}')
+  assert_equals "allowed-tools: $want" "$after" "bdd-$cmd has allowed-tools right after the description"
+done <<'TABLE'
+discover|["Agent", "Bash", "Read", "Grep", "Glob", "AskUserQuestion"]
+design|["Agent", "Bash", "Read", "Grep", "Glob", "AskUserQuestion"]
+implement|["Agent", "Bash", "Read", "Write", "Edit", "Grep", "Glob"]
+run|["Agent", "Bash", "Read", "Write", "Grep", "Glob", "AskUserQuestion"]
+triage|["Agent", "Bash", "Read", "Edit", "Write", "Grep", "Glob", "AskUserQuestion"]
+reconcile|["Bash", "Read", "Grep", "Glob"]
+TABLE
+for c in discover design implement run triage reconcile init; do
+  [ "$(tr -d '\r' < "$ROOT/plugin/commands/$c.md" | grep -c '^allowed-tools:')" = 0 ] && pass || fail "plugin $c still has allowed-tools"
+done
+# the project install gets the script and schema from the repo root
+assert_contains "$ROOT/install.sh" 'SCRIPTS_DIR="$SOURCE_DIR/scripts"'
 finish

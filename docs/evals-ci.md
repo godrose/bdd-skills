@@ -1,6 +1,6 @@
 # Evals in CI
 
-The plugin evals run in GitHub Actions from `.github/workflows/evals.yml`. How to run them by hand is in `plugin/evals/README.md`.
+The plugin evals run in GitHub Actions from `.github/workflows/evals.yml`. How to run them by hand is in `evals/README.md`.
 
 ## In CI
 

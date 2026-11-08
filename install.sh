@@ -11,7 +11,8 @@
 # What it does:
 #   1. If no local source, clones godrose/bdd-skills to a temp dir
 #   2. Copies plugin/commands/ and plugin/agents/ into .claude/ with a source header and project names (bdd-design),
-#      plus plugin/scripts/ and plugin/schemas/ for the decision log
+#      plus scripts/ and schemas/ for the decision log, and puts back the pre-approved tools
+#      the plugin does not carry
 #   3. Copies plugin/bdd-config.template.md as .claude/bdd-config.md (if not exists)
 #   4. Prints next steps
 
@@ -41,6 +42,8 @@ fi
 
 # The plugin files live in plugin/. A source without that folder cannot be installed.
 PLUGIN_DIR="$SOURCE_DIR/plugin"
+SCRIPTS_DIR="$SOURCE_DIR/scripts"
+SCHEMAS_DIR="$SOURCE_DIR/schemas"
 if [ ! -f "$PLUGIN_DIR/commands/design.md" ]; then
   echo "install.sh: no plugin/ folder in $SOURCE_DIR. Use a current copy of the repo." >&2
   [ -n "$CLEANUP" ] && rm -rf "$CLEANUP"
@@ -64,13 +67,28 @@ to_project() {
   sed -E '/^> Plugin note:/{N;d;}; s#"\$\{CLAUDE_PLUGIN_ROOT\}"/scripts/decisions\.sh#.claude/scripts/decisions.sh#g; s/bdd:(discover|design|implement|run|triage|reconcile|verifier)/bdd-\1/g; s/^name: verifier(\r?)$/name: bdd-verifier\1/'
 }
 
+# The plugin carries no pre-approved tools, because the directory refuses them. A project install is not scanned,
+# so each command gets back the list it had up to 0.5.0.
+tools_for() {
+  case "$1" in
+    discover|design) echo '["Agent", "Bash", "Read", "Grep", "Glob", "AskUserQuestion"]' ;;
+    implement) echo '["Agent", "Bash", "Read", "Write", "Edit", "Grep", "Glob"]' ;;
+    run) echo '["Agent", "Bash", "Read", "Write", "Grep", "Glob", "AskUserQuestion"]' ;;
+    triage) echo '["Agent", "Bash", "Read", "Edit", "Write", "Grep", "Glob", "AskUserQuestion"]' ;;
+    reconcile) echo '["Bash", "Read", "Grep", "Glob"]' ;;
+    *) echo "" ;;
+  esac
+}
+
 # Inject source header into a skill file and write to destination
 install_skill() {
   local src="$1"
   local dst="$2"
   local body
   body=$(mktemp)
-  to_project < "$src" > "$body"
+  local tools
+  tools=$(tools_for "$(basename "$dst" .md | sed "s/^bdd-//")")
+  to_project < "$src" | awk -v t="$tools" '{print} t != "" && !d && /^description:/ {cr = ($0 ~ /\r$/) ? "\r" : ""; printf "allowed-tools: %s%s\n", t, cr; d=1}' > "$body"
   src="$body"
 
   # Read the file, inject source comment after the frontmatter opening ---
@@ -111,9 +129,9 @@ done
 for s in discover design implement run triage reconcile; do
   install_skill "$PLUGIN_DIR/commands/$s.md" "$CLAUDE_DIR/commands/bdd-$s.md"
 done
-cp "$PLUGIN_DIR/scripts/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
+cp "$SCRIPTS_DIR/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
 chmod +x "$CLAUDE_DIR/scripts/decisions.sh"
-cp "$PLUGIN_DIR/schemas/decision.schema.json" "$CLAUDE_DIR/schemas/decision.schema.json"
+cp "$SCHEMAS_DIR/decision.schema.json" "$CLAUDE_DIR/schemas/decision.schema.json"
 install_skill "$PLUGIN_DIR/agents/verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
 
 echo "Installed BDD skills (from $REPO_URL ${VERSION:-}):"
