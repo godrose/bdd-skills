@@ -324,6 +324,7 @@ Contributions from individuals and from teams are welcome. No sign-off form is n
 - This repo uses its own method. A larger change (a new command, a config row, anything in install) starts with a discovery pack in `docs/discovery/`. A small fix, rename or copy edit does not. `CLAUDE.md` has the details.
 - Run `bash tests/run.sh` before you open a pull request. A new test must fail before your change and pass after it.
 - Fill in the pull request template.
+- What the plugin does not check is listed in [`docs/known-gaps.md`](docs/known-gaps.md). When you close a gap, remove its entry in the same change.
 
 ## License
 
