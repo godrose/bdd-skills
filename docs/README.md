@@ -30,7 +30,8 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-05-rename-repo-bdd-skills.md` | Rename the repo to `bdd-skills` (marketplace name superseded in part) |
 | `2026-11-08-red-first-and-known-gaps.md` | The red-first check in `implement`, and a known-gaps file |
 | `2026-11-08-plugin-in-subfolder.md` | Move the plugin into a `plugin/` folder, so the directory scan reads only plugin files |
-| `2026-11-08-evals-ci-out-of-plugin.md` | Move the CI token setup out of the plugin folder, after the second validation report |
+| `2026-11-08-evals-ci-out-of-plugin.md` | Move the CI token setup out of the plugin folder, after the second validation report |
+| `2026-11-08-allowed-tools-decision.md` | Keep the broad `allowed-tools` grants, say why in the listing, and record the gap |
 
 Maintainer notes for the nightly evals are in `evals-ci.md`.
 

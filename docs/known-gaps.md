@@ -43,3 +43,11 @@ Each gap says what is not checked, why it is still open, and what would close it
 **Why.** An `implement` eval needs a fixture with a test runner that works on the CI machine, which is a larger piece of work than the check itself.
 
 **Closed when.** An `implement` eval covers a natural red, a forced red and a scenario that is not seen red, and runs in the nightly.
+
+### G6 The commands pre-approve broad tools
+
+**Not checked.** `allowed-tools` in the commands names bare `Bash` (all seven), `Write` (three) and `Edit` (three). The directory scan reports this as a policy hold and sends the plugin to a reviewer.
+
+**Why.** The commands run the **prepare**, **generate**, **test** and **lint** commands from `bdd-config.md`. They differ for every project, and a grant in a command's front matter cannot read the config. The write paths (`features_dir`, `steps_dir`, `decisions_dir`) also come from the config. A fixed `Bash(...)` or `Write(...)` pattern would block real projects or be as wide as the bare tool.
+
+**Closed when.** Claude Code lets a command's grants be built from the project's config, or the plugin keeps its own commands separate from the user's commands and a narrow grant covers the first set.
