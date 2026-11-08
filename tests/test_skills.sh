@@ -333,4 +333,10 @@ assert_no_added_emdash tests/test_skills.sh docs/discovery/2026-11-05-lint-in-de
 # the audit's closing line is printed word for word and is the last line (the init-audit eval checks it)
 assert_contains "$PLUGIN/commands/init.md" 'word for word'
 assert_contains "$PLUGIN/commands/init.md" 'Nothing follows it'
+
+# an ambiguous locator is scoped, not settled with .first()
+assert_not_contains "$PLUGIN/commands/implement.md" 'Use `.first()` on locators that may match multiple elements'
+assert_contains "$PLUGIN/commands/implement.md" 'Scope the locator to the element you mean'
+assert_contains "$PLUGIN/commands/implement.md" 'Use `.first()` only when the first match is part of the behavior being tested'
+assert_contains "$PLUGIN/commands/implement.md" 'hide the ambiguity'
 finish
