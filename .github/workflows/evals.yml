@@ -42,7 +42,7 @@ jobs:
             if [ "$c" = run-zero-tests ]; then
               grants+=("Bash(sh ./fake-test.sh:*)" "Bash(echo:*)" "Bash(ls:*)" "Bash(cat:*)")
             fi
-            claude plugin eval plugin --trust-plugin --scaffold --runs 3 --ablation none \
+            bash evals/run.sh --trust-plugin --scaffold --runs 3 --ablation none \
               --model haiku --judge-model sonnet --no-publish \
               --max-cost-usd 1 --threshold 0.8 \
               --output-dir "results/$c" --case "$c" \

@@ -1,6 +1,5 @@
 ---
 description: "Discover what to build before designing scenarios: turn a story into questions, examples, edge cases and exclusions through a dialogue"
-allowed-tools: ["Agent", "Bash", "Read", "Grep", "Glob", "AskUserQuestion"]
 ---
 
 ## BDD Discover

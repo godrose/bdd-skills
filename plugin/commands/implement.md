@@ -1,6 +1,5 @@
 ---
 description: "Implement a BDD scenario step by step - explore the system under test, implement steps, verify iteratively"
-allowed-tools: ["Agent", "Bash", "Read", "Write", "Edit", "Grep", "Glob"]
 ---
 
 ## BDD Implement Scenario

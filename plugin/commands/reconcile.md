@@ -1,6 +1,5 @@
 ---
 description: "Check the decision log against the scenarios: find orphans, drift, undecided scenarios and contradictions. Reports only, never edits."
-allowed-tools: ["Bash", "Read", "Grep", "Glob"]
 ---
 
 ## BDD Reconcile
@@ -23,7 +22,7 @@ The script needs `jq`. Run `command -v jq`. If it is missing, say so and give an
 - `--all`: audit everything, with no `--base`.
 - `--show STORY [--since REF] [--channel URL]`: print the story page.
 
-> Plugin note: the script path in the commands below is an absolute path inside the plugin. If it still starts with `$`, or the script is not found, say the plugin root was not set, and stop. Do not search for the script elsewhere.
+> Plugin note: the decision log script is not part of the plugin. If the script path below is not a file, say "The decision log needs the project install of this repository, which provides the script." and stop. Do not search for the script elsewhere.
 
 ### Steps
 

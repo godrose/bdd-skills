@@ -12,7 +12,7 @@ assert_file "$ROOT/.claude-plugin/marketplace.json"
 assert_equals "./plugin" "$(jq -r '.plugins[0].source' "$ROOT/.claude-plugin/marketplace.json" 2>/dev/null)" "marketplace source"
 
 # what goes inside, and what must not stay at the root
-for d in commands agents scripts schemas evals; do
+for d in commands agents; do
   [ -d "$PLUGIN/$d" ] && pass || fail "plugin/$d is missing"
   [ -e "$ROOT/$d" ] && fail "$d is still at the repo root" || pass
 done
@@ -20,10 +20,10 @@ assert_file "$PLUGIN/bdd-config.template.md"
 [ -e "$ROOT/bdd-config.template.md" ] && fail "bdd-config.template.md is still at the repo root" || pass
 
 # what stays at the root
-for p in tests docs .github install.sh CLAUDE.md CHANGELOG.md README.md LICENSE; do
+for p in tests docs .github install.sh CLAUDE.md CHANGELOG.md README.md LICENSE evals scripts schemas; do
   [ -e "$ROOT/$p" ] && pass || fail "$p is missing at the repo root"
 done
-for p in tests docs .github install.sh CLAUDE.md CHANGELOG.md; do
+for p in tests docs .github install.sh CLAUDE.md CHANGELOG.md evals scripts schemas; do
   [ -e "$PLUGIN/$p" ] && fail "$p must not be inside plugin/" || pass
 done
 
@@ -38,14 +38,14 @@ assert_contains "$R" "https://github.com/godrose/bdd-skills"
 if cmp -s "$ROOT/LICENSE" "$PLUGIN/LICENSE"; then pass; else fail "plugin/LICENSE differs from LICENSE or is missing"; fi
 
 # the eval results folder stays ignored
-assert_contains "$ROOT/.gitignore" "plugin/evals/results/"
+assert_contains "$ROOT/.gitignore" "evals/results/"
 
 # how to run, check and evaluate the plugin
 assert_contains "$ROOT/CLAUDE.md" 'claude --plugin-dir <this repo>/plugin'
 assert_contains "$ROOT/README.md" 'claude --plugin-dir <clone>/plugin'
 assert_contains "$ROOT/README.md" 'claude plugin validate plugin'
-assert_contains "$ROOT/.github/workflows/evals.yml" 'claude plugin eval plugin'
-assert_contains "$PLUGIN/evals/README.md" 'claude plugin eval plugin'
+assert_contains "$ROOT/.github/workflows/evals.yml" "evals/run.sh"
+assert_contains "$EVALS/README.md" 'evals/run.sh'
 
 # CI keeps the layout from regressing
 CI="$ROOT/.github/workflows/ci.yml"
@@ -71,14 +71,33 @@ assert_equals "$iw" "$ih" "icon.png is square"
 # the directory scan pairs a token note with a case regex as a credential leaving the machine, so CI setup lives outside plugin/
 if grep -rIlE "setup-token|CLAUDE_CODE_OAUTH_TOKEN" "$PLUGIN" --exclude-dir=results 2>/dev/null | grep -q .; then fail "plugin/ names the CI token setup"; else pass; fi
 assert_file "$ROOT/docs/evals-ci.md"
-assert_contains "$PLUGIN/evals/README.md" "docs/evals-ci.md"
+assert_contains "$EVALS/README.md" "docs/evals-ci.md"
 assert_contains "$ROOT/docs/README.md" "evals-ci.md"
 
-# the grants are broad on purpose, and the listing says why
+
+# the directory's policy for organizations that are not Verified: allowed file types, no scripts, and no pre-approved tools beyond the read tools
+bad=$(git -C "$ROOT" ls-files plugin | grep -vE '\.(md|txt|json|yaml|yml|png|jpe?g|gif|webp|ico)$' | grep -vE '(^|/)(LICENSE|\.gitignore)$')
+[ -z "$bad" ] && pass || fail "plugin/ holds files of a type the directory refuses: $(echo $bad | tr '\n' ' ')"
+shebang=""
+for f in $(git -C "$ROOT" ls-files plugin); do
+  [ "$(head -c2 "$ROOT/$f" 2>/dev/null)" = "#!" ] && shebang="$shebang $f"
+done
+[ -z "$shebang" ] && pass || fail "plugin/ holds files that start with #!:$shebang"
+pkg=$(git -C "$ROOT" ls-files plugin | grep -E '(^|/)(package(-lock)?\.json|pnpm-workspace\.yaml|\.npmrc|yarn\.lock)$')
+[ -z "$pkg" ] && pass || fail "plugin/ holds package-manager files: $pkg"
+for f in "$PLUGIN"/commands/*.md "$PLUGIN"/agents/*.md; do
+  line=$(tr -d '\r' < "$f" | grep -E '^(allowed-tools|allowedTools|tools):' | head -1)
+  extra=$(echo "$line" | grep -oE '"[^"]*"' | tr -d '"' | grep -vE '^(Read|Grep|Glob|LS)$')
+  [ -z "$extra" ] && pass || fail "$(basename "$f") pre-approves tools beyond Read, Grep, Glob and LS: $(echo $extra | tr '\n' ' ')"
+done
+
+# the listing says what the commands do about permissions
 assert_contains "$PLUGIN/README.md" "## Tool permissions"
-assert_contains "$PLUGIN/README.md" "bdd-config.md"
 assert_contains "$PLUGIN/README.md" "known-gaps.md"
-assert_contains "$ROOT/docs/README.md" "allowed-tools-decision.md"
+assert_contains "$PLUGIN/README.md" "pre-approve nothing"
+assert_not_contains "$PLUGIN/README.md" "pre-approve \`Bash\`"
+assert_contains "$ROOT/docs/README.md" "directory-policy.md"
+assert_contains "$ROOT/CLAUDE.md" "refuses"
 
 # the older packs stay as written, and the index says their paths follow the earlier layout
 assert_contains "$ROOT/docs/README.md" 'earlier layout'

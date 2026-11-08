@@ -1,3 +1,5 @@
+> **Superseded** by `2026-11-08-directory-policy.md`. The directory refused the plugin for these grants, so they were removed.
+
 # Discovery: the broad `allowed-tools` grants
 
 Input: the directory's validation reports of 2026-11-08, and a read of each command for what its tools are used for.

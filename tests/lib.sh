@@ -1,5 +1,6 @@
 #!/bin/bash
 PLUGIN="$ROOT/plugin"
+EVALS="$ROOT/evals"
 PASSES=0
 FAILS=0
 

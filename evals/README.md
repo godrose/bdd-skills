@@ -14,29 +14,32 @@ Each case copies its `fixture/` into the run folder with `scaffold.sh`, so every
 
 ## Run it
 
+
+The eval tool reads cases from a folder below the plugin, and the plugin folder cannot hold scripts or fixtures. So `evals/run.sh` builds a temporary copy of `plugin/` with these cases inside it and runs the tool there. Pass it the same options as `claude plugin eval`.
+
 Runs are full Claude Code sessions on your own login. They draw on your plan's usage limit, so start small. A first pilot is one run per case, no baseline arm and a small model:
 
 ```bash
-claude plugin eval plugin --scaffold --runs 1 --ablation none --model haiku --judge-model sonnet --no-publish \
+bash evals/run.sh --scaffold --runs 1 --ablation none --model haiku --judge-model sonnet --no-publish \
   --allow-tools Write Edit "Bash(sh ./fake-test.sh:*)"
 ```
 
 - `--scaffold` runs the cases' `scaffold.sh` as you. Use it only on cases you wrote.
 - `--no-publish` keeps the report local. It holds prompts and outputs.
 - Drop `--runs 1` for the default of 3 runs, and drop `--ablation none` to add the no-plugin baseline. Both multiply the usage.
-- `plugin/evals/results/` is ignored by git.
+- `evals/results/` is ignored by git.
 
 `design-lint-draft` runs the lint row, writes a temp draft file and deletes it. The agent chains commands (`cd x && sh ./fake-lint.sh`), and narrow `Bash(...)` grants deny them, so the lint step never runs. Give it plain `Bash`, only for this case:
 
 ```bash
-claude plugin eval plugin --scaffold --runs 1 --ablation none --model haiku --judge-model sonnet --no-publish \
+bash evals/run.sh --scaffold --runs 1 --ablation none --model haiku --judge-model sonnet --no-publish \
   --case design-lint-draft --allow-tools Write Edit Bash
 ```
 
 `run-zero-tests` runs the fake test command, and the agent chains `echo`, `ls` and `cat` with it. Give it those read-only commands, not plain `Bash`:
 
 ```bash
-claude plugin eval plugin --scaffold --runs 1 --ablation none --model haiku --judge-model sonnet --no-publish \
+bash evals/run.sh --scaffold --runs 1 --ablation none --model haiku --judge-model sonnet --no-publish \
   --case run-zero-tests --allow-tools Write Edit "Bash(sh ./fake-test.sh:*)" "Bash(echo:*)" "Bash(ls:*)" "Bash(cat:*)"
 ```
 

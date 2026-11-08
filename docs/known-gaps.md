@@ -44,10 +44,11 @@ Each gap says what is not checked, why it is still open, and what would close it
 
 **Closed when.** An `implement` eval covers a natural red, a forced red and a scenario that is not seen red, and runs in the nightly.
 
-### G6 The commands pre-approve broad tools
 
-**Not checked.** `allowed-tools` in the commands names bare `Bash` (all seven), `Write` (three) and `Edit` (three). The directory scan reports this as a policy hold and sends the plugin to a reviewer.
+### G6 No eval runs the decision log with its script present
 
-**Why.** The commands run the **prepare**, **generate**, **test** and **lint** commands from `bdd-config.md`. They differ for every project, and a grant in a command's front matter cannot read the config. The write paths (`features_dir`, `steps_dir`, `decisions_dir`) also come from the config. A fixed `Bash(...)` or `Write(...)` pattern would block real projects or be as wide as the bare tool.
+**Not checked.** The marketplace plugin does not ship `decisions.sh`, so every eval runs with the script missing. `triage-approval-gate` has `decision_log: on` and so runs the "needs the project install, nothing was recorded" path. Nothing runs `design`, `triage` or `reconcile` against the script that `install.sh` copies.
 
-**Closed when.** Claude Code lets a command's grants be built from the project's config, or the plugin keeps its own commands separate from the user's commands and a narrow grant covers the first set.
+**Why.** The eval tool loads only the plugin folder, and the plugin cannot carry the script. A case that needs it must put the script into the fixture, and the fixture is not scanned.
+
+**Closed when.** A case's scaffold copies `scripts/decisions.sh` into the fixture as `.claude/scripts/decisions.sh`, and runs a project-install copy of the commands against it.

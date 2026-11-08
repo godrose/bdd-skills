@@ -1,6 +1,5 @@
 ---
 description: "Turn pasted discussion (Slack, Jira, PR comments) into proposed scenario edits and decision records, then write them only after approval"
-allowed-tools: ["Agent", "Bash", "Read", "Edit", "Write", "Grep", "Glob", "AskUserQuestion"]
 ---
 
 ## BDD Triage
@@ -17,7 +16,7 @@ Take the discussion about a story and turn it into reviewed changes: scenario ed
 - Pasted text. The builder labels each pasted block with its channel: Slack, Jira or PR. Several channels can come in one run.
 - If the `requirements-sync` skill is configured and can read comments, you may fetch the Jira comments yourself.
 
-> Plugin note: the script path in the commands below is an absolute path inside the plugin. If it still starts with `$`, or the script is not found, say the plugin root was not set, and stop. Do not search for the script elsewhere.
+> Plugin note: the decision log script is not part of the plugin. If `decision_log` is `on` and the script path below is not a file, say "The decision log needs the project install of this repository, which provides the script. Nothing was recorded.", go on without records, and do not search for the script elsewhere.
 
 ### Steps
 

@@ -28,6 +28,7 @@ Spikes and trials on real projects still come after discovery. They find what qu
 - Plugin text uses plugin names (`bdd:design`). `install.sh` converts it for project installs. Do not write project-form names or `.claude/scripts` paths in the plugin tree.
 - Run `bash tests/run.sh` before every commit. A new test must fail before the change.
 - Never tell users to delete with a `bdd-*` glob. Their own skills match it.
+- The plugin folder holds only Markdown, text, JSON, YAML and PNG, JPEG, GIF, WebP or ICO files. It holds no file that starts with `#!`, no package-manager config and no `allowed-tools` beyond Read, Grep, Glob and LS. The directory refuses all of these from an organization that is not Verified. Scripts, schemas for them and the evals live at the repo root. A test checks it.
 
 ## Releasing
 

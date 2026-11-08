@@ -1,6 +1,5 @@
 ---
 description: "Design BDD scenarios from user stories or ACs: analyze coverage gaps, formulate scenarios, audit step reuse, then implement or stop at the approved spec"
-allowed-tools: ["Agent", "Bash", "Read", "Grep", "Glob", "AskUserQuestion"]
 ---
 
 ## BDD Scenario Design
@@ -173,7 +172,7 @@ In `specify-only` mode, do not implement. Write the `.feature` files and tag eac
 
 **Decision log.** Read **decision_log**. When it is `on` and the change passes the size gate (more than a wording fix), then after approval, in both modes:
 
-> Plugin note: the script path in the commands below is an absolute path inside the plugin. If it still starts with `$`, or the script is not found, say the plugin root was not set, and stop. Do not search for the script elsewhere.
+> Plugin note: the decision log script is not part of the plugin. If `decision_log` is `on` and the script path below is not a file, say "The decision log needs the project install of this repository, which provides the script. Nothing was recorded.", go on without records, and do not search for the script elsewhere.
 
 1. Write a decision record to `<decisions_dir>/<story>.jsonl` for each approved scenario and each exclusion. Take `fp` from `"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh fingerprint <spec-id> --features <features_dir>`.
 2. Tag each scenario with `@<scenario_id_prefix><slug>`. Never change an id once written.
