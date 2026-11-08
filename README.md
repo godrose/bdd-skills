@@ -247,6 +247,7 @@ Each scenario in the log carries a stable tag such as `@spec-export-empty-list`.
 plugin/                         # The plugin. Claude Code installs this folder
   .claude-plugin/
     plugin.json                 # Plugin manifest: name, version, description
+    icon.png                    # The listing icon for the plugin directory
   commands/
     init.md                     # Plugin only: create .claude/bdd-config.md from the template (copy only)
     discover.md                 # Discover what to build: questions, examples, edge cases, exclusions

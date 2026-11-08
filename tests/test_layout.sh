@@ -56,6 +56,18 @@ assert_contains "$CI" '@anthropic-ai/claude-code@'
 assert_contains "$ROOT/install.sh" 'PLUGIN_DIR="$SOURCE_DIR/plugin"'
 assert_contains "$ROOT/install.sh" 'no plugin/ folder'
 
+# the listing icon: a square PNG, 512 to 2048 px on each side, under 2 MB. The portal fixes it at the first save or submit.
+ICON="$PLUGIN/.claude-plugin/icon.png"
+assert_file "$ICON"
+sig=$(od -An -tu1 -N8 "$ICON" 2>/dev/null | tr -s " " | sed "s/^ //; s/ $//")
+assert_equals "137 80 78 71 13 10 26 10" "$sig" "icon.png is a PNG"
+dims=$(od -An -tu1 -j16 -N8 "$ICON" 2>/dev/null)
+set -- $dims
+iw=$((${1:-0} * 16777216 + ${2:-0} * 65536 + ${3:-0} * 256 + ${4:-0})); ih=$((${5:-0} * 16777216 + ${6:-0} * 65536 + ${7:-0} * 256 + ${8:-0}))
+assert_equals "$iw" "$ih" "icon.png is square"
+[ "$iw" -ge 512 ] && [ "$iw" -le 2048 ] && pass || fail "icon.png is ${iw}px, need 512 to 2048"
+[ "$(wc -c < "$ICON" 2>/dev/null || echo 99999999)" -lt 2097152 ] && pass || fail "icon.png is 2 MB or more, or missing"
+
 # the older packs stay as written, and the index says their paths follow the earlier layout
 assert_contains "$ROOT/docs/README.md" 'earlier layout'
 
