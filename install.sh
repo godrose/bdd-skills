@@ -30,7 +30,13 @@ else
   SOURCE_DIR="$(mktemp -d)"
   CLEANUP="$SOURCE_DIR"
   echo "Cloning $REPO_URL ($REPO_BRANCH)..."
-  git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$SOURCE_DIR" 2>&1 | grep -v "^$"
+  if ! clone_out=$(git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$SOURCE_DIR" 2>&1); then
+    echo "$clone_out" >&2
+    echo "install.sh: could not clone $REPO_URL. Check your network and your git access to the repository." >&2
+    rm -rf "$CLEANUP"
+    exit 1
+  fi
+  echo "$clone_out" | grep -v "^$" || true
 fi
 
 # The plugin files live in plugin/. A source without that folder cannot be installed.

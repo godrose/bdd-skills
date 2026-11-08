@@ -48,6 +48,7 @@ Nothing blocked, and the name and publisher checks passed. The findings, with th
 | 11 | How tests find the plugin | One variable, `PLUGIN="$ROOT/plugin"`, set in `tests/lib.sh`. The tests use it for the plugin tree. | One place to change. |
 | 12 | Older packs | Left as written. `docs/README.md` says paths in older packs follow the earlier layout. | Packs are records of their day. |
 | 13 | Keep the layout from regressing | CI runs `claude plugin validate plugin` and fails on any finding. The version of Claude Code is pinned in the workflow. | Validation needs no login. A moved file or a broken manifest is caught on the pull request, not at submission. |
+| 14 | A failed clone in `install.sh` | The installer says "could not clone" and stops, and leaves no files in the project. A source without `plugin/` gets its own message. | The trial found a failed clone reported as a missing plugin folder, which blames the wrong thing. |
 
 ## Existing users
 
@@ -72,6 +73,7 @@ A fresh install behaves as today. A contributor who clones the repo sees `plugin
 5. `tests/check_release.sh` and the version tests read `plugin/.claude-plugin/plugin.json`. They must fail clearly if the file is missing.
 6. The evals workflow uploads results from `evals/results/`. It must use the new path.
 7. `install.sh` run from a copy with no `plugin/` folder: stop with a clear message.
+8. `install.sh` cannot clone the repository, for example with no network or no git access to a private repo: say that, not that `plugin/` is missing.
 
 ## Candidate exclusions
 
@@ -99,11 +101,22 @@ Each must fail before the change.
 - The README and `CLAUDE.md` say `--plugin-dir <clone>/plugin`.
 - The evals workflow and the README run `claude plugin eval plugin`.
 - `ci.yml` runs `claude plugin validate plugin` with a pinned Claude Code version.
+- `install.sh` reports a failed clone and a source without `plugin/` with different messages, and leaves the project untouched in both cases. A stub `git` keeps the test offline.
 
 ## Trial after the change
 
 On a clean profile, install `bdd@gennadyverdel-plugins` at `0.4.0`. Point the marketplace at the branch and run an update. Record what Claude Code does. Then install fresh from the branch and confirm the seven commands and the agent load.
 
+## Trial results (2026-11-08)
+
+Run in an isolated Claude Code config, so no real setup was touched.
+
+- **Fresh install from the new layout:** the marketplace entry `./plugin` resolves. The plugin installs at `0.4.0`, with the seven commands and the agent. The cache holds only the plugin folder, with no tests, docs or CI.
+- **An install made from the old layout, then the marketplace moves to the new one, same version:** `plugin update` reports it is already at `0.4.0` and changes nothing. The old cached copy keeps working.
+- **Then a release bumps to `0.5.0`:** `plugin update` moves from `0.4.0` to `0.5.0`. The `0.5.0` cache holds only the plugin folder. The `0.4.0` cache is left in place.
+- **The installer:** a failed clone was reported as a missing plugin folder. Fixed, decision 14.
+- **Not tried:** a marketplace hosted on GitHub. Local `file://` sources are not accepted, so the update path above was run against a local folder. The cache behavior is the same for both, by version, but this was not observed on GitHub itself.
+
 ## Readiness
 
-Ready for `bdd:design`. No open questions. Decisions 2 to 13, the edge cases and every exclusion are confirmed.
+Ready for `bdd:design`. No open questions. Decisions 2 to 13, the edge cases and every exclusion are confirmed. Decision 14 and edge case 8 were added by the trial.

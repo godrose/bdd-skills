@@ -72,4 +72,20 @@ done
 [ -e "$T/fresh/.claude/commands/bdd-init.md" ] && fail "project install has an init command" || pass
 [ -e "$T/fresh/.claude/commands/init.md" ] && fail "project install has an init command" || pass
 
+# The installer says what went wrong when it cannot get the plugin files (a stub git keeps this offline).
+B="$T/nogit"; mkdir -p "$B/bin" "$B/proj"
+cp "$ROOT/install.sh" "$B/install.sh"
+printf '#!/bin/sh\necho "Cloning into stub"\nexit 1\n' > "$B/bin/git"; chmod +x "$B/bin/git"
+out=$(cd "$B" && PATH="$B/bin:$PATH" bash install.sh proj 2>&1); st=$?
+[ "$st" -ne 0 ] && pass || fail "a failed clone exits 0"
+echo "$out" | grep -qF "could not clone" && pass || fail "a failed clone does not say so: $out"
+echo "$out" | grep -qF "no plugin/ folder" && fail "a failed clone is reported as a missing plugin folder" || pass
+[ -e "$B/proj/.claude" ] && fail "a failed clone left files in the project" || pass
+
+printf '#!/bin/sh\necho "Cloning into stub"\nexit 0\n' > "$B/bin/git"
+out=$(cd "$B" && PATH="$B/bin:$PATH" bash install.sh proj 2>&1); st=$?
+[ "$st" -ne 0 ] && pass || fail "a source without plugin/ exits 0"
+echo "$out" | grep -qF "no plugin/ folder" && pass || fail "a source without plugin/ does not say so: $out"
+[ -e "$B/proj/.claude" ] && fail "a source without plugin/ left files in the project" || pass
+
 finish
