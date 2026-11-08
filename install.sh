@@ -10,9 +10,9 @@
 #
 # What it does:
 #   1. If no local source, clones godrose/bdd-skills to a temp dir
-#   2. Copies commands/ and agents/ into .claude/ with a source header and project names (bdd-design),
-#      plus scripts/ and schemas/ for the decision log
-#   3. Copies bdd-config.template.md as .claude/bdd-config.md (if not exists)
+#   2. Copies plugin/commands/ and plugin/agents/ into .claude/ with a source header and project names (bdd-design),
+#      plus plugin/scripts/ and plugin/schemas/ for the decision log
+#   3. Copies plugin/bdd-config.template.md as .claude/bdd-config.md (if not exists)
 #   4. Prints next steps
 
 set -e
@@ -21,7 +21,7 @@ REPO_URL="https://github.com/godrose/bdd-skills"
 REPO_BRANCH="main"
 
 # Determine source directory
-if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/commands/design.md" ]; then
+if [ -n "${BASH_SOURCE[0]}" ] && [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/plugin/commands/design.md" ]; then
   # Running from a local clone
   SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   CLEANUP=""
@@ -30,7 +30,21 @@ else
   SOURCE_DIR="$(mktemp -d)"
   CLEANUP="$SOURCE_DIR"
   echo "Cloning $REPO_URL ($REPO_BRANCH)..."
-  git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$SOURCE_DIR" 2>&1 | grep -v "^$"
+  if ! clone_out=$(git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$SOURCE_DIR" 2>&1); then
+    echo "$clone_out" >&2
+    echo "install.sh: could not clone $REPO_URL. Check your network and your git access to the repository." >&2
+    rm -rf "$CLEANUP"
+    exit 1
+  fi
+  echo "$clone_out" | grep -v "^$" || true
+fi
+
+# The plugin files live in plugin/. A source without that folder cannot be installed.
+PLUGIN_DIR="$SOURCE_DIR/plugin"
+if [ ! -f "$PLUGIN_DIR/commands/design.md" ]; then
+  echo "install.sh: no plugin/ folder in $SOURCE_DIR. Use a current copy of the repo." >&2
+  [ -n "$CLEANUP" ] && rm -rf "$CLEANUP"
+  exit 1
 fi
 
 TARGET="${1:-.}"
@@ -95,12 +109,12 @@ done
 
 # Install skills with source headers
 for s in discover design implement run triage reconcile; do
-  install_skill "$SOURCE_DIR/commands/$s.md" "$CLAUDE_DIR/commands/bdd-$s.md"
+  install_skill "$PLUGIN_DIR/commands/$s.md" "$CLAUDE_DIR/commands/bdd-$s.md"
 done
-cp "$SOURCE_DIR/scripts/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
+cp "$PLUGIN_DIR/scripts/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
 chmod +x "$CLAUDE_DIR/scripts/decisions.sh"
-cp "$SOURCE_DIR/schemas/decision.schema.json" "$CLAUDE_DIR/schemas/decision.schema.json"
-install_skill "$SOURCE_DIR/agents/verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
+cp "$PLUGIN_DIR/schemas/decision.schema.json" "$CLAUDE_DIR/schemas/decision.schema.json"
+install_skill "$PLUGIN_DIR/agents/verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
 
 echo "Installed BDD skills (from $REPO_URL ${VERSION:-}):"
 echo "  $CLAUDE_DIR/commands/bdd-discover.md"
@@ -115,7 +129,7 @@ echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
 # Config template - only copy if no config exists yet
 if [ ! -f "$CLAUDE_DIR/bdd-config.md" ]; then
-  to_project < "$SOURCE_DIR/bdd-config.template.md" > "$CLAUDE_DIR/bdd-config.md"
+  to_project < "$PLUGIN_DIR/bdd-config.template.md" > "$CLAUDE_DIR/bdd-config.md"
   echo "  $CLAUDE_DIR/bdd-config.md (from template - edit this for your project)"
 else
   echo ""

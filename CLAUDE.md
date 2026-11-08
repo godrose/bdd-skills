@@ -12,7 +12,7 @@ Run discovery before writing a spec or any code when the change is any of these:
 
 Skip it only for what `commands/discover.md` calls trivial: a one-line fix, a rename, a copy edit. Say so in one sentence.
 
-Discovery means the questions, examples, edge cases and exclusions that `/bdd:discover` asks, one question at a time. Run it with `claude --plugin-dir <this repo>`, or follow `commands/discover.md` by hand. Save the pack in `docs/discovery/`.
+Discovery means the questions, examples, edge cases and exclusions that `/bdd:discover` asks, one question at a time. Run it with `claude --plugin-dir <this repo>/plugin`, or follow `plugin/commands/discover.md` by hand. Save the pack in `docs/discovery/`.
 
 ## The spec must cover
 

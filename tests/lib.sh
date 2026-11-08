@@ -1,4 +1,5 @@
 #!/bin/bash
+PLUGIN="$ROOT/plugin"
 PASSES=0
 FAILS=0
 
@@ -14,6 +15,15 @@ finish() { echo "passed=$PASSES failed=$FAILS"; [ "$FAILS" -eq 0 ]; }
 
 # In-place edit that works on BSD and GNU sed. The last argument is the file.
 sedi() { local f="${!#}"; sed -i.bak "$@" && rm -f "$f.bak"; }
+
+# Print the plugin manifest as it was at a base commit. Reads the current location first and the one before the plugin moved into plugin/ second.
+base_manifest() {
+  local b="$1" p
+  for p in plugin/.claude-plugin/plugin.json .claude-plugin/plugin.json; do
+    git -C "$ROOT" show "$b:$p" 2>/dev/null && return 0
+  done
+  return 1
+}
 
 # Fail if lines added since the merge-base with main contain an em-dash (U+2014).
 # Fails loudly when there is no base ref, so a shallow checkout cannot pass vacuously.
@@ -38,17 +48,17 @@ assert_version_bumped() {
     fail "no main or origin/main to diff against"
     return
   fi
-  old=$(git -C "$ROOT" show "$base:.claude-plugin/plugin.json" 2>/dev/null | jq -r .version 2>/dev/null)
+  old=$(base_manifest "$base" | jq -r .version 2>/dev/null)
   if [ -z "$old" ]; then
     pass
     return
   fi
-  changed=$(git -C "$ROOT" diff --name-only "$base" -- commands agents scripts schemas bdd-config.template.md)
+  changed=$(git -C "$ROOT" diff --name-only "$base" -- plugin/commands plugin/agents plugin/scripts plugin/schemas plugin/bdd-config.template.md commands agents scripts schemas bdd-config.template.md)
   if [ -z "$changed" ]; then
     pass
     return
   fi
-  new=$(jq -r .version "$ROOT/.claude-plugin/plugin.json" 2>/dev/null)
+  new=$(jq -r .version "$ROOT/plugin/.claude-plugin/plugin.json" 2>/dev/null)
   if [ "$old" = "$new" ]; then
     fail "plugin files changed but the version is still $old: $(echo "$changed" | tr '\n' ' ')"
   else
@@ -65,12 +75,12 @@ assert_version_higher() {
     fail "no main or origin/main to diff against"
     return
   fi
-  old=$(git -C "$ROOT" show "$base:.claude-plugin/plugin.json" 2>/dev/null | jq -r '.version // empty' 2>/dev/null)
+  old=$(base_manifest "$base" | jq -r '.version // empty' 2>/dev/null)
   if [ -z "$old" ]; then
     pass
     return
   fi
-  new=$(jq -r '.version // empty' "$ROOT/.claude-plugin/plugin.json" 2>/dev/null)
+  new=$(jq -r '.version // empty' "$ROOT/plugin/.claude-plugin/plugin.json" 2>/dev/null)
   higher=$(printf '%s\n%s\n' "$old" "$new" | awk -F. 'NR==1{a1=$1;a2=$2;a3=$3} NR==2{b1=$1;b2=$2;b3=$3} END{if (b1>a1 || (b1==a1 && (b2>a2 || (b2==a2 && b3>a3)))) print "yes"; else print "no"}')
   if [ "$higher" = yes ]; then
     pass
