@@ -48,7 +48,7 @@ In Claude Code:
 
 ```
 /plugin marketplace add godrose/bdd-skills
-/plugin install bdd@godrose-plugins
+/plugin install bdd@gennadyverdel-plugins
 ```
 
 The repo is `bdd-skills`. The plugin is `bdd`, so its commands are `/bdd:*`.
@@ -293,8 +293,8 @@ In `specify-only` mode, `bdd:design` stops after the scenarios. `bdd:implement` 
 **Plugin.** The plugin is versioned, and a change reaches you when a new version is released. `CHANGELOG.md` lists what each version changed. Update to get the latest release:
 
 ```bash
-claude plugin marketplace update godrose-plugins
-claude plugin update bdd@godrose-plugins
+claude plugin marketplace update gennadyverdel-plugins
+claude plugin update bdd@gennadyverdel-plugins
 ```
 
 Restart Claude Code to apply the update.

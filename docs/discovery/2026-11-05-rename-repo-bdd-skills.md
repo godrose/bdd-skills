@@ -31,12 +31,12 @@ Almost none. Files written by the old installer keep `# Source: https://github.c
 
 ## First run
 
-A new visitor lands on `godrose/bdd-skills`, sees the hero, then runs `/plugin marketplace add godrose/bdd-skills` and `/plugin install bdd@godrose-plugins`. A note explains the two names.
+A new visitor lands on `godrose/bdd-skills`, sees the hero, then runs `/plugin marketplace add godrose/bdd-skills` and `/plugin install bdd@gennadyverdel-plugins`. A note explains the two names.
 
 ## Candidate exclusions (all confirmed)
 
 1. The plugin name `bdd` and the `/bdd:*` commands. Reason: no user-facing change.
-2. The marketplace name `godrose-plugins`. Reason: it is the account catalog.
+2. The marketplace name `gennadyverdel-plugins`. Reason: it is the account catalog.
 3. Old specs and discovery packs under `docs/`. Reason: history.
 4. The sibling repos `bdd-netcore` and `bdd-medium-demo`. Reason: separate projects.
 5. Never create a new repo at the old name `godrose/bdd`. Reason: it breaks the GitHub redirect.

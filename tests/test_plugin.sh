@@ -16,7 +16,7 @@ assert_equals "$VER" "$(jq -r '.plugins[0].version' "$MK" 2>/dev/null)" "marketp
 assert_contains "$ROOT/CHANGELOG.md" "## $VER"
 assert_equals bdd "$(jq -r '.plugins[0].name' "$MK" 2>/dev/null)" "marketplace plugin name"
 assert_equals "./" "$(jq -r '.plugins[0].source' "$MK" 2>/dev/null)" "marketplace plugin source"
-assert_equals godrose-plugins "$(jq -r .name "$MK" 2>/dev/null)" "marketplace name"
+assert_equals gennadyverdel-plugins "$(jq -r .name "$MK" 2>/dev/null)" "marketplace name"
 assert_equals "Gennady Verdel" "$(jq -r .author.name "$PJ" 2>/dev/null)" "plugin author is the full name"
 assert_equals "Gennady Verdel" "$(jq -r .owner.name "$MK" 2>/dev/null)" "marketplace owner is the full name"
 

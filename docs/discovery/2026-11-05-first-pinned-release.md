@@ -36,6 +36,7 @@ The repos that pin a version tag, publish releases and keep a notes file in the 
 | 6 | The bump check | Every PR: both manifests carry the same semver, and `CHANGELOG.md` has a heading for that version. Release PRs only (title starts with `release:`): a CI step runs `assert_version_bumped`, so the version must be higher than on `main`. | Feature PRs cannot be forced to bump, and a release PR cannot forget to. |
 | 7 | Keeping two files in sync | A test, not a script. | There are two files. A bump script is worth it from about five. |
 | 8 | A reversal | This replaces decision 1 of `2026-11-02-track-commits.md` ("remove `version`, every merge is a new version") and its exclusions "no tags or changelog" and "no stable-release claim". It still makes no stable claim: `0.4.0` is an early release. | The earlier pack said the choice was temporary and listed this work. |
+| 9 | Marketplace name | `gennadyverdel-plugins`, so the install id is `bdd@gennadyverdel-plugins`. This replaces `godrose-plugins` from `docs/superpowers/specs/2026-11-01-plugin-packaging-design.md` and exclusion 2 of `2026-11-05-rename-repo-bdd-skills.md`. | The catalog name now matches the full name used as plugin author and marketplace owner. Nobody had installed from the repo yet, so no user has to re-add it. |
 
 ## Existing users
 
@@ -48,7 +49,7 @@ The repos that pin a version tag, publish releases and keep a notes file in the 
 
 ## First run
 
-A fresh install of the tagged state gets plugin `bdd` at `0.4.0`. `/plugin install bdd@godrose-plugins` works as in the README. A project with no config sees the same `init` flow as today.
+A fresh install of the tagged state gets plugin `bdd` at `0.4.0`. `/plugin install bdd@gennadyverdel-plugins` works as in the README. A project with no config sees the same `init` flow as today.
 
 ## Edge cases
 

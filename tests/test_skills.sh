@@ -141,9 +141,9 @@ assert_not_contains "$ROOT/commands/discover.md" 'does not exist, say so and sto
 
 
 # Install docs: plugin first, project files second
-for s in '### As a plugin' '/plugin marketplace add godrose/bdd-skills' '/plugin install bdd@godrose-plugins' \
+for s in '### As a plugin' '/plugin marketplace add godrose/bdd-skills' '/plugin install bdd@gennadyverdel-plugins' \
   '<summary><b>As project files</b></summary>' 'use a hyphen' '`/bdd-design`' \
-  '<summary><b>Moving from project files to the plugin</b></summary>' 'claude plugin update bdd@godrose-plugins' \
+  '<summary><b>Moving from project files to the plugin</b></summary>' 'claude plugin update bdd@gennadyverdel-plugins' \
   '`/bdd:discover <story>`' '`/bdd:design`' '`/bdd:implement`'; do
   assert_contains "$R" "$s"
 done
