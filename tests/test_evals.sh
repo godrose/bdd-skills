@@ -111,7 +111,7 @@ done
 assert_not_contains "$W" "pull_request"
 # an API key would take precedence over the subscription token
 assert_not_contains "$W" "ANTHROPIC_API_KEY"
-assert_contains "$PLUGIN/evals/README.md" "setup-token"
+assert_contains "$ROOT/docs/evals-ci.md" "setup-token"
 assert_not_contains "$W" "push:"
 # the token is set on the step that runs the evals, not for the whole job
 if grep -qE "^ {0,8}CLAUDE_CODE_OAUTH_TOKEN" "$W"; then fail "CLAUDE_CODE_OAUTH_TOKEN is set above the step level in evals.yml"; else pass; fi
@@ -120,8 +120,8 @@ assert_not_contains "$W" "--allow-tools Write Edit Bash "
 assert_contains "$W" 'Bash(sh ./fake-test.sh:*)'
 # the lint case needs plain Bash, so it stays out of the loop
 assert_not_contains "$W" "for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft"
-assert_contains "$PLUGIN/evals/README.md" "## In CI"
-assert_contains "$PLUGIN/evals/README.md" "EVALS_NIGHTLY"
+assert_contains "$ROOT/docs/evals-ci.md" "## In CI"
+assert_contains "$ROOT/docs/evals-ci.md" "EVALS_NIGHTLY"
 assert_no_added_emdash tests/test_evals.sh .github/workflows/evals.yml
 
 # The Linux runner needs the sandbox backend before a shell tool is granted (first CI run: "cannot confine it")
@@ -138,6 +138,6 @@ assert_contains "$W" "All "
 assert_contains "$W" "Failed graders"
 n=$(grep -c "if: always()" "$W")
 [ "$n" = 1 ] && pass || fail "evals.yml has $n always() steps, expected only the summary"
-assert_contains "$PLUGIN/evals/README.md" "only when the job fails"
+assert_contains "$ROOT/docs/evals-ci.md" "only when the job fails"
 
 finish

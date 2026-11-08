@@ -68,6 +68,12 @@ assert_equals "$iw" "$ih" "icon.png is square"
 [ "$iw" -ge 512 ] && [ "$iw" -le 2048 ] && pass || fail "icon.png is ${iw}px, need 512 to 2048"
 [ "$(wc -c < "$ICON" 2>/dev/null || echo 99999999)" -lt 2097152 ] && pass || fail "icon.png is 2 MB or more, or missing"
 
+# the directory scan pairs a token note with a case regex as a credential leaving the machine, so CI setup lives outside plugin/
+if grep -rIlE "setup-token|CLAUDE_CODE_OAUTH_TOKEN" "$PLUGIN" --exclude-dir=results 2>/dev/null | grep -q .; then fail "plugin/ names the CI token setup"; else pass; fi
+assert_file "$ROOT/docs/evals-ci.md"
+assert_contains "$PLUGIN/evals/README.md" "docs/evals-ci.md"
+assert_contains "$ROOT/docs/README.md" "evals-ci.md"
+
 # the older packs stay as written, and the index says their paths follow the earlier layout
 assert_contains "$ROOT/docs/README.md" 'earlier layout'
 
