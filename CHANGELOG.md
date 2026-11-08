@@ -2,6 +2,24 @@
 
 Releases are tagged `vX.Y.Z`. Before `1.0.0` the plugin can still change in ways that need an edit to your config. The notes say when.
 
+## 0.5.0 (2026-11-08)
+
+The plugin now lives in a `plugin/` folder, so the directory scan and the cache hold only what users install. Nothing in your project or your `bdd-config.md` needs to change.
+
+### Commands
+
+- `/bdd:implement` has a red-first check. After the step code is written, it sees each scenario fail for the stated reason before it counts as passing. It uses a natural red when there is one, and otherwise breaks the step code on purpose and restores it. A scenario it could not see red keeps the unautomated tag, and the report says so on a `Red-first:` line.
+
+### Repo
+
+- The plugin moved into `plugin/`: `commands/`, `agents/`, `scripts/`, `schemas/`, `bdd-config.template.md`, `evals/`, a short `README.md` and a `LICENSE`. The marketplace entry points at `./plugin`.
+- To run the plugin from a clone, use `claude --plugin-dir <clone>/plugin`. Pointing it at the clone root no longer works. Use `claude plugin validate plugin` and `claude plugin eval plugin` too.
+- `install.sh` reads from `plugin/`. It says "could not clone" when the clone fails, and "no plugin/ folder" when a source has none. In both cases it leaves your project untouched.
+- A plugin listing icon, and a "Tool permissions" section in the plugin README that says why the commands pre-approve `Bash`, `Write` and `Edit`.
+- `docs/known-gaps.md` lists what the plugin does not check, with why and what would close each gap.
+- The CI token setup for the nightly evals moved from `plugin/evals/README.md` to `docs/evals-ci.md`.
+- CI runs `claude plugin validate plugin --strict` on a pinned Claude Code version.
+
 ## 0.4.0 (2026-11-05)
 
 The first pinned version. Until now the plugin had no version, so every merge to `main` reached users at once. From here, `plugin update` delivers a change when a new version is released. A project that installed the plugin earlier moves to `0.4.0` on its next update.
