@@ -2,6 +2,26 @@
 
 Releases are tagged `vX.Y.Z`. Before `1.0.0` the plugin can still change in ways that need an edit to your config. The notes say when.
 
+## 0.6.0 (2026-11-08)
+
+The plugin now passes the directory's policy for organizations that are not Verified. That policy allows no pre-approved tools beyond Read, Grep, Glob and LS, and no scripts or fixtures in the plugin folder. Two things change for marketplace users. Nothing in your `bdd-config.md` needs to change.
+
+### What you will notice
+
+- **Permission prompts.** The seven commands no longer pre-approve `Bash`, `Write` or `Edit`. Claude Code asks before each shell command and file write, unless your own settings allow them. To keep the old behavior, allow those tools in your project settings.
+- **The decision log script.** The marketplace plugin no longer ships `decisions.sh`. With `decision_log` set to `on` and no script, `design` and `triage` go on without records and say "Nothing was recorded". `reconcile` stops and says it needs the project install. `init --detect` no longer offers to turn the log on.
+
+### Project-file installs
+
+- No change. `install.sh` copies `decisions.sh` and the schema from the repo root, and writes each command's former `allowed-tools` line back into the installed copy. Re-run it to update. Nothing in your project behaves differently.
+
+### Repo
+
+- `scripts/`, `schemas/` and `evals/` moved to the repo root. They are not part of the plugin.
+- Run the evals with `bash evals/run.sh`, which builds a temporary copy of the plugin with the cases inside it. The nightly workflow does the same.
+- A test fails if the plugin folder holds a file type the directory refuses, a file that starts with `#!`, package-manager config, or an `allowed-tools` entry beyond Read, Grep, Glob and LS.
+- The known gaps list a new entry: no eval runs the decision log script. The earlier entry on broad grants is gone, with its pack marked superseded.
+
 ## 0.5.0 (2026-11-08)
 
 The plugin now lives in a `plugin/` folder, so the directory scan and the cache hold only what users install. Nothing in your project or your `bdd-config.md` needs to change.
