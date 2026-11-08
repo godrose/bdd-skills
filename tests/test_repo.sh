@@ -36,4 +36,11 @@ assert_contains "$ROOT/.github/workflows/ci.yml" "tests/check_release.sh"
 assert_not_contains "$ROOT/README.md" 'each merge to `main` is a new version'
 assert_contains "$ROOT/README.md" "CHANGELOG.md"
 
+# docs/ has an index and every discovery pack is listed in it
+IDX="$ROOT/docs/README.md"
+assert_file "$IDX"
+for f in "$ROOT"/docs/discovery/*.md; do
+  assert_contains "$IDX" "$(basename "$f")"
+done
+
 finish

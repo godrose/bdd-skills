@@ -1,6 +1,6 @@
 # Discovery: the first pinned release (0.4.0)
 
-Input: the "Before going public" list in `CLAUDE.md`, the earlier pack `2026-11-02-track-commits.md`, the Medium publish checklist of the demo project, and a look at how comparable plugin repos release.
+Input: the "Before going public" list in `CLAUDE.md`, the earlier pack `2026-11-02-track-commits.md`, and a look at how comparable plugin repos release.
 
 ## Story
 

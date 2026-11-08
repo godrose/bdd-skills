@@ -1,6 +1,6 @@
 # Discovery: `@pending` scenarios and `generate`, and turning on the decision log from `init --detect`
 
-Input: `evidence/plugin-findings.md` in bdd-medium-demo, findings 1 and 2.
+Input: findings 1 and 2 from a trial on a small demo project.
 
 ## Story
 

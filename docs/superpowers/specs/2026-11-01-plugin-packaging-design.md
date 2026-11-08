@@ -1,5 +1,7 @@
 # Plugin packaging - design
 
+> Superseded in part by `2026-11-05-first-pinned-release.md` (decision 9): the marketplace name is now `gennadyverdel-plugins`. The rest stands.
+
 Date: 2026-11-01. Status: scoped, spike done, not yet approved for implementation.
 
 ## Intent

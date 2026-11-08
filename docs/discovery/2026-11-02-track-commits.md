@@ -1,5 +1,7 @@
 # Discovery: stop bumping the plugin version on every change
 
+> Superseded by `2026-11-05-first-pinned-release.md` (decision 8). Kept as the record of the earlier choice. The "To resolve before going public" list below is done.
+
 ## Story
 
 Every change to `commands/`, `agents/`, `scripts/`, `schemas/` or the config template needed a plugin version bump, because the plugin cache is keyed by version. Eight PRs produced 0.1.0 to 0.1.7 in about two days. Each bump touches three files and can conflict between parallel PRs. The repo is private and pre-release, and the number carries no meaning yet.
