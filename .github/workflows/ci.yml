@@ -13,3 +13,6 @@ jobs:
         with:
           fetch-depth: 0
       - run: bash tests/run.sh
+      - name: Release checks
+        if: startsWith(github.event.pull_request.title, 'release:')
+        run: bash tests/check_release.sh

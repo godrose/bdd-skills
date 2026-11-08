@@ -8,13 +8,17 @@ assert_file "$PJ"
 assert_file "$MK"
 
 assert_equals bdd "$(jq -r .name "$PJ" 2>/dev/null)" "plugin name"
-# Users track commits while the plugin is pre-release. A pinned version would freeze them on a cached copy.
-# See "Before going public" in CLAUDE.md.
-[ "$(jq -r "has(\"version\")" "$PJ" 2>/dev/null)" = false ] && pass || fail "plugin.json must not set version (see Before going public in CLAUDE.md)"
-[ "$(jq -r "[.plugins[] | has(\"version\")] | any" "$MK" 2>/dev/null)" = false ] && pass || fail "marketplace.json must not set version (see Before going public in CLAUDE.md)"
+# The version is pinned and set in both manifests. Only release PRs change it (see Releasing in CLAUDE.md).
+VER=$(jq -r .version "$PJ" 2>/dev/null)
+echo "$VER" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' && pass || fail "plugin.json version is not semver: $VER"
+assert_equals "$VER" "$(jq -r '.plugins[0].version' "$MK" 2>/dev/null)" "marketplace version matches plugin.json"
+[ -n "$(jq -r '.description // empty' "$MK" 2>/dev/null)" ] && pass || fail "marketplace.json needs a description"
+assert_contains "$ROOT/CHANGELOG.md" "## $VER"
 assert_equals bdd "$(jq -r '.plugins[0].name' "$MK" 2>/dev/null)" "marketplace plugin name"
 assert_equals "./" "$(jq -r '.plugins[0].source' "$MK" 2>/dev/null)" "marketplace plugin source"
-assert_equals godrose-plugins "$(jq -r .name "$MK" 2>/dev/null)" "marketplace name"
+assert_equals gennadyverdel-plugins "$(jq -r .name "$MK" 2>/dev/null)" "marketplace name"
+assert_equals "Gennady Verdel" "$(jq -r .author.name "$PJ" 2>/dev/null)" "plugin author is the full name"
+assert_equals "Gennady Verdel" "$(jq -r .owner.name "$MK" 2>/dev/null)" "marketplace owner is the full name"
 
 for c in discover design implement run triage reconcile init; do
   assert_file "$ROOT/commands/$c.md"

@@ -1,5 +1,7 @@
 # Discovery: rename the repo `godrose/bdd` to `godrose/bdd-skills`
 
+> Superseded in part by `2026-11-05-first-pinned-release.md` (decision 9): the marketplace name is now `gennadyverdel-plugins`. The rest stands.
+
 ## Story
 
 Rename the GitHub repo to `bdd-skills`. The plugin name stays `bdd`, so `/bdd:*` commands and users' configs do not change. The name `bdd` is generic for a repo and does not say what it holds. `bdd-skills` matches the README title, is neutral about the agent, and sits beside `bdd-netcore`. `bdd-ai` was considered and rejected: it is vague, dates fast and promises that the AI does the whole job.
@@ -38,7 +40,7 @@ A new visitor lands on `godrose/bdd-skills`, sees the hero, then runs `/plugin m
 1. The plugin name `bdd` and the `/bdd:*` commands. Reason: no user-facing change.
 2. The marketplace name `godrose-plugins`. Reason: it is the account catalog.
 3. Old specs and discovery packs under `docs/`. Reason: history.
-4. The sibling repos `bdd-netcore` and `bdd-medium-demo`. Reason: separate projects.
+4. The sibling repo `bdd-netcore` and the demo project. Reason: separate projects.
 5. Never create a new repo at the old name `godrose/bdd`. Reason: it breaks the GitHub redirect.
 6. The Codex adapter. Reason: separate discovery.
 

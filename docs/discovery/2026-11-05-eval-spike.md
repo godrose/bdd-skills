@@ -7,7 +7,7 @@ Almost every plugin failure so far was found by trying the plugin on a real proj
 ## History used
 
 - Discovery packs from the .NET trials: design assumptions, the Then-assertion check, zero tests ran, the `prepare` row, verifier selection, step batch, framework-neutral implement.
-- The bdd-netcore dogfood doc and the demo findings (`evidence/plugin-findings.md`).
+- The bdd-netcore dogfood doc and the findings from the demo project trial.
 - The only decision log is the demo's. It holds no failures.
 
 ## What the tool is (from `claude plugin eval --help` and a scaffolded case)

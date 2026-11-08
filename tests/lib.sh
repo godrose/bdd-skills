@@ -55,3 +55,26 @@ assert_version_bumped() {
     pass
   fi
 }
+
+# Fail unless the plugin version is higher than the one on main. Used for release PRs only (tests/check_release.sh).
+# A base without a version is the first pinned release and passes.
+assert_version_higher() {
+  local base old new higher
+  base=$(git -C "$ROOT" merge-base HEAD main 2>/dev/null || git -C "$ROOT" merge-base HEAD origin/main 2>/dev/null)
+  if [ -z "$base" ]; then
+    fail "no main or origin/main to diff against"
+    return
+  fi
+  old=$(git -C "$ROOT" show "$base:.claude-plugin/plugin.json" 2>/dev/null | jq -r '.version // empty' 2>/dev/null)
+  if [ -z "$old" ]; then
+    pass
+    return
+  fi
+  new=$(jq -r '.version // empty' "$ROOT/.claude-plugin/plugin.json" 2>/dev/null)
+  higher=$(printf '%s\n%s\n' "$old" "$new" | awk -F. 'NR==1{a1=$1;a2=$2;a3=$3} NR==2{b1=$1;b2=$2;b3=$3} END{if (b1>a1 || (b1==a1 && (b2>a2 || (b2==a2 && b3>a3)))) print "yes"; else print "no"}')
+  if [ "$higher" = yes ]; then
+    pass
+  else
+    fail "version $new is not higher than $old on main"
+  fi
+}

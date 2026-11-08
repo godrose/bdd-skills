@@ -1,9 +1,18 @@
 {
   "name": "bdd",
   "description": "BDD workflow skills: discover, design, implement and verify scenarios, with an optional decision log. Framework-agnostic.",
-  "author": { "name": "godrose" },
+  "author": {
+    "name": "Gennady Verdel"
+  },
   "homepage": "https://github.com/godrose/bdd-skills",
   "repository": "https://github.com/godrose/bdd-skills",
   "license": "Apache-2.0",
-  "keywords": ["bdd", "gherkin", "cucumber", "testing", "scenarios"]
+  "keywords": [
+    "bdd",
+    "gherkin",
+    "cucumber",
+    "testing",
+    "scenarios"
+  ],
+  "version": "0.4.0"
 }

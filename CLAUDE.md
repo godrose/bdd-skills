@@ -29,14 +29,25 @@ Spikes and trials on real projects still come after discovery. They find what qu
 - Run `bash tests/run.sh` before every commit. A new test must fail before the change.
 - Never tell users to delete with a `bdd-*` glob. Their own skills match it.
 
-## Before going public
+## Releasing
 
-The plugin has no `version` in `plugin.json` or `marketplace.json`, so users track commits: each merge to `main` is a new version. This suits a private, pre-release repo. It must be resolved at the first stable release:
+The plugin version is pinned in `plugin.json` and the marketplace entry. Only release PRs change it. Feature PRs never bump it. The first pinned version is `0.4.0`. It stays below `1.0.0` until the plugin is called stable.
 
-1. Pin a version in `plugin.json` and the marketplace entry.
-2. Bump it only in release PRs, not in feature PRs.
-3. Restore the bump check for releases (`assert_version_bumped` stays in `tests/lib.sh`) and replace the "no version" test in `tests/test_plugin.sh`.
-4. Restore the PR template checkbox for releases.
-5. Reword the README update section: users get changes at releases.
+A release PR:
 
-Details: `docs/discovery/2026-11-02-track-commits.md`.
+1. Has a title that starts with `release:`. CI then runs `tests/check_release.sh`, which fails unless the version is higher than on `main`.
+2. Sets the same `version` in both manifests.
+3. Adds a `## <version>` entry to `CHANGELOG.md`. Every PR checks that the entry exists.
+4. Ticks the release box in the PR template.
+
+After the merge, tag and publish by hand, using the changelog entry as the notes:
+
+```bash
+git checkout main && git pull
+git tag v<version> && git push origin v<version>
+gh release create v<version> --title v<version> --notes-file <file holding the entry>
+```
+
+A fresh install gets `main` as it is, not the tag. A release is what the tag and the changelog name.
+
+Details: `docs/discovery/2026-11-05-first-pinned-release.md`. The earlier choice to let users track commits is in `docs/discovery/2026-11-02-track-commits.md`.
