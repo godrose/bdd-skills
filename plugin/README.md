@@ -20,4 +20,8 @@ The plugin reads and writes only files in your project. It has no hooks and no M
 
 The full guide, the config reference, the changelog and the list of known gaps are in the repository: https://github.com/godrose/bdd-skills
 
+## Tool permissions
+
+The commands pre-approve `Bash`, and some also pre-approve `Write` and `Edit`. They do this because they run the commands you put in `bdd-config.md` (prepare, generate, test and lint), and those differ for each project, so a fixed list cannot name them. Apart from those, the plugin's own shell use is its `decisions.sh` script, `git merge-base`, and in `init` a file copy and a `find` over `.claude`. File writes go to the folders that `bdd-config.md` names. `design` writes no scenarios and `init` writes no config values until you approve them. The grants are listed in [known-gaps.md](https://github.com/godrose/bdd-skills/blob/main/docs/known-gaps.md).
+
 Licensed under Apache-2.0.

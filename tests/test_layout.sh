@@ -74,6 +74,12 @@ assert_file "$ROOT/docs/evals-ci.md"
 assert_contains "$PLUGIN/evals/README.md" "docs/evals-ci.md"
 assert_contains "$ROOT/docs/README.md" "evals-ci.md"
 
+# the grants are broad on purpose, and the listing says why
+assert_contains "$PLUGIN/README.md" "## Tool permissions"
+assert_contains "$PLUGIN/README.md" "bdd-config.md"
+assert_contains "$PLUGIN/README.md" "known-gaps.md"
+assert_contains "$ROOT/docs/README.md" "allowed-tools-decision.md"
+
 # the older packs stay as written, and the index says their paths follow the earlier layout
 assert_contains "$ROOT/docs/README.md" 'earlier layout'
 
