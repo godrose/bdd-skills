@@ -10,7 +10,7 @@ $old"
 assert_contains "$ROOT/README.md" 'The repo is `bdd-skills`. The plugin is `bdd`, so its commands are `/bdd:*`.'
 assert_contains "$ROOT/README.md" '/plugin marketplace add godrose/bdd-skills'
 assert_contains "$ROOT/install.sh" 'REPO_URL="https://github.com/godrose/bdd-skills"'
-assert_contains "$ROOT/.claude-plugin/plugin.json" '"repository": "https://github.com/godrose/bdd-skills"'
-assert_contains "$ROOT/commands/init.md" '# Source: https://github.com/godrose/bdd-skills'
+assert_contains "$PLUGIN/.claude-plugin/plugin.json" '"repository": "https://github.com/godrose/bdd-skills"'
+assert_contains "$PLUGIN/commands/init.md" '# Source: https://github.com/godrose/bdd-skills'
 
 finish

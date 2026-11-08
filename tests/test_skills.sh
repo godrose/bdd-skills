@@ -2,22 +2,22 @@
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 . "$ROOT/tests/lib.sh"
 
-for f in "$ROOT"/commands/*.md "$ROOT"/agents/*.md; do
+for f in "$PLUGIN"/commands/*.md "$PLUGIN"/agents/*.md; do
   assert_equals "---" "$(head -1 "$f" | tr -d '\r')" "frontmatter in $f"
   grep -qE '^(description|name):' "$f" && pass || fail "$f lacks description or name"
 done
 
-CFG="$ROOT/bdd-config.template.md"
+CFG="$PLUGIN/bdd-config.template.md"
 for key in workflow_mode glossary_file discovery_dir '| lint |' discoverer; do
   assert_contains "$CFG" "$key"
 done
 ROLE_NAMES=$(grep -o '`bdd:[a-z-]*`' "$CFG" | tr -d '`' | sed 's/^bdd://' | sort -u)
 [ -n "$ROLE_NAMES" ] && pass || fail "no skill roles found in the config template"
 for name in $ROLE_NAMES; do
-  if [ -f "$ROOT/commands/$name.md" ] || [ -f "$ROOT/agents/$name.md" ]; then pass; else fail "role bdd:$name has no skill file"; fi
+  if [ -f "$PLUGIN/commands/$name.md" ] || [ -f "$PLUGIN/agents/$name.md" ]; then pass; else fail "role bdd:$name has no skill file"; fi
 done
 
-D="$ROOT/commands/discover.md"
+D="$PLUGIN/commands/discover.md"
 assert_file "$D"
 for h in Story 'Open questions' 'Candidate examples' 'Edge and negative cases' 'Vocabulary check' 'Candidate exclusions' Readiness; do
   assert_contains "$D" "## $h"
@@ -27,7 +27,7 @@ for s in 'Defaults when config rows are absent' 'stop and ask' 'requirements-syn
 done
 assert_not_contains "$D" "$(printf '\xe2\x80\x94')"
 
-G="$ROOT/commands/design.md"
+G="$PLUGIN/commands/design.md"
 for s in '--specify-only' 'specify-only' 'specify-and-implement' 'discovery pack' 'does not invoke the implementer' 'unautomated tag' 'If `workflow_mode` is absent'; do
   assert_contains "$G" "$s"
 done
@@ -35,7 +35,7 @@ for h in 'Story to scenarios' 'Cases included' 'Cases deliberately excluded' 'Ne
   assert_contains "$G" "$h"
 done
 
-I="$ROOT/commands/implement.md"
+I="$PLUGIN/commands/implement.md"
 for s in 'approved spec' 'Step status' 'remove the unautomated tag'; do
   assert_contains "$I" "$s"
 done
@@ -63,7 +63,7 @@ for s in unautomated_tag automated_tag; do
 done
 
 # Deferred minors
-assert_no_added_emdash .claude commands agents scripts schemas .claude-plugin bdd-config.template.md README.md install.sh tests docs
+assert_no_added_emdash .claude plugin .claude-plugin README.md install.sh tests docs
 for s in 'size gate once you have read the story' 'ask the builder to paste the story' 'counts as empty'; do
   assert_contains "$D" "$s"
 done
@@ -75,8 +75,8 @@ for s in '<summary><b>Optional config rows</b></summary>' '--specify-and-impleme
 done
 assert_file "$ROOT/docs/superpowers/dry-runs/2026-10-24-discover-and-specify-only.md"
 
-RC_="$ROOT/commands/reconcile.md"
-FB="$ROOT/commands/triage.md"
+RC_="$PLUGIN/commands/reconcile.md"
+FB="$PLUGIN/commands/triage.md"
 assert_file "$RC_"; assert_file "$FB"
 for s in 'decisions.sh check' 'decisions.sh show' '--base' 'report, not a sync' 'never edits' 'contradict' 'audit' 'jq' 'legacy' 'decision_log'; do
   assert_contains "$RC_" "$s"
@@ -121,7 +121,7 @@ for s in 'manual_only_dir' 'default `scenario`'; do
   assert_contains "$G" "$s"
 done
 
-for f in "$ROOT/commands/run.md" "$ROOT/agents/verifier.md"; do
+for f in "$PLUGIN/commands/run.md" "$PLUGIN/agents/verifier.md"; do
   for s in 'unautomated_tag' 'manual_only_tag' 'never an error'; do
     assert_contains "$f" "$s"
   done
@@ -133,11 +133,11 @@ done
 
 
 # A missing config file stops the skills that need tooling or paths
-for f in "$ROOT"/commands/{design,implement,run,triage,reconcile}.md "$ROOT/agents/verifier.md"; do
+for f in "$PLUGIN"/commands/{design,implement,run,triage,reconcile}.md "$PLUGIN/agents/verifier.md"; do
   assert_contains "$f" 'does not exist, say so and stop'
   assert_contains "$f" '`bdd-config.template.md`'
 done
-assert_not_contains "$ROOT/commands/discover.md" 'does not exist, say so and stop'
+assert_not_contains "$PLUGIN/commands/discover.md" 'does not exist, say so and stop'
 
 
 # Install docs: plugin first, project files second
@@ -158,12 +158,12 @@ assert_not_contains "$R" 'mkdir -p .claude && curl'
 
 
 # A generate row with no command is skipped, not run (godog and similar need no generation)
-for f in "$ROOT/commands/run.md" "$ROOT/agents/verifier.md"; do
+for f in "$PLUGIN/commands/run.md" "$PLUGIN/agents/verifier.md"; do
   assert_contains "$f" '_(not needed)_'
   assert_contains "$f" 'skip this step'
   assert_contains "$f" 'not a failure'
 done
-assert_contains "$ROOT/bdd-config.template.md" 'empty if the framework reads .feature files directly'
+assert_contains "$PLUGIN/bdd-config.template.md" 'empty if the framework reads .feature files directly'
 
 
 # /bdd:init --detect is documented
@@ -191,30 +191,30 @@ assert_before() {
   a=$(line_of "$1" "$2"); b=$(line_of "$1" "$3")
   if [ -n "$a" ] && [ -n "$b" ] && [ "$a" -lt "$b" ]; then pass; else fail "$1: '$2' (line ${a:-none}) is not before '$3' (line ${b:-none})"; fi
 }
-for f in "$ROOT/commands/run.md" "$ROOT/agents/verifier.md" "$ROOT/commands/implement.md"; do
+for f in "$PLUGIN/commands/run.md" "$PLUGIN/agents/verifier.md" "$PLUGIN/commands/implement.md"; do
   assert_contains "$f" '**prepare**'
   assert_contains "$f" 'If the row is absent, empty'
   assert_contains "$f" 'If **prepare** fails, report the error and stop'
   assert_contains "$f" 'Do not run generate or test'
 done
-assert_contains "$ROOT/commands/run.md" '- **prepare** command'
-assert_before "$ROOT/commands/run.md" 'run the **prepare** command' 'run the **generate** command'
-assert_before "$ROOT/agents/verifier.md" 'Run the **prepare** command' 'Run the **generate** command'
-assert_before "$ROOT/commands/implement.md" 'Run the **prepare** command' 'Ensure the **generate** command'
-assert_contains "$ROOT/commands/implement.md" 'the **prepare** command, then the **generate** command, then the **test** command'
-assert_contains "$ROOT/agents/verifier.md" 'Do not retry it'
+assert_contains "$PLUGIN/commands/run.md" '- **prepare** command'
+assert_before "$PLUGIN/commands/run.md" 'run the **prepare** command' 'run the **generate** command'
+assert_before "$PLUGIN/agents/verifier.md" 'Run the **prepare** command' 'Run the **generate** command'
+assert_before "$PLUGIN/commands/implement.md" 'Run the **prepare** command' 'Ensure the **generate** command'
+assert_contains "$PLUGIN/commands/implement.md" 'the **prepare** command, then the **generate** command, then the **test** command'
+assert_contains "$PLUGIN/agents/verifier.md" 'Do not retry it'
 assert_contains "$CFG" '| prepare |'
 grep -qE '^\| prepare \| `` \(optional' "$CFG" && pass || fail "template prepare row must be empty with an (optional ...) note, not <...> form"
 
 
 # run.md must not point at an install command that no row defines; prepare is where installing belongs
-assert_not_contains "$ROOT/commands/run.md" 'Run the install command if missing'
-assert_contains "$ROOT/commands/run.md" 'step 2 (**prepare**)'
+assert_not_contains "$PLUGIN/commands/run.md" 'Run the install command if missing'
+assert_contains "$PLUGIN/commands/run.md" 'step 2 (**prepare**)'
 
 
 # Then-step assertion check: a reused Then step must make the claim the scenario needs
-G="$ROOT/commands/design.md"
-I="$ROOT/commands/implement.md"
+G="$PLUGIN/commands/design.md"
+I="$PLUGIN/commands/implement.md"
 for s in "Pass C" "assertion check" "| Asserts |" "assertion unknown" "assertion not checkable yet" "The person chooses" "never changes fixture data" "Same words means same claim"; do
   assert_contains "$G" "$s"
 done
@@ -224,9 +224,9 @@ assert_contains "$I" "Do not edit approved scenario data"
 
 
 # Zero tests ran is never a pass
-RUN="$ROOT/commands/run.md"
-V="$ROOT/agents/verifier.md"
-I="$ROOT/commands/implement.md"
+RUN="$PLUGIN/commands/run.md"
+V="$PLUGIN/agents/verifier.md"
+I="$PLUGIN/commands/implement.md"
 for f in "$RUN" "$V" "$I"; do
   assert_contains "$f" "no tests ran"
 done
@@ -242,8 +242,8 @@ assert_before "$RUN" "Count what ran" "On success"
 
 
 # Verifier selection by tag, name, file or all, and tag defaults in implement
-V="$ROOT/agents/verifier.md"
-I="$ROOT/commands/implement.md"
+V="$PLUGIN/agents/verifier.md"
+I="$PLUGIN/commands/implement.md"
 for s in "By: tag | name | file | all" "Select:" "**Selection:**" "unknown field Tag" "name matched"; do
   assert_contains "$V" "$s"
 done
@@ -257,7 +257,7 @@ done
 
 
 # implement is framework neutral: UI and language advice is gated by the config
-I="$ROOT/commands/implement.md"
+I="$PLUGIN/commands/implement.md"
 for s in "apply when the config sets" "visual-debug flag" "page objects or helpers" "explicit file extensions" "UI projects only" "the system under test" "no UI evidence"; do
   assert_contains "$I" "$s"
 done
@@ -267,7 +267,7 @@ done
 
 
 # step_batch: group steps by risk so the implement loop needs fewer runs
-I="$ROOT/commands/implement.md"
+I="$PLUGIN/commands/implement.md"
 for s in "Plan the groups" "step_batch" "classify it high" "A high step closes the group" "split the rest of that group in half" "does not wait for approval" "existing, no work"; do
   assert_contains "$I" "$s"
 done
@@ -292,7 +292,7 @@ assert_not_contains "$I" "Print one line per step before the first run"
 
 
 # Vague ACs: the designer lists its assumptions instead of choosing silently
-G="$ROOT/commands/design.md"
+G="$PLUGIN/commands/design.md"
 for s in "List assumptions" "more than one distinct value" "Do not stop to ask" "values unknown, please confirm" "Assumptions: none" "Omit this section when there are none" "Silently picking one meaning"; do
   assert_contains "$G" "$s"
 done
@@ -300,11 +300,11 @@ assert_not_contains "$G" "flag it for the user before designing scenarios"
 assert_contains "$G" "do not list it"
 assert_before "$G" "List assumptions" "Assumptions: none"
 assert_before "$G" "Assumptions: none" "Omit this section when there are none"
-assert_contains "$ROOT/commands/discover.md" "stop and ask"
+assert_contains "$PLUGIN/commands/discover.md" "stop and ask"
 assert_no_added_emdash commands/design.md tests/test_skills.sh
 
 # bdd:feedback was renamed bdd:triage; no command may point at the old name
-for f in "$ROOT"/commands/*.md "$ROOT"/agents/*.md; do
+for f in "$PLUGIN"/commands/*.md "$PLUGIN"/agents/*.md; do
   assert_not_contains "$f" "bdd:feedback"
 done
 
@@ -315,14 +315,14 @@ for s in 'before it is shown' '.bdd-draft-' 'deleted before' 'lint did not run' 
 done
 
 # steps_dir takes several paths, comma-separated
-for f in "$G" "$I" "$ROOT/commands/discover.md" "$ROOT/commands/init.md" "$CFG" "$ROOT/README.md"; do
+for f in "$G" "$I" "$PLUGIN/commands/discover.md" "$PLUGIN/commands/init.md" "$CFG" "$ROOT/README.md"; do
   assert_contains "$f" 'comma-separated'
 done
-assert_contains "$ROOT/commands/init.md" 'each entry'
+assert_contains "$PLUGIN/commands/init.md" 'each entry'
 
 # generate: IDE-generated frameworks get unknown, never "not needed"
-assert_contains "$ROOT/commands/init.md" 'generates code in the IDE'
-assert_contains "$ROOT/commands/init.md" 'only for a framework that reads .feature files directly'
+assert_contains "$PLUGIN/commands/init.md" 'generates code in the IDE'
+assert_contains "$PLUGIN/commands/init.md" 'only for a framework that reads .feature files directly'
 
 # no new rows for these changes
 for row in required_tags adapters_dir domain_dir; do
@@ -331,6 +331,6 @@ done
 assert_no_added_emdash tests/test_skills.sh docs/discovery/2026-11-05-lint-in-design-and-layered-steps.md
 
 # the audit's closing line is printed word for word and is the last line (the init-audit eval checks it)
-assert_contains "$ROOT/commands/init.md" 'word for word'
-assert_contains "$ROOT/commands/init.md" 'Nothing follows it'
+assert_contains "$PLUGIN/commands/init.md" 'word for word'
+assert_contains "$PLUGIN/commands/init.md" 'Nothing follows it'
 finish

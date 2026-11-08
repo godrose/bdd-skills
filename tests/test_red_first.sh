@@ -3,7 +3,7 @@
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 . "$ROOT/tests/lib.sh"
 
-I="$ROOT/commands/implement.md"
+I="$PLUGIN/commands/implement.md"
 for s in \
   'red-first check' \
   '#### Phase 2.5: Red-first check' \
@@ -24,12 +24,12 @@ a=$(first_line "$I" '#### Phase 2.5: Red-first check'); b=$(first_line "$I" '###
 if [ -n "$a" ] && [ -n "$b" ] && [ "$a" -lt "$b" ]; then pass; else fail "Phase 2.5 (line ${a:-none}) is not before Phase 3 (line ${b:-none})"; fi
 
 # the check lives in implement only
-for f in "$ROOT/commands/run.md" "$ROOT/agents/verifier.md" "$ROOT/commands/design.md" "$ROOT/commands/discover.md"; do
+for f in "$PLUGIN/commands/run.md" "$PLUGIN/agents/verifier.md" "$PLUGIN/commands/design.md" "$PLUGIN/commands/discover.md"; do
   if grep -qiF 'red-first' "$f"; then fail "$f mentions the red-first check"; else pass; fi
 done
 
 # no new config row for it
-if grep -qiF 'red_first' "$ROOT/bdd-config.template.md"; then fail "the template has a red_first row"; else pass; fi
+if grep -qiF 'red_first' "$PLUGIN/bdd-config.template.md"; then fail "the template has a red_first row"; else pass; fi
 
 # the known-gaps file: each gap has an id and four parts
 G="$ROOT/docs/known-gaps.md"

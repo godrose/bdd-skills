@@ -4,6 +4,8 @@ This repo uses its own method. A larger change starts with a discovery pack, and
 
 Every pack is a record of its day. A pack that a later one reversed carries a "Superseded" note at the top. The current behavior is in the commands, the README and the tests, not here.
 
+Paths in the older packs follow the earlier layout, where `commands/`, `agents/`, `scripts/` and `evals/` sat at the repo root. They now live in `plugin/`.
+
 ## discovery/
 
 One pack per change: questions, examples, edge cases, exclusions and decisions with reasons. A test fails if a pack is missing from this list.
@@ -27,6 +29,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-05-pending-generate-and-decision-log.md` | `@pending` scenarios, `generate`, and the decision log from `init --detect` |
 | `2026-11-05-rename-repo-bdd-skills.md` | Rename the repo to `bdd-skills` (marketplace name superseded in part) |
 | `2026-11-08-red-first-and-known-gaps.md` | The red-first check in `implement`, and a known-gaps file |
+| `2026-11-08-plugin-in-subfolder.md` | Move the plugin into a `plugin/` folder, so the directory scan reads only plugin files |
 
 ## known-gaps.md
 

@@ -13,13 +13,13 @@ mkrepo() {
   local d g="git -c user.name=t -c user.email=t@t"
   d=$(mktemp -d)
   git -C "$d" init -q -b main
-  mkdir -p "$d/.claude-plugin" "$d/commands"
-  if [ -n "$1" ]; then printf '{"name":"bdd","version":"%s"}\n' "$1" > "$d/.claude-plugin/plugin.json"; else printf '{"name":"bdd"}\n' > "$d/.claude-plugin/plugin.json"; fi
-  echo a > "$d/commands/x.md"
+  mkdir -p "$d/plugin/.claude-plugin" "$d/plugin/commands"
+  if [ -n "$1" ]; then printf '{"name":"bdd","version":"%s"}\n' "$1" > "$d/plugin/.claude-plugin/plugin.json"; else printf '{"name":"bdd"}\n' > "$d/plugin/.claude-plugin/plugin.json"; fi
+  echo a > "$d/plugin/commands/x.md"
   $g -C "$d" add -A && $g -C "$d" commit -q -m base
   $g -C "$d" checkout -q -b feature
-  printf '{"name":"bdd","version":"%s"}\n' "$2" > "$d/.claude-plugin/plugin.json"
-  [ "$3" = touch ] && echo b >> "$d/commands/x.md"
+  printf '{"name":"bdd","version":"%s"}\n' "$2" > "$d/plugin/.claude-plugin/plugin.json"
+  [ "$3" = touch ] && echo b >> "$d/plugin/commands/x.md"
   $g -C "$d" add -A && $g -C "$d" commit -q -m change
   echo "$d"
 }
@@ -50,5 +50,29 @@ expect "0.4.9 to 0.4.10: higher check (not a text sort)" 0 "$(check "$d" assert_
 d=$(mkrepo "" 0.4.0 touch)
 expect "base without a version: bumped check" 0 "$(check "$d" assert_version_bumped)"
 expect "base without a version: higher check" 0 "$(check "$d" assert_version_higher)"
+
+# A base from before the plugin moved into plugin/: the version is read from the old path.
+# Args: base version, new version. The branch moves the files into plugin/ and sets the new version.
+mkmoved() {
+  local d g="git -c user.name=t -c user.email=t@t"
+  d=$(mktemp -d)
+  git -C "$d" init -q -b main
+  mkdir -p "$d/.claude-plugin" "$d/commands"
+  printf '{"name":"bdd","version":"%s"}\n' "$1" > "$d/.claude-plugin/plugin.json"
+  echo a > "$d/commands/x.md"
+  $g -C "$d" add -A && $g -C "$d" commit -q -m base
+  $g -C "$d" checkout -q -b feature
+  mkdir -p "$d/plugin"
+  git -C "$d" mv .claude-plugin plugin/.claude-plugin && git -C "$d" mv commands plugin/commands
+  printf '{"name":"bdd","version":"%s"}\n' "$2" > "$d/plugin/.claude-plugin/plugin.json"
+  $g -C "$d" add -A && $g -C "$d" commit -q -m move
+  echo "$d"
+}
+
+d=$(mkmoved 0.4.0 0.4.0)
+expect "old-layout base, same version: higher check" 1 "$(check "$d" assert_version_higher)"
+d=$(mkmoved 0.4.0 0.5.0)
+expect "old-layout base, 0.4.0 to 0.5.0: higher check" 0 "$(check "$d" assert_version_higher)"
+expect "old-layout base, 0.4.0 to 0.5.0: bumped check" 0 "$(check "$d" assert_version_bumped)"
 
 finish

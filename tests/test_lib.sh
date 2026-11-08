@@ -56,10 +56,10 @@ g moved commit -q -am newdash
 assert_equals 1 "$(FAILS=0; delta_paths)" "a new em-dash in a moved file is still found"
 
 mkp() {
-  mkdir -p "$T/$1/commands" "$T/$1/.claude-plugin"
+  mkdir -p "$T/$1/plugin/commands" "$T/$1/plugin/.claude-plugin"
   git -C "$T/$1" init -q -b main
-  echo a > "$T/$1/commands/x.md"
-  echo '{"name":"bdd","version":"0.1.0"}' > "$T/$1/.claude-plugin/plugin.json"
+  echo a > "$T/$1/plugin/commands/x.md"
+  echo '{"name":"bdd","version":"0.1.0"}' > "$T/$1/plugin/.claude-plugin/plugin.json"
   g "$1" add -A
   g "$1" commit -q -m base
   g "$1" switch -q -c work
@@ -71,14 +71,14 @@ vdelta() {
 }
 
 mkp vb-nobump
-echo b >> "$T/vb-nobump/commands/x.md"
+echo b >> "$T/vb-nobump/plugin/commands/x.md"
 g vb-nobump commit -q -am edit
 ROOT="$T/vb-nobump"
 assert_equals 1 "$(FAILS=0; vdelta)" "a changed command without a version bump fails"
 
 mkp vb-bump
-echo b >> "$T/vb-bump/commands/x.md"
-echo '{"name":"bdd","version":"0.1.1"}' > "$T/vb-bump/.claude-plugin/plugin.json"
+echo b >> "$T/vb-bump/plugin/commands/x.md"
+echo '{"name":"bdd","version":"0.1.1"}' > "$T/vb-bump/plugin/.claude-plugin/plugin.json"
 g vb-bump commit -q -am edit
 ROOT="$T/vb-bump"
 assert_equals 0 "$(FAILS=0; vdelta)" "a changed command with a version bump passes"
@@ -92,9 +92,9 @@ assert_equals 0 "$(FAILS=0; vdelta)" "a docs-only change needs no bump"
 
 mk vb-first main
 g vb-first switch -q -c work
-mkdir -p "$T/vb-first/commands" "$T/vb-first/.claude-plugin"
-echo a > "$T/vb-first/commands/x.md"
-echo '{"name":"bdd","version":"0.1.0"}' > "$T/vb-first/.claude-plugin/plugin.json"
+mkdir -p "$T/vb-first/plugin/commands" "$T/vb-first/plugin/.claude-plugin"
+echo a > "$T/vb-first/plugin/commands/x.md"
+echo '{"name":"bdd","version":"0.1.0"}' > "$T/vb-first/plugin/.claude-plugin/plugin.json"
 g vb-first add -A
 g vb-first commit -q -m plugin
 ROOT="$T/vb-first"
