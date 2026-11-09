@@ -60,3 +60,11 @@ Each gap says what is not checked, why it is still open, and what would close it
 **Why.** A whole flow needs several answers from a user and a fixture with a test runner that works on the CI machine. The eval tool runs one prompt per case.
 
 **Closed when.** A case drives `deliver` through a scripted conversation on a fixture with a working test runner, and checks the report and the files it writes.
+
+### G8 Out-of-scope items are not linked to a tracker
+
+**Not checked.** `deliver` writes each exclusion as one line in the out-of-scope file. In a team that uses Jira, Monday or a similar tracker, each excluded item would usually become a ticket of its own, so it is planned and not forgotten. Nothing creates the ticket, links the line to it, or tells you when the ticket is done and the line is stale. The first trial in bdd-netcore wrote its exclusions to a file only.
+
+**Why.** Reaching a tracker needs the optional **requirements-sync** skill, and its role has no "create an item" action. The file works for one repository and needs no setup.
+
+**Closed when.** An exclusion can name a tracker key in its line, `deliver` offers to create the ticket through the configured skill, and a later run on the same story reads the key and says whether the ticket is closed. This is a design decision first, so it starts with discovery.
