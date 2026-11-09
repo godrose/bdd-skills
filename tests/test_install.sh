@@ -56,16 +56,16 @@ assert_contains "$T/old-out.txt" "manual_only_dir"
 # The project copy is the plugin text converted back to project names and paths
 for f in "$T"/fresh/.claude/commands/*.md "$T"/fresh/.claude/agents/*.md "$T/fresh/.claude/bdd-config.md"; do
   assert_not_contains "$f" 'CLAUDE_PLUGIN_ROOT'
-  if grep -qE 'bdd:(discover|design|implement|run|triage|reconcile|verifier)' "$f"; then fail "$f has a plugin-style skill name"; else pass; fi
+  if grep -qE 'bdd:(discover|design|implement|run|triage|reconcile|deliver|verifier)' "$f"; then fail "$f has a plugin-style skill name"; else pass; fi
 done
 assert_contains "$T/fresh/.claude/agents/bdd-verifier.md" "name: bdd-verifier"
 assert_contains "$T/fresh/.claude/commands/bdd-reconcile.md" '.claude/scripts/decisions.sh check'
 assert_contains "$T/fresh/.claude/bdd-config.md" '`bdd-design`'
-for c in design triage reconcile; do
+for c in design triage reconcile deliver; do
   assert_not_contains "$T/fresh/.claude/commands/bdd-$c.md" "Plugin note"
   assert_not_contains "$T/fresh/.claude/commands/bdd-$c.md" "plugin root"
 done
-for c in design implement run triage reconcile; do
+for c in design implement run triage reconcile deliver; do
   assert_contains "$T/fresh/.claude/commands/bdd-$c.md" 'does not exist, say so and stop'
   assert_not_contains "$T/fresh/.claude/commands/bdd-$c.md" 'template is at'
 done
@@ -104,10 +104,25 @@ implement|["Agent", "Bash", "Read", "Write", "Edit", "Grep", "Glob"]
 run|["Agent", "Bash", "Read", "Write", "Grep", "Glob", "AskUserQuestion"]
 triage|["Agent", "Bash", "Read", "Edit", "Write", "Grep", "Glob", "AskUserQuestion"]
 reconcile|["Bash", "Read", "Grep", "Glob"]
+deliver|["Agent", "Bash", "Read", "Write", "Edit", "Grep", "Glob", "AskUserQuestion"]
 TABLE
-for c in discover design implement run triage reconcile init; do
+for c in discover design implement run triage reconcile init deliver; do
   [ "$(tr -d '\r' < "$ROOT/plugin/commands/$c.md" | grep -c '^allowed-tools:')" = 0 ] && pass || fail "plugin $c still has allowed-tools"
 done
 # the project install gets the script and schema from the repo root
 assert_contains "$ROOT/install.sh" 'SCRIPTS_DIR="$SOURCE_DIR/scripts"'
+
+# deliver in a project install: listed, a config without the row gets a note, and a user's own file of that name is kept
+assert_file "$T/fresh/.claude/commands/bdd-deliver.md"
+assert_contains "$T/fresh-out.txt" "bdd-deliver.md"
+assert_contains "$T/old-out.txt" "out_of_scope_file"
+mkdir -p "$T/own/.claude/commands"
+printf 'MY OWN COMMAND\n' > "$T/own/.claude/commands/bdd-deliver.md"
+bash "$ROOT/install.sh" "$T/own" > "$T/own-out.txt" 2>&1
+assert_equals "MY OWN COMMAND" "$(cat "$T/own/.claude/commands/bdd-deliver.md")" "a bdd-deliver.md without the source line is left alone"
+assert_contains "$T/own-out.txt" "bdd-deliver.md"
+assert_contains "$T/own-out.txt" "skipped"
+echo "STALE" >> "$T/fresh/.claude/commands/bdd-deliver.md"
+bash "$ROOT/install.sh" "$T/fresh" > /dev/null 2>&1
+assert_not_contains "$T/fresh/.claude/commands/bdd-deliver.md" "STALE"
 finish

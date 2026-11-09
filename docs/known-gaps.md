@@ -30,7 +30,7 @@ Each gap says what is not checked, why it is still open, and what would close it
 
 ### G4 `design-lint-draft` runs only by hand
 
-**Not checked.** The nightly runs four of the five eval cases. `design-lint-draft` needs plain `Bash`, and the agent's shell can see the variables that carry the login token.
+**Not checked.** The nightly runs five of the six eval cases. `design-lint-draft` needs plain `Bash`, and the agent's shell can see the variables that carry the login token.
 
 **Why.** Running it in CI would hand the token to a shell the agent controls. The narrow `Bash(...)` grants that the other cases use deny its chained commands.
 
@@ -52,3 +52,11 @@ Each gap says what is not checked, why it is still open, and what would close it
 **Why.** The eval tool loads only the plugin folder, and the plugin cannot carry the script. A case that needs it must put the script into the fixture, and the fixture is not scanned.
 
 **Closed when.** A case's scaffold copies `scripts/decisions.sh` into the fixture as `.claude/scripts/decisions.sh`, and runs a project-install copy of the commands against it.
+
+### G7 No eval runs a whole `deliver` flow
+
+**Not checked.** `deliver-first-gate` stops at the first question. Nothing runs `/bdd:deliver` through the second gate, the implement and run steps, the two kinds of stop, or the final report. The report shape, the out-of-scope list and the feature-description lines are checked only as text in `tests/test_deliver.sh`.
+
+**Why.** A whole flow needs several answers from a user and a fixture with a test runner that works on the CI machine. The eval tool runs one prompt per case.
+
+**Closed when.** A case drives `deliver` through a scripted conversation on a fixture with a working test runner, and checks the report and the files it writes.

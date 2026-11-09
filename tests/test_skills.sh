@@ -133,7 +133,7 @@ done
 
 
 # A missing config file stops the skills that need tooling or paths
-for f in "$PLUGIN"/commands/{design,implement,run,triage,reconcile}.md "$PLUGIN/agents/verifier.md"; do
+for f in "$PLUGIN"/commands/{design,implement,run,triage,reconcile,deliver}.md "$PLUGIN/agents/verifier.md"; do
   assert_contains "$f" 'does not exist, say so and stop'
   assert_contains "$f" '`bdd-config.template.md`'
 done
@@ -339,4 +339,22 @@ assert_not_contains "$PLUGIN/commands/implement.md" 'Use `.first()` on locators 
 assert_contains "$PLUGIN/commands/implement.md" 'Scope the locator to the element you mean'
 assert_contains "$PLUGIN/commands/implement.md" 'Use `.first()` only when the first match is part of the behavior being tested'
 assert_contains "$PLUGIN/commands/implement.md" 'hide the ambiguity'
+
+# deliver: the hooks in the existing commands, and the config row it reads
+assert_contains "$PLUGIN/commands/discover.md" 'out_of_scope_file'
+assert_contains "$PLUGIN/commands/discover.md" 'git log --diff-filter=D'
+assert_contains "$PLUGIN/commands/discover.md" 'Agreed examples'
+assert_contains "$PLUGIN/commands/discover.md" 'E1'
+assert_contains "$PLUGIN/commands/discover.md" 'No **out_of_scope_file**: use `docs/out-of-scope.md`'
+assert_contains "$PLUGIN/commands/deliver.md" 'No **out_of_scope_file**: use `docs/out-of-scope.md`'
+assert_contains "$PLUGIN/commands/design.md" 'counts as the approval of the examples'
+assert_contains "$PLUGIN/commands/design.md" 'Decision (YYYY-MM-DD)'
+assert_contains "$PLUGIN/commands/design.md" 'go-ahead'
+assert_contains "$PLUGIN/commands/implement.md" 'Open decision:'
+assert_contains "$PLUGIN/commands/implement.md" 'Found:'
+assert_contains "$PLUGIN/commands/implement.md" 'Options:'
+assert_not_contains "$PLUGIN/commands/run.md" 'deliver'
+assert_not_contains "$PLUGIN/agents/verifier.md" 'deliver'
+assert_contains "$CFG" '| out_of_scope_file | `docs/out-of-scope.md`'
+assert_contains "$ROOT/README.md" 'out_of_scope_file'
 finish

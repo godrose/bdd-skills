@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 assert_contains "$ROOT/.gitignore" "evals/results/"
 
-for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft; do
+for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft deliver-first-gate; do
   d="$EVALS/$c"
   assert_file "$d/case.yaml"
   assert_file "$d/scaffold.sh"
@@ -86,16 +86,22 @@ ls "$3" >> "$RUNSH_OUT"
 STUB
 chmod +x "$RS/bin/claude"
 RUNSH_OUT="$RS/out.txt" PATH="$RS/bin:$PATH" bash "$EVALS/run.sh" --runs 1 >/dev/null 2>&1
-for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft; do
+for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft deliver-first-gate; do
   grep -qx "$c" "$RS/out.txt" && pass || fail "run.sh does not place the $c case under the plugin copy: $(tr '\n' ' ' < "$RS/out.txt")"
 done
 grep -qx "case.yaml" "$RS/out.txt" && fail "run.sh copied a case's files into evals/ directly" || pass
 grep -qx "commands" "$RS/out.txt" && pass || fail "run.sh did not copy the plugin"
 rm -rf "$RS"
+
+# the deliver gate case runs in the nightly with the narrow grants, and the docs say five of six
+assert_contains "$ROOT/.github/workflows/evals.yml" "for c in init-audit design-vague-ac triage-approval-gate run-zero-tests deliver-first-gate"
+assert_contains "$ROOT/docs/evals-ci.md" "five of the six cases"
+assert_contains "$EVALS/README.md" "| \`deliver-first-gate\` |"
+assert_contains "$EVALS/README.md" "two questions in one message"
 finish
 
 # One statement per judge criterion. A compound name ("-and-") marks a bundled criterion.
-for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft; do
+for c in init-audit design-vague-ac triage-approval-gate run-zero-tests design-lint-draft deliver-first-gate; do
   if awk '/type: llm/{getline; print}' "$EVALS/$c/case.yaml" | grep -q -- '-and-'; then
     fail "$c has a judge grader with a compound name"
   else

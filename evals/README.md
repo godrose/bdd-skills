@@ -1,6 +1,6 @@
 # Evals
 
-A spike with `claude plugin eval`. Five single-turn cases. Four come from failures found in a real trial. `design-lint-draft` checks the lint step added from the cross-project review (see `docs/discovery/2026-11-05-lint-in-design-and-layered-steps.md`). Each ends at the command's first approval gate. See `docs/discovery/2026-11-05-eval-spike.md`.
+A spike with `claude plugin eval`. Six single-turn cases. Four come from failures found in a real trial. `design-lint-draft` checks the lint step added from the cross-project review (see `docs/discovery/2026-11-05-lint-in-design-and-layered-steps.md`). `deliver-first-gate` checks the first gate of `/bdd:deliver` (see `docs/discovery/2026-11-09-deliver.md`). Each ends at the command's first approval gate. See `docs/discovery/2026-11-05-eval-spike.md`.
 
 | Case | Command | What it checks |
 |---|---|---|
@@ -9,6 +9,7 @@ A spike with `claude plugin eval`. Five single-turn cases. Four come from failur
 | `triage-approval-gate` | `/bdd:triage` | Asks for approval. Writes no record or feature file first. |
 | `run-zero-tests` | `/bdd:run` | A run of zero tests is not a pass. |
 | `design-lint-draft` | `/bdd:design` | Lints the draft before showing it. Acts only on findings in the draft, reports the old one untouched, and leaves no `.bdd-draft-*` file. |
+| `deliver-first-gate` | `/bdd:deliver` | Starts with discovery, puts one question to the user, and writes no scenario or code before the examples are approved. The agent sometimes asks two questions in one message: it did in 1 of 6 runs on 2026-11-09. |
 
 Each case copies its `fixture/` into the run folder with `scaffold.sh`, so every run starts in the same state.
 

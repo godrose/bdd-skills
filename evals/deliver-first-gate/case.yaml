@@ -1,0 +1,48 @@
+schema_version: "1.0"
+name: deliver-first-gate
+description: deliver starts with discovery, puts one question to the user, and writes no scenario or code before the examples are approved
+tags: [deliver, approval-gate]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    /bdd:deliver Make the CSV export include only the records that match the current filter.
+  max_turns: 20
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Write, Edit]
+runs: 3
+graders:
+  - type: tool_used
+    name: no-write
+    tool: Write
+    min: 0
+    max: 0
+    arm: both
+  - type: tool_used
+    name: no-edit
+    tool: Edit
+    min: 0
+    max: 0
+    arm: both
+  - type: regex
+    name: asks-a-question
+    target: last_message
+    pattern: "\\?"
+    match: contains
+  - type: llm
+    name: one-question
+    focus: last_message
+    criteria: >
+      The answer puts one question to the user, not a list of several questions.
+  - type: llm
+    name: asks-about-the-behavior
+    focus: last_message
+    criteria: >
+      The question in the answer is about how the change should behave, for example what the
+      filter is or what should happen in some case. It is not about tooling or permissions.
+  - type: llm
+    name: no-claim-of-writing-or-building
+    focus: last_message
+    criteria: >
+      The answer does not say that it already wrote scenarios, step code or a feature file, or that
+      it implemented or verified anything.

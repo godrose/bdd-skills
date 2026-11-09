@@ -26,6 +26,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | state_fixture | `<fixture/variable name for shared state>` |
 | glossary_file | `<optional path to a domain glossary; empty to skip>` |
 | discovery_dir | `docs/discovery` (where a saved discovery pack goes; optional) |
+| out_of_scope_file | `docs/out-of-scope.md` (where exclusions and removals are listed; optional) |
 | unautomated_tag | `@pending` (tag for scenarios planned to be automated; optional) |
 | automated_tag | `<optional tag your test-management tool keys on, e.g. @automated; empty to skip>` |
 | decisions_dir | `docs/decisions` (where the decision log lives; used when decision_log is on) |
