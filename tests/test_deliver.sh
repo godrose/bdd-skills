@@ -122,4 +122,15 @@ assert_contains "$D" 'This step looks at the system itself and does not run the 
 assert_contains "$D" 'Run a scenario again only to take a screenshot during it'
 assert_not_contains "$D" 'tells you whether passing means anything'
 
+# 20 the trial record: how a product manager works with deliver, kept as an example
+T="$ROOT/docs/trials/2026-11-09-deliver-pm-session.md"
+assert_file "$T"
+assert_contains "$ROOT/docs/README.md" '2026-11-09-deliver-pm-session.md'
+assert_contains "$T" 'the plugin author played the product manager'
+assert_contains "$T" 'Not run through the command itself'
+assert_contains "$T" 'One question at a time'
+assert_contains "$T" 'Where the product manager was confused or pushed back'
+assert_not_contains "$T" '/Users/'
+assert_not_contains "$T" "$(printf '\xe2\x80\x94')"
+
 finish
