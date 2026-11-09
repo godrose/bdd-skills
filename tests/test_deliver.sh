@@ -117,5 +117,9 @@ assert_contains "$D" 'Never report an example as passed when its result could be
 assert_contains "$D" 'Seen: <'
 assert_contains "$D" 'not looked at'
 assert_contains "$D" 'then looks at the result'
+assert_contains "$D" 'A passing run shows that the scenarios and the system agree with each other'
+assert_contains "$D" 'This step looks at the system itself and does not run the suite again'
+assert_contains "$D" 'Run a scenario again only to take a screenshot during it'
+assert_not_contains "$D" 'tells you whether passing means anything'
 
 finish

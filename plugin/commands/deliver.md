@@ -54,7 +54,9 @@ Invoke the **test-runner** skill (`bdd:run`) for the new scenarios and for the a
 
 #### Step 5: Look at the result
 
-Passing scenarios do not show that they describe what a person sees. Before the report, look at the real result of every new or changed example, by the means its layer offers. Use the same data the scenarios use.
+Passing scenarios do not show that they describe what a person sees. A passing run shows that the scenarios and the system agree with each other. It does not show that either matches the agreed examples. This step looks at the system itself and does not run the suite again. Run a scenario again only to take a screenshot during it.
+
+Before the report, look at the real result of every new or changed example, by the means its layer offers. Use the same data the scenarios use.
 
 - **A screen.** Open the app on that data and look at each page the change touches. In a browser-driven project, take a screenshot during a run of the scenario, or use the project's own way to start the app, and read it. Compare it with the agreed examples: every value, status and row the change touches, and anything the page shows that no scenario names, such as an empty field or a leftover label.
 - **No screen.** For an API or a service, make a real request to the running system and read the response. For stored data, read the stored record. For a background job, read the log or the record it writes. Compare it with the agreed examples in the same way.
