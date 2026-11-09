@@ -33,6 +33,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-08-evals-ci-out-of-plugin.md` | Move the CI token setup out of the plugin folder, after the second validation report |
 | `2026-11-08-allowed-tools-decision.md` | Keep the broad `allowed-tools` grants (superseded) |
 | `2026-11-08-directory-policy.md` | Meet the directory's file and tool policy: no grants, no scripts or fixtures in the plugin |
+| `2026-11-09-deliver.md` | `/bdd:deliver`: one conversation from a description to verified scenarios, for a PM with a developer watching |
 
 Maintainer notes for the nightly evals are in `evals-ci.md`.
 
