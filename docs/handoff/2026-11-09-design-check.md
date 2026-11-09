@@ -55,7 +55,7 @@ Also possible: say in the `verifier` description that it only runs tests and the
 
 - `/bdd:deliver` is in PR #44 (branch `feat/deliver`, CI green). It is not merged and not released.
 - Do not release `0.7.0` without the user. The directory review of `0.6.0` is still pending.
-- Trial project: `/Users/genaverdel/Workspace/bdd-netcore`. PRs #137 (delete) and #138 (run duration) are green. Real run: `devops/run-specs-server-real-containers.sh`.
+- Trial project: the .NET brownfield project the user trialled on (the user knows the path). Its delete and run-duration PRs are green. It has a script that runs the Server scenarios against real containers.
 - The trials followed `deliver.md` by hand. Nobody typed `/bdd:deliver`. The product manager was the plugin author. A trial with a person new to the method is still to do.
 - Plugin rules: plugin names only (`bdd:design`), no scripts or `allowed-tools` beyond Read, Grep, Glob and LS in `plugin/`. Run `bash tests/run.sh` before every commit. A new test must fail before the change.
 - Do not name the trial project in plugin-facing text (G8 and the discovery pack were cleaned for this).
