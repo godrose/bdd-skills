@@ -143,7 +143,7 @@ Project files have no plugin namespace, so the commands use a hyphen: `/bdd-disc
 <summary><b>Moving from project files to the plugin</b></summary>
 
 1. Install the plugin as above.
-2. Delete the files the installer created, and only these: `.claude/commands/bdd-discover.md`, `bdd-design.md`, `bdd-implement.md`, `bdd-run.md`, `bdd-triage.md`, `bdd-reconcile.md` and `bdd-deliver.md` in that folder, plus `.claude/agents/bdd-verifier.md`, `.claude/scripts/decisions.sh` and `.claude/schemas/decision.schema.json`. Some may not exist, because older installs did not have every file. That is fine. Having both sets gives you duplicate commands.
+2. Delete the files the installer created, and only these: `.claude/commands/bdd-discover.md`, `bdd-design.md`, `bdd-implement.md`, `bdd-run.md`, `bdd-triage.md`, `bdd-reconcile.md` and `bdd-deliver.md` in that folder (delete `bdd-deliver.md` only if its first lines carry the installer's `# Source:` header, because the installer keeps a file of your own with that name), plus `.claude/agents/bdd-verifier.md`, `.claude/scripts/decisions.sh` and `.claude/schemas/decision.schema.json`. Some may not exist, because older installs did not have every file. That is fine. Having both sets gives you duplicate commands.
    Keep your own skills, such as `bdd-<project>-knowledge.md` or a sync skill. They are not part of the plugin.
 3. Keep `.claude/bdd-config.md`. In its Skill Roles table, change `bdd-design` to `bdd:design`, and the same for the other skills and the verifier.
 4. Tell the maintainer if you still need the project-file install. It stays for a few releases.

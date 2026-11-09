@@ -39,10 +39,10 @@ before "$D" 'approved the checklist' 'No `.feature` file is written before the g
 
 # 7 and 8 the two kinds of stop
 assert_contains "$D" 'A product decision is asked at once'
-assert_contains "$D" 'one question'
+assert_contains "$D" 'ask one question about that behavior'
 assert_contains "$D" 'record the answer'
 assert_contains "$D" 'A technical stop is parked'
-assert_contains "$D" 'three'
+assert_contains "$D" 'a step failed three times'
 assert_contains "$D" 'independent examples go on'
 assert_contains "$D" 'developer note'
 
@@ -50,13 +50,22 @@ assert_contains "$D" 'developer note'
 assert_contains "$D" 'never change an approved scenario or its expected values'
 
 # 10 and 11 the final report
-assert_contains "$D" 'passed'
-assert_contains "$D" 'failed'
+assert_contains "$D" ': passed'
+assert_contains "$D" ': failed - <what happened>'
 assert_contains "$D" "couldn't be checked"
 assert_contains "$D" 'regression line'
 assert_contains "$D" 'pull request description'
 for s in '@pending' 'manual-only' 'not seen red' 'zero tests'; do assert_contains "$D" "$s"; done
 assert_contains "$D" 'a step whose code the increment changed'
+# review fixes: no double implement, a status for an unlooked-at example, exclusions written at the checklist, no repeated history search
+assert_contains "$D" 'do not invoke it again for that scenario'
+assert_contains "$D" 'was not looked at in step 5'
+assert_contains "$D" 'Write each exclusion when the product manager approves the checklist'
+assert_contains "$PLUGIN/commands/discover.md" 'git log --diff-filter=D'
+assert_contains "$ROOT/README.md" "only if its first lines carry the installer"
+assert_contains "$ROOT/docs/known-gaps.md" "### G9"
+assert_not_contains "$ROOT/docs/handoff/2026-11-09-design-check.md" "/Users/"
+assert_not_contains "$ROOT/docs/handoff/2026-11-09-design-check.md" "bdd-netcore"
 
 # 12 specify-only
 assert_contains "$D" 'specify-only'

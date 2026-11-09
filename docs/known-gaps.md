@@ -68,3 +68,11 @@ Each gap says what is not checked, why it is still open, and what would close it
 **Why.** Reaching a tracker needs the optional **requirements-sync** skill, and its role has no "create an item" action. The file works for one repository and needs no setup.
 
 **Closed when.** An exclusion can name a tracker key in its line, `deliver` offers to create the ticket through the configured skill, and a later run on the same story reads the key and says whether the ticket is closed. This is a design decision first, so it starts with discovery.
+
+### G9 The deliver gate eval can fail on its one-question grader
+
+**Not checked.** `deliver-first-gate` has a grader, `one-question`, that fails when the agent puts two questions in one message. It did in 1 of 6 runs on 2026-11-09. The case runs in the nightly with a 0.8 threshold, so a night with two bad runs of three turns it red without a regression.
+
+**Why.** The command says to ask one question at a time, and the model sometimes pairs a question with a closely related one. The grader is stricter than the other graders in the case, which are stable.
+
+**Closed when.** The grader is split into a deterministic count of question marks plus a one-clause judge, as was done for G1, and the case passes in a week of nightly runs.

@@ -46,7 +46,7 @@ If **workflow_mode** is `specify-only`, stop after the go-ahead. Say that the sc
 
 #### Step 3: Implement
 
-Invoke the **implementer** skill (`bdd:implement`) for each approved scenario. It runs its own fix loop and its red-first check.
+Invoke the **implementer** skill (`bdd:implement`) for each approved scenario. It runs its own fix loop and its red-first check. If `bdd:design` already invoked the implementer for a scenario after the go-ahead, do not invoke it again for that scenario. This step covers only the scenarios that are not yet implemented.
 
 #### Step 4: Run
 
@@ -80,9 +80,10 @@ When a check fails against an agreed example, fix the step code or the implement
 Record each answer where it will last.
 
 - **Answers that shaped a scenario** go in the text under `Feature:` in the `.feature` file, one line each: `Decision (YYYY-MM-DD): <answer>. Why: <reason>.` Write them in the same change as the scenarios.
-- **Exclusions and removals** go in the out-of-scope list, the file named by **out_of_scope_file**. One line each: `YYYY-MM-DD | excluded: <what> | why: <reason> | revisit when: <optional>`, or `removed:` in place of `excluded:` for something taken out. Create the file when the first entry is written, and only after the product manager has approved something. Never rewrite a line that is already there. If the file is not in this format, read it as plain text and add lines in this format.
+- **Exclusions and removals** go in the out-of-scope list, the file named by **out_of_scope_file**. One line each: `YYYY-MM-DD | excluded: <what> | why: <reason> | revisit when: <optional>`, or `removed:` in place of `excluded:` for something taken out. Write each exclusion when the product manager approves the checklist, because exclusions come up in step 1. Write a removal when the change that makes it is approved. Create the file when the first entry is written, and only after the product manager has approved something. Never rewrite a line that is already there. If the file is not in this format, read it as plain text and add lines in this format.
 - **A reversal** of an entry is a new dated line that says so, and leave the old entry in place.
 - **Deleted features.** Features may have been deleted outside this flow. Look for the story's terms in them with `git log --diff-filter=D --name-only -- '*.feature'` and `git log -S`. This uses local git only. If the clone is shallow and has no history, say that you cannot look.
+
 - **The decision log.** When **decision_log** is `on`, `bdd:design` and `bdd:triage` record approved decisions. If their script is missing, they say so. Add "Nothing was recorded" to the developer note. The answers are still in the feature file.
 
 There is no resume file. Before approval the state is in the conversation. After the `.feature` file is written, the files are the state, and running this command again on the same story reads what exists.
@@ -107,7 +108,7 @@ Seen: <what was looked at, and how: a page, a request, a record>
 Developer note: <parked technical stops, what to look at, and anything that was not recorded>
 ```
 
-- "Couldn't be checked" covers a scenario still tagged `@pending`, a scenario that stays manual-only, a scenario the red-first check marked "not seen red", and any run that executed zero tests. A run of zero tests is never a pass.
+- "Couldn't be checked" covers an example whose result was not looked at in step 5 (the Seen line says why), a scenario still tagged `@pending`, a scenario that stays manual-only, a scenario the red-first check marked "not seen red", and any run that executed zero tests. A run of zero tests is never a pass.
 - Name each example by the words the product manager agreed.
 - Put anything surprising that you saw in step 5 in the developer note, even when it was fixed.
 - Leave the developer note out when there is nothing in it.
