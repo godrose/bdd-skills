@@ -101,4 +101,21 @@ assert_contains "$ROOT/README.md" '/bdd:deliver'
 assert_contains "$PLUGIN/README.md" '/bdd:deliver'
 assert_contains "$ROOT/docs/README.md" '2026-11-09-deliver.md'
 
+# 19 look at the result before the report, by the means the layer offers
+before "$D" '#### Step 4: Run' '#### Step 5: Look at the result'
+before "$D" '#### Step 5: Look at the result' '### The report'
+assert_contains "$D" 'Passing scenarios do not show that they describe what a person sees'
+assert_contains "$D" '**A screen.**'
+assert_contains "$D" 'screenshot'
+assert_contains "$D" 'anything the page shows that no scenario names'
+assert_contains "$D" '**No screen.**'
+assert_contains "$D" 'make a real request'
+assert_contains "$D" 'read the stored record'
+assert_contains "$D" '**Declared against seen.**'
+assert_contains "$D" 'A fixture can declare a state that the system changes at once'
+assert_contains "$D" 'Never report an example as passed when its result could be looked at and was not'
+assert_contains "$D" 'Seen: <'
+assert_contains "$D" 'not looked at'
+assert_contains "$D" 'then looks at the result'
+
 finish

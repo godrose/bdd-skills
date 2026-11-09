@@ -4,7 +4,7 @@ description: "Carry a change from a plain description to verified scenarios in o
 
 ## BDD Deliver
 
-Carry one change from a description to scenarios that pass, in one conversation. This is a **methodology skill** that composes the existing ones: `bdd:discover`, `bdd:design`, `bdd:implement` and `bdd:run`. It does not replace them and does not repeat their work. It sequences them, turns their stops into questions, and writes the report.
+Carry one change from a description to scenarios that pass, in one conversation. This is a **methodology skill** that composes the existing ones: `bdd:discover`, `bdd:design`, `bdd:implement` and `bdd:run`. It does not replace them and does not repeat their work. It sequences them, turns their stops into questions, then looks at the result and writes the report.
 
 It is for a product manager with a developer or architect watching. The product manager describes a change and answers questions about how it should behave. The developer answers what is technical. After the first delivery the team shares one language, and each later change starts as a description and adds visible value on top of what exists.
 
@@ -52,6 +52,18 @@ Invoke the **implementer** skill (`bdd:implement`) for each approved scenario. I
 
 Invoke the **test-runner** skill (`bdd:run`) for the new scenarios and for the affected feature. The affected feature is the `.feature` files this change wrote or edited, plus any other feature file that uses a step whose code the increment changed.
 
+#### Step 5: Look at the result
+
+Passing scenarios do not show that they describe what a person sees. Before the report, look at the real result of every new or changed example, by the means its layer offers. Use the same data the scenarios use.
+
+- **A screen.** Open the app on that data and look at each page the change touches. In a browser-driven project, take a screenshot during a run of the scenario, or use the project's own way to start the app, and read it. Compare it with the agreed examples: every value, status and row the change touches, and anything the page shows that no scenario names, such as an empty field or a leftover label.
+- **No screen.** For an API or a service, make a real request to the running system and read the response. For stored data, read the stored record. For a background job, read the log or the record it writes. Compare it with the agreed examples in the same way.
+- **Declared against seen.** For every state that a scenario's data declares, such as a status or a flag, check that the system still shows it once it is running. A fixture can declare a state that the system changes at once. The scenario then passes while it describes something that never happens.
+
+What you see decides the next step. A difference from an agreed example, or a surprise nobody described, is a stop. If the behavior is in question, ask the product manager one question about it. Otherwise fix the step code, the data or the product, and run again within the fix loop's cap. Never change an agreed example or its expected values to match what you saw.
+
+If the result cannot be looked at, for example the app cannot be started here, do not skip this silently. Say what was not looked at and why. Never report an example as passed when its result could be looked at and was not.
+
 ### When a step stops
 
 Sort every stop by kind.
@@ -87,11 +99,15 @@ E3 <example in plain words>: couldn't be checked - <why>
 Regression: <N> earlier scenarios in <the affected feature> still pass.
 <or, for each earlier scenario that now fails: what used to be true, and the decision that was made>
 
+Seen: <what was looked at, and how: a page, a request, a record>
+<or: not looked at: <why>>
+
 Developer note: <parked technical stops, what to look at, and anything that was not recorded>
 ```
 
 - "Couldn't be checked" covers a scenario still tagged `@pending`, a scenario that stays manual-only, a scenario the red-first check marked "not seen red", and any run that executed zero tests. A run of zero tests is never a pass.
 - Name each example by the words the product manager agreed.
+- Put anything surprising that you saw in step 5 in the developer note, even when it was fixed.
 - Leave the developer note out when there is nothing in it.
 
 ### Rules
