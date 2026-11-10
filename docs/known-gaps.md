@@ -76,3 +76,11 @@ Each gap says what is not checked, why it is still open, and what would close it
 **Why.** The command says to ask one question at a time, and the model sometimes pairs a question with a closely related one. The grader is stricter than the other graders in the case, which are stable.
 
 **Closed when.** The grader is split into a deterministic count of question marks plus a one-clause judge, as was done for G1, and the case passes in a week of nightly runs.
+
+### G10 Only new scenarios are checked against their titles
+
+**Not checked.** Pass D in `design` compares a title with what its steps assert, for the scenarios drafted in that run. Scenarios already in a project are never checked, so a weak title written before the check stays.
+
+**Why.** The check runs while a person approves one change. Findings on old scenarios would pile onto that approval. A project-wide audit needs its own report and its own place to put the findings.
+
+**Closed when.** A command audits every scenario in the features folder and lists each title that asserts less than it claims, without editing a file.
