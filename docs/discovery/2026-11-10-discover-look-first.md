@@ -59,3 +59,24 @@ A fresh project with no scenarios, steps, screens or code sees "found nothing" a
 - An eval of Step 0: text tests pin the rule.
 - Scanning outside the repository, such as a tracker or a wiki.
 - The size gate is unchanged. A trivial change skips discovery, so it skips Step 0.
+
+## Live runs on a third project
+
+Two headless runs of `/bdd:discover` through the branch plugin, read-only, on a small real story. The project is an API service with about forty scenario files and a web client, in a stack that has no fake/real data split. Its name and paths are left out. The "product manager" was the plugin author, answering as someone who does not know the code. So this is still not a person new to the method (G11).
+
+The story was a small rule about a client being told clearly that something it relies on has expired.
+
+- **E13** Step 0 found that the behavior already exists, and that one scenario covers the main case. Both runs said so before asking anything. Nothing new was built for a story that was already met. Values were marked "from code", and the paths were on the "For the developer" line.
+- **E14** Step 0 found cases the story did not name: two other ways the same thing can expire, one of them found in only one of the two runs. Neither has a scenario for this request. It raised two possible defects to handle separately: an error field named differently from the others, and a message that is wrong for one of the cases.
+- **E15** Both runs listed what they did not look at: the real provider path, and the git history.
+- **E16** When the product manager said "work it out from the code if you can", the run traced the code and answered its own question.
+
+What the runs got wrong, each seen once:
+
+- A run asked the product manager a code question (does the request check the date itself?). The A/B/C question for an unknown source fits better.
+- A run ended with an unanswered open question and a second question about exclusions. That breaks the one-question rule.
+- A run printed an internal step name ("Step 0 and 3b") to the product manager.
+- The two runs found different sets of rules. One missed a rule the other found. That is variance, and one more sentence in the command would not remove it.
+- The setup was wrong: the throwaway config still pointed at another project. Both runs noticed and read the right project. It was a flaw in the setup, not in the plugin.
+
+No rule was changed for these. Each is one sample. They are kept here so a later run can show whether they repeat.
