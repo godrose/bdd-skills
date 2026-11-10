@@ -228,6 +228,7 @@ for s in "Pass D" "title check" "| Claims |" "claim unchecked" "names an exact v
 done
 assert_before "$G" "Pass C" "Pass D"
 assert_contains "$ROOT/docs/known-gaps.md" "### G10"
+assert_contains "$ROOT/docs/known-gaps.md" "### G12"
 
 
 # Zero tests ran is never a pass
@@ -359,7 +360,7 @@ for s in "Step 0: Look first" "before the first question" "For the developer:" "
   assert_contains "$D" "$s"
 done
 assert_before "$D" "Step 0: Look first" "#### Step 1: Understand the story"
-for s in "try the words nearby" "Say which words you tried" "Keep field names, status names and log names out of these sentences" "Ask the developer at once, as its own question"; do
+for s in "try the words nearby" "Say which words you tried" "Keep field names, status names and log names out of these sentences" "are roles" "nobody can check it" "record the unknown as an assumption" "Put one question to the product manager in a message"; do
   assert_contains "$D" "$s"
 done
 assert_before "$D" "#### Step 1: Understand the story" "#### Step 3b"

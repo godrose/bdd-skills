@@ -21,9 +21,12 @@ A product manager describes a change. The assistant asks questions before it has
 - **E4** When something cannot be looked at, it says "not looked at: <why>". Examples are a project with no screens, a repo with no source, or a shallow clone.
 - **E5** When the behavior already exists, the story becomes scenarios for existing behavior, with values marked "from code". This is the Step 3b rule, and it now applies from Step 0.
 - **E6** For a value the system sets or changes without the user (a status, a time, a count, a total), discovery finds the source in the code, states it "from code", and asks one plain question about the consequence, such as a delay or the precision.
-- **E7** When the source cannot be found, it is an open question for the developer ("Where is this set?"). The pack is not ready until it is answered.
+- **E7** When the source cannot be found, discovery asks one plain question: A, I can check it. B, someone else can. C, nobody can. On A it waits. On B the question "Where is this set?" goes on the "For the developer" line, and the pack is not ready until it is answered.
 - **E8** A value the user typed and the system only stores and shows back is not asked about.
 - **E9** The pack gets two short sections: "What exists" and "Shown values and their source".
+- **E10** On C, the unknown is recorded as an assumption with its risk, and the pack can be ready with that assumption listed. This is for a person with no developer, or a developer who cannot reach that part of the system.
+- **E11** Roles are hats. One person can be product manager and developer, or nobody can read the code. Findings stay plain for everyone, with names on the paths line.
+- **E12** The product manager gets one question per message. A question for the developer is on its own line and does not count as a second question.
 
 ## Decisions
 
@@ -34,6 +37,8 @@ A product manager describes a change. The assistant asks questions before it has
 | 3 | How is a shown value handled? | Find the source in the code. State it "from code". Ask the product manager only about the consequence (delay, precision). | A product manager cannot say where a status comes from. They can say whether a delay is acceptable, and that was the question trial 2 asked too late. |
 | 4 | The source cannot be found? | An open question for the developer. The pack is not ready until it is answered. | Same rule as Step 3b for a repo with no source. Designing without the source caused the late stop in trial 2. |
 | 5 | Which values? | Those the system sets or changes without the user doing it in the same moment: a status, a time, a count, a total, anything computed or set by another service. | These are the values that can differ from what a scenario declares. A value the user typed is noise. |
+| 6 | The source is unknown and nobody can check it? | Refines decision 4. Discovery asks one plain question (A I can check, B someone else can, C nobody can). On C it records an assumption with its risk and the pack can be ready. | A live run on a second project showed the pack stuck, with a note to pass the question on. A founder with no developer has nobody to pass it to. Not ready until answered stays the default, and the owner can accept the risk in writing. |
+| 7 | Should discovery interview the setup first? | No. The question is asked only at the moment it matters. Plain wording is the default for all setups. An opt-in setting is a possible later change, default plain, as a dated reversal. | An early interview costs a question before any value, can be wrong for a given story, and needs a config row. The setup changed only three things in the runs: wording, who gets the developer question, and whether an unknown blocks. |
 
 ## Existing users
 
@@ -49,7 +54,8 @@ A fresh project with no scenarios, steps, screens or code sees "found nothing" a
 
 - Starting the app and looking at it: that stays in step 5 of `deliver`.
 - A design-time check that declared states survive in the system: a separate discovery, still open.
-- A config switch: it can be added later, default on, as a dated reversal.
+- A config switch or an early interview about the setup: it can be added later, default plain, as a dated reversal.
+- Changing `deliver` for a person with no developer: known gap G12.
 - An eval of Step 0: text tests pin the rule.
 - Scanning outside the repository, such as a tracker or a wiki.
 - The size gate is unchanged. A trivial change skips discovery, so it skips Step 0.
