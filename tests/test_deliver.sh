@@ -97,7 +97,8 @@ assert_contains "$D" 'already works'
 
 # 18 permissions, no resume file, nothing written on an early end
 assert_contains "$D" 'pre-approves nothing'
-assert_contains "$D" 'a developer must'
+assert_not_contains "$D" 'a developer must be there'
+assert_contains "$D" 'the person running it must be there to approve each one'
 assert_contains "$D" 'There is no resume file'
 assert_contains "$D" 'If the session ends before the examples are approved, nothing is written'
 
@@ -141,5 +142,14 @@ assert_contains "$T" 'One question at a time'
 assert_contains "$T" 'Where the product manager was confused or pushed back'
 assert_not_contains "$T" '/Users/'
 assert_not_contains "$T" "$(printf '\xe2\x80\x94')"
+
+# 21 a person with no developer: parked stops become risks in plain words (docs/discovery/2026-11-11-deliver-no-developer.md)
+for s in 'with or without a developer or architect watching' 'Not checked, and what it risks:' 'one plain sentence on what could go wrong for the users' 'on a "For the developer" line' 'Never name a file, a field, a function or a status in the plain sentence' 'Do not ask whether there is a developer' 'Leave the "Not checked, and what it risks" section out when nothing was parked' 'is never reported as passed'; do
+  assert_contains "$D" "$s"
+done
+before "$D" 'Not checked, and what it risks:' 'Developer note: <'
+assert_not_contains "$D" 'Developer note: <parked technical stops'
+assert_contains "$ROOT/docs/discovery/2026-11-11-deliver-no-developer.md" 'Decisions'
+assert_contains "$ROOT/docs/README.md" '2026-11-11-deliver-no-developer.md'
 
 finish

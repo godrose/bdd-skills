@@ -45,7 +45,7 @@ assert_contains "$F/run.sh" "TURNS=12"
 
 # S4 the persona card is passed to the small model, and its reply is the next prompt
 d=$(fresh_script s4 "What exists: x. One?" "$READY"); harness "$d"
-assert_contains "$d/pm-prompt-1.txt" "$(head -1 "$F/personas/$(cat "$F/fixtures/a/persona.txt").md")"
+assert_contains "$d/pm-prompt-1.txt" "$(tr -d '\r' < "$F/personas/$(tr -d '\r' < "$F/fixtures/a/persona.txt").md" | head -1)"
 assert_contains "$d/assistant-args-2.txt" "A. reply 1"
 
 # S5 to S8 one table: a message, the rule, held or broken
@@ -157,6 +157,13 @@ assert_file "$T/rel-out/a/run-1/turn-01-assistant.txt"
 mkdir -p "$T/empty"; FAKE_DIR="$T/empty" bash "$F/run.sh" --fixture a --runs 1 --out "$T/out-empty" > /dev/null 2>&1
 assert_contains "$T/out-empty/a/report.md" "no answer"
 assert_not_contains "$T/out-empty/a/report.md" "0 of"
+
+# Fixture text files with Windows line endings still work (a clone with autocrlf)
+mkdir -p "$T/crlf"; cp -R "$F" "$T/crlf/flows"; rm -rf "$T/crlf/flows/results"
+for x in "$T"/crlf/flows/fixtures/*/persona.txt "$T"/crlf/flows/fixtures/*/story.txt; do perl -pi -e 's/\r?\n/\r\n/' "$x"; done
+d=$(fresh_script crlfscript "What exists: x. One?" "$READY")
+FAKE_DIR="$d" bash "$T/crlf/flows/run.sh" --fixture a --runs 1 --out "$T/out-crlf" > /dev/null 2>&1
+assert_file "$T/out-crlf/a/run-1/turn-01-assistant.txt"
 
 # S14 no claude: says so, stops, writes nothing
 rm -rf "$T/out-none"

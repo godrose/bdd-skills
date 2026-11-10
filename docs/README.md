@@ -37,7 +37,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-10-design-title-check.md` | `bdd:design` checks that a scenario asserts what its title claims (Pass D) |
 | `2026-11-10-discover-look-first.md` | `bdd:discover` looks at what exists before the first question and handles shown values (Step 0) |
 | `2026-11-10-discover-flow-runs.md` | A scripted flow run for `bdd:discover`: a real headless session, a model playing the product manager, rules counted on the transcript |
-## trials/
+| `2026-11-11-deliver-no-developer.md` | `bdd:deliver` reports parked technical stops as plain risks, for a person with no developer |## trials/
 
 Records of real working sessions with the plugin, kept as examples.
 
