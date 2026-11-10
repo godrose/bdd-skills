@@ -1,0 +1,1 @@
+When a loan is overdue, the member should see a clear notice on their loans page that says how many days late it is.
