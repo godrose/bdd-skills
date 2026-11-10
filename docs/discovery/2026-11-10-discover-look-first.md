@@ -1,0 +1,82 @@
+# Discovery: `bdd:discover` looks at what exists before the first question
+
+Input: the two trials of `/bdd:deliver` on a real project (`docs/trials/2026-11-09-deliver-pm-session.md`), a read of `plugin/commands/discover.md`, and a discovery dialogue with the builder, one question at a time. It covers handoff suggestions 1 and 2.
+
+## Story
+
+A product manager describes a change. The assistant asks questions before it has looked at what the project already has. Twice in trial 1 it stated something that was false, and once in trial 2 a product decision came up late, after the examples were approved. Discovery should look first, say what it found in plain words, and ask about a shown value only when the answer is a product decision.
+
+## Existing behavior (from the command)
+
+- Step 1 restates the story and Step 2 proposes examples. Step 3 mines vocabulary and Step 3b looks for existing behavior in the code. Both come after the questions start.
+- Step 3b reads domain code, handlers and unit tests. It does not read existing scenarios for the behavior itself, and it does not read screens.
+- Step 3b already says: when the behavior exists, mark values "from code", and when the repo has no source, ask where the behavior is defined.
+- The trials showed the cost. Discovery said delete had no scenarios, but one screen check existed. It said no screen showed dates, but the list had a "Created on" column. It asked about timing precision only at design, after the checklist was approved.
+
+## Agreed examples
+
+- **E1** Before the first question, discovery looks for the story's key terms in scenarios, step code, screens and code. This is a new Step 0, "Look first". It only reads.
+- **E2** Each finding is one plain sentence at the start of the restatement. The paths go on one trailing line labelled "For the developer".
+- **E3** When nothing is found, it says one line: "Looked at scenarios, steps, screens and code for these terms: found nothing."
+- **E4** When something cannot be looked at, it says "not looked at: <why>". Examples are a project with no screens, a repo with no source, or a shallow clone.
+- **E5** When the behavior already exists, the story becomes scenarios for existing behavior, with values marked "from code". This is the Step 3b rule, and it now applies from Step 0.
+- **E6** For a value the system sets or changes without the user (a status, a time, a count, a total), discovery finds the source in the code, states it "from code", and asks one plain question about the consequence, such as a delay or the precision.
+- **E7** When the source cannot be found, discovery asks one plain question: A, I can check it. B, someone else can. C, nobody can. On A it waits. On B the question "Where is this set?" goes on the "For the developer" line, and the pack is not ready until it is answered.
+- **E8** A value the user typed and the system only stores and shows back is not asked about.
+- **E9** The pack gets two short sections: "What exists" and "Shown values and their source".
+- **E10** On C, the unknown is recorded as an assumption with its risk, and the pack can be ready with that assumption listed. This is for a person with no developer, or a developer who cannot reach that part of the system.
+- **E11** Roles are hats. One person can be product manager and developer, or nobody can read the code. Findings stay plain for everyone, with names on the paths line.
+- **E12** The product manager gets one question per message. A question for the developer is on its own line and does not count as a second question.
+
+## Decisions
+
+| # | Question | Decision | Reason |
+|---|----------|----------|--------|
+| 1 | When does discovery look at what exists? | Before the first question, in a new Step 0 "Look first". Steps 3 and 3b stay for vocabulary and defects. | Both retractions in trial 1 came from stating something before looking. A named step is visible and a test can pin its place before Step 1. |
+| 2 | How are findings reported? | One plain line per finding at the start of the restatement, with the paths on one trailing line "For the developer". "Found nothing" and "not looked at: <why>" are said aloud. | The product manager may not know where code is, so the sentence must stand alone. A silent miss is what went wrong in trial 1. |
+| 3 | How is a shown value handled? | Find the source in the code. State it "from code". Ask the product manager only about the consequence (delay, precision). | A product manager cannot say where a status comes from. They can say whether a delay is acceptable, and that was the question trial 2 asked too late. |
+| 4 | The source cannot be found? | An open question for the developer. The pack is not ready until it is answered. | Same rule as Step 3b for a repo with no source. Designing without the source caused the late stop in trial 2. |
+| 5 | Which values? | Those the system sets or changes without the user doing it in the same moment: a status, a time, a count, a total, anything computed or set by another service. | These are the values that can differ from what a scenario declares. A value the user typed is noise. |
+| 6 | The source is unknown and nobody can check it? | Refines decision 4. Discovery asks one plain question (A I can check, B someone else can, C nobody can). On C it records an assumption with its risk and the pack can be ready. | A live run on a second project showed the pack stuck, with a note to pass the question on. A founder with no developer has nobody to pass it to. Not ready until answered stays the default, and the owner can accept the risk in writing. |
+| 7 | Should discovery interview the setup first? | No. The question is asked only at the moment it matters. Plain wording is the default for all setups. An opt-in setting is a possible later change, default plain, as a dated reversal. | An early interview costs a question before any value, can be wrong for a given story, and needs a config row. The setup changed only three things in the runs: wording, who gets the developer question, and whether an unknown blocks. |
+
+## Existing users
+
+- A project that uses `bdd:discover` or `bdd:deliver` gets Step 0 when it updates the plugin or re-runs `install.sh`. It needs no config change, because there is no new row.
+- Nothing is installed or deleted, and a user's own command or skill with a similar name is not touched.
+- Existing scenarios and the out-of-scope list are read and never changed.
+
+## First run
+
+A fresh project with no scenarios, steps, screens or code sees "found nothing" and carries on. Empty folders still report "nothing to mine" in Step 3.
+
+## Exclusions
+
+- Starting the app and looking at it: that stays in step 5 of `deliver`.
+- A design-time check that declared states survive in the system: a separate discovery, still open.
+- A config switch or an early interview about the setup: it can be added later, default plain, as a dated reversal.
+- Changing `deliver` for a person with no developer: known gap G12.
+- An eval of Step 0: text tests pin the rule.
+- Scanning outside the repository, such as a tracker or a wiki.
+- The size gate is unchanged. A trivial change skips discovery, so it skips Step 0.
+
+## Live runs on a third project
+
+Two headless runs of `/bdd:discover` through the branch plugin, read-only, on a small real story. The project is an API service with about forty scenario files and a web client, in a stack that has no fake/real data split. Its name and paths are left out. The "product manager" was the plugin author, answering as someone who does not know the code. So this is still not a person new to the method (G11).
+
+The story was a small rule about a client being told clearly that something it relies on has expired.
+
+- **E13** Step 0 found that the behavior already exists, and that one scenario covers the main case. Both runs said so before asking anything. Nothing new was built for a story that was already met. Values were marked "from code", and the paths were on the "For the developer" line.
+- **E14** Step 0 found cases the story did not name: two other ways the same thing can expire, one of them found in only one of the two runs. Neither has a scenario for this request. It raised two possible defects to handle separately: an error field named differently from the others, and a message that is wrong for one of the cases.
+- **E15** Both runs listed what they did not look at: the real provider path, and the git history.
+- **E16** When the product manager said "work it out from the code if you can", the run traced the code and answered its own question.
+
+What the runs got wrong, each seen once:
+
+- A run asked the product manager a code question (does the request check the date itself?). The A/B/C question for an unknown source fits better.
+- A run ended with an unanswered open question and a second question about exclusions. That breaks the one-question rule.
+- A run printed an internal step name ("Step 0 and 3b") to the product manager.
+- The two runs found different sets of rules. One missed a rule the other found. That is variance, and one more sentence in the command would not remove it.
+- The setup was wrong: the throwaway config still pointed at another project. Both runs noticed and read the right project. It was a flaw in the setup, not in the plugin.
+
+No rule was changed for these. Each is one sample. They are kept here so a later run can show whether they repeat.

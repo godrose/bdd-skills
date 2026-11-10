@@ -228,6 +228,7 @@ for s in "Pass D" "title check" "| Claims |" "claim unchecked" "names an exact v
 done
 assert_before "$G" "Pass C" "Pass D"
 assert_contains "$ROOT/docs/known-gaps.md" "### G10"
+assert_contains "$ROOT/docs/known-gaps.md" "### G12"
 
 
 # Zero tests ran is never a pass
@@ -353,6 +354,21 @@ assert_contains "$PLUGIN/commands/discover.md" 'git log --diff-filter=D'
 assert_contains "$PLUGIN/commands/discover.md" 'Agreed examples'
 assert_contains "$PLUGIN/commands/discover.md" 'E1'
 assert_contains "$PLUGIN/commands/discover.md" 'No **out_of_scope_file**: use `docs/out-of-scope.md`'
+
+# Step 0: discover looks first (docs/discovery/2026-11-10-discover-look-first.md)
+for s in "Step 0: Look first" "before the first question" "For the developer:" "found nothing" "not looked at:" "Shown values and their source" "## What exists" "Where is this set" "without the user doing it in the same moment" "only about what it means for them"; do
+  assert_contains "$D" "$s"
+done
+assert_before "$D" "Step 0: Look first" "#### Step 1: Understand the story"
+for s in "try the words nearby" "Say which words you tried" "Keep field names, status names and log names out of these sentences" "are roles" "nobody can check it" "record the unknown as an assumption" "Put one question to the product manager in a message"; do
+  assert_contains "$D" "$s"
+done
+assert_before "$D" "#### Step 1: Understand the story" "#### Step 3b"
+
+# Outline against separate scenarios is offered by name (handoff suggestion 4, a copy edit under the size gate)
+for s in "Outline + Examples against separate scenarios" "by those names" "let the person choose" "never merge cases into one scenario"; do
+  assert_contains "$G" "$s"
+done
 assert_contains "$PLUGIN/commands/deliver.md" 'No **out_of_scope_file**: use `docs/out-of-scope.md`'
 assert_contains "$PLUGIN/commands/design.md" 'counts as the approval of the examples'
 assert_contains "$PLUGIN/commands/design.md" 'Decision (YYYY-MM-DD)'

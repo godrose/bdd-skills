@@ -25,10 +25,21 @@ Apply the size gate once you have read the story. Some changes do not need disco
 
 Discovery is a dialogue. Ask **one question at a time**. Wait for the answer. Use the answer to choose the next question. Do not hand the builder a list of twenty questions.
 
+#### Step 0: Look first
+
+Look at what the project already has before the first question. This only reads. Change nothing. The product manager and the developer are roles. One person can be both, or nobody may be able to read the code.
+
+1. Take the story's key terms: the action, the thing it acts on, and any value the story shows. Search for them in the scenarios (**features_dir**), every folder of the **steps_dir**, the screens (views, templates and page objects, when the project has a client), and the domain and server code. Read the out-of-scope list too (the file named by **out_of_scope_file**). If the story's words match nothing, try the words nearby before you report nothing: status names, enum values, and the words the scenarios and screens use for the same thing. Say which words you tried.
+2. Say what you found at the start of the restatement in Step 1. Write one plain sentence per finding, in words a product manager can check without knowing where the code is. Keep field names, status names and log names out of these sentences. Say what the system does and shows, and leave the names to the paths line. Put the paths on one trailing line: "For the developer: <paths>".
+3. If you still found nothing, say "Looked at scenarios, steps, screens and code for these terms: found nothing." and name the terms, including the nearby words you tried.
+4. If something cannot be looked at, say "not looked at: <why>". Examples: the project has no screens, the repo holds only features, or the clone is shallow. Never skip it silently.
+5. For each value the story shows that the system sets or changes without the user doing it in the same moment (a status, a time, a count, a total, anything computed or set by another service), find what sets it in the code. State it "from code". Then ask the product manager one plain question only about what it means for them, such as a delay or the precision. Do not ask where the value comes from. A value the user typed and the system only stores and shows back needs no question. If you cannot find what sets it, do not guess. Ask one plain question: "I could not find where this value is set. A: I can check it. B: someone else can, and I will pass it on. C: nobody can check it." On A, wait for the answer. On B, put "Where is this set?" on the "For the developer" line, and the pack is not ready until it is answered. On C, record the unknown as an assumption with its risk (for example "start time unconfirmed, verify it in step 5 of `bdd:deliver`"). The pack can then be ready, with that assumption listed. Never hold up the other questions for it.
+6. If the behavior already exists, Step 3b applies from here: the story becomes scenarios for existing behavior, with values marked "from code".
+
 #### Step 1: Understand the story
 
 1. If a tracker key is given and a **requirements-sync** skill is configured, invoke it to fetch the story, acceptance criteria, comments and linked items. Otherwise use the text you were given. If you were given only a tracker key and no **requirements-sync** skill is configured, ask the builder to paste the story.
-2. Restate the story in plain words and ask the builder to correct it.
+2. Restate the story in plain words, beginning with what Step 0 found, and ask the builder to correct it.
 3. If the acceptance criteria are missing or vague, stop and ask. Do not draft scenarios from a guess.
 
 #### Step 2: Find examples
@@ -67,6 +78,12 @@ Present the discovery pack (below). It stays in the conversation by default. Sav
 ## Story
 <restated story, corrected by the builder>
 
+## What exists
+<what Step 0 found, one plain sentence each, then "For the developer: <paths>"; or "found nothing"; or "not looked at: <why>">
+
+## Shown values and their source
+<each value the system sets or changes without the user: what sets it, marked "from code", and the answer about what it means for the user; or "where is this set?" as an open question; or "none">
+
 ## Open questions
 <questions still unanswered, most important first, or "none">
 
@@ -89,12 +106,13 @@ Present the discovery pack (below). It stays in the conversation by default. Sav
 <ready for bdd:design, or what is still missing>
 ```
 
-The pack is **ready** only when no open question is unanswered and every exclusion is confirmed.
+The pack is **ready** only when no open question is unanswered and every exclusion is confirmed. A shown value whose source is unknown is an open question, unless the person who owns the story says nobody can check it. Then it is a listed assumption.
 
 ### Rules
 
 - Reuse the project's existing words. A new term needs a stated reason.
 - Never invent acceptance criteria. Ask.
+- Put one question to the product manager in a message. A question for the developer goes on its own line and is not a second question.
 - Never write step definitions or touch the test code. That is the implementer's job.
 - If the builder says "just guess", propose one concrete answer and mark it as your guess.
 

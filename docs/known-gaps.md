@@ -84,3 +84,19 @@ Each gap says what is not checked, why it is still open, and what would close it
 **Why.** The check runs while a person approves one change. Findings on old scenarios would pile onto that approval. A project-wide audit needs its own report and its own place to put the findings.
 
 **Closed when.** A command audits every scenario in the features folder and lists each title that asserts less than it claims, without editing a file.
+
+### G11 The design title check and the discover first step were never run in a live session
+
+**Not checked.** Pass D in `design` and Step 0 in `discover` are pinned by text tests only. Nobody has run `/bdd:design` or `/bdd:discover` on a real story with these rules in place. Whether a model scans before the first question, keeps the findings in plain words, and asks a product manager only what it means for them, is not known. Nor is it known how Pass D behaves on a title with several named things.
+
+**Why.** A live run needs a project other than the first trial project, and a person at a terminal. A read-through of Step 0 by hand, by its author, on a second .NET project on 2026-11-10 found one gap, since fixed: a story's words can match nothing in the code, and "found nothing" would then be false. Two headless runs on a third project, an API service with no fake/real split, on 2026-11-10 found the existing behavior and its gaps, and showed three small slips (see the discovery pack, E13 to E16). In both, the product manager was the author, so that is still not a live run with a person new to the method. The first trial project has two configurations and a UI, so it would say little about the many projects that have neither.
+
+**Closed when.** `/bdd:discover` and `/bdd:design` are run through the plugin folder of the branch on a small real story in a project with one configuration, and the result is recorded in `docs/trials/`. Release `0.7.0` waits for this, or for the maintainer's decision to release without it.
+
+### G12 `deliver` assumes there is a developer to hand technical stops to
+
+**Not checked.** `deliver` parks a technical stop for "the developer" and reports it in the developer note. A founder with no developer cannot act on that note. Step 0 in `discover` now has a way out (an unknown the owner cannot check becomes a listed assumption). `deliver`'s other stops have none.
+
+**Why.** The method was built from a trial with a product manager and a developer watching. The one-person case came up later, in a live run of `discover`, and `deliver` was not changed for it.
+
+**Closed when.** A run of `deliver` as a person with no developer reaches a report that names each parked stop as an assumption or a risk the person accepts, and not as a task for someone who does not exist.
