@@ -364,6 +364,11 @@ for s in "try the words nearby" "Say which words you tried" "Keep field names, s
   assert_contains "$D" "$s"
 done
 assert_before "$D" "#### Step 1: Understand the story" "#### Step 3b"
+
+# Outline against separate scenarios is offered by name (handoff suggestion 4, a copy edit under the size gate)
+for s in "Outline + Examples against separate scenarios" "by those names" "let the person choose" "never merge cases into one scenario"; do
+  assert_contains "$G" "$s"
+done
 assert_contains "$PLUGIN/commands/deliver.md" 'No **out_of_scope_file**: use `docs/out-of-scope.md`'
 assert_contains "$PLUGIN/commands/design.md" 'counts as the approval of the examples'
 assert_contains "$PLUGIN/commands/design.md" 'Decision (YYYY-MM-DD)'
