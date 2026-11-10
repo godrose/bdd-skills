@@ -61,3 +61,52 @@ A maintainer runs one script with a fixture name and a run count. Without a Clau
 
 - The cost of one multi-turn run and the variance between runs: the first spike measures both.
 - Whether the persona model's replies vary enough to change what the run asks. The logged replies show it.
+
+## First real runs (2026-11-10)
+
+Three runs on each fixture, through `flows/run.sh`, with the branch plugin, Haiku as the product manager and the default model under test. The product manager here is a model, so this is still not a person new to the method (G11).
+
+| | Fixture A (something to find) | Fixture B (nothing to find) |
+|---|---|---|
+| Turns per run | 6, 9, 7 | 10, 8, 12 |
+| Seconds per run | 61, 83, 72 | 81, 74, 93 |
+| Usage per run, notional USD | 0.81, 1.12, 0.79 | 1.35, 0.87, 1.33 |
+| look-first | 3 of 3 | 3 of 3 |
+| one-question | 3 of 3 | 2 of 3 |
+| plain-words | 2 of 3 | 1 of 3 |
+| pack-end | 3 of 3 | 3 of 3 |
+| project-untouched | 3 of 3 | 3 of 3 |
+
+Cost: a run took 1 to 1.5 minutes and about 1 dollar notional, so six runs were about 6 dollars notional. The usage draws on the plan limit. Runs differ in length: 6 to 12 turns for the same story.
+
+What the plugin did, seen in the transcripts:
+
+- Step 0 reported what exists on A, and "found nothing", the words it tried and what it did not look at on B, in all six runs.
+- The system-set value was stated "from code" in the runs that asked about it.
+- On B the founder persona said nobody could check how administrators are set in two of three runs. Both ended "ready" with the unknown listed.
+- No run wrote a file outside the pack folder. No run saved the pack. They offered to.
+
+What the rules caught, each a real break:
+
+- A code name or a path outside the "For the developer" line, in the pack's closing notes: three runs. Examples: a page name in a "possible defect" note, a function name, a file in a "reused" list. The findings at the start were clean. The slips are in the long final pack.
+- Two questions in one message in one run: the pack listed an open question and then asked it again.
+
+What the runs showed about the checker, not the plugin. Each was fixed with a test that failed first:
+
+1. A first message that said "What I found" was scored as not looking first.
+2. A "Ready" verdict was scored as broken for having no reason. Only "Not ready" needs a reason.
+3. The plugin's own names (`bdd:design`, the pack folder) were counted as code names.
+4. Values and column names in backticks (a header, a timestamp, an output file name) were counted as code names. Now only identifier shapes, paths and code file names count.
+5. A relative output folder made every call fail, and the empty runs were scored as breaks. Runs with no answer are now listed and not scored.
+
+Refinements to the examples:
+
+- **E3, pack end:** "ready" needs no reason. "Not ready" needs one.
+- **E3, plain words:** a value or a column name shown to the product manager is not a code name.
+- **E7:** a run that got no answer is listed and not scored.
+
+Left open:
+
+- The two-question rule counts lines with a question mark. A pack that lists an open question and then asks it counts as two. Whether that is a break or the shape of the pack is not decided.
+- The rule that counts code names and paths in the closing pack may be stricter than `discover.md` says. The command speaks of findings. This is for the maintainer to decide.
+- Nothing is run twice for the same reply, so how much of the variance comes from the product manager model is not known.

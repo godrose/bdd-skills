@@ -83,6 +83,10 @@ rule_case plain-words broken "What exists: a check in src/loans/overdue.js.
 Is that right?" "$READY"
 rule_case plain-words broken 'What exists: the `OVERDUE_STATUS` is set.
 Is that right?' "$READY"
+rule_case plain-words broken "The page loans.html shows it.
+Is that right?" "$READY"
+rule_case plain-words held   'The header uses `name`, `email` and `joined`, for example `2026-11-10T17:17:11Z`, in `members.csv`.
+Is that right?' "$READY"
 rule_case plain-words held   'What exists: a status is set.
 Is that right?
 For the developer:

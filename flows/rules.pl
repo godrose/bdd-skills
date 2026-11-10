@@ -24,7 +24,7 @@ my @pw;
 for my $i (0 .. $#msg) {
   my $t = strip_dev($msg[$i]);
   $t =~ s/`?bdd:\w+`?//g; $t =~ s{`?docs/discovery/?`?}{}g;
-  push @pw, $i + 1 if $t =~ /`[^`]+`/ || $t =~ m{[\w.-]+(?:/[\w.-]+)+\.\w{1,5}\b} || $t =~ /\b[\w-]+\.(?:js|ts|cs|py|feature|json|yml|yaml|md|sh)\b/;
+  push @pw, $i + 1 if $t =~ /`[^`\n]*(?:[A-Z]{2,}_|_[A-Za-z]|[a-z][A-Z]|\(\)|\w\.\w+\()[^`\n]*`/ || $t =~ m{[\w.-]+(?:/[\w.-]+)+\.\w{1,5}\b} || $t =~ /\b[\w-]+\.(?:js|ts|cs|py|feature|json|yml|yaml|sh|html)\b/;
 }
 row("plain-words", scalar(@pw), join(", ", map { "message $_" } @pw));
 
