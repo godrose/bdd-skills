@@ -359,6 +359,9 @@ for s in "Step 0: Look first" "before the first question" "For the developer:" "
   assert_contains "$D" "$s"
 done
 assert_before "$D" "Step 0: Look first" "#### Step 1: Understand the story"
+for s in "try the words nearby" "Say which words you tried"; do
+  assert_contains "$D" "$s"
+done
 assert_before "$D" "#### Step 1: Understand the story" "#### Step 3b"
 assert_contains "$PLUGIN/commands/deliver.md" 'No **out_of_scope_file**: use `docs/out-of-scope.md`'
 assert_contains "$PLUGIN/commands/design.md" 'counts as the approval of the examples'
