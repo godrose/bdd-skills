@@ -111,3 +111,22 @@ Left open:
 - The two-question rule counts lines with a question mark. A pack that lists an open question and then asks it counts as two. Whether that is a break or the shape of the pack is not decided.
 - The builder decided it: see decision 9. The command now says so.
 - Nothing is run twice for the same reply, so how much of the variance comes from the product manager model is not known.
+
+## Rerun of fixture B after decision 9
+
+Three more runs of fixture B with the new rule in `discover.md` and the vocabulary exemption in the checker. Turns 10, 9 and 7. Seconds 75, 77 and 59. Usage 1.24, 0.94 and 0.65 notional USD.
+
+| Rule | Before the rule | After the rule |
+|---|---|---|
+| look-first | 3 of 3 | 3 of 3 |
+| one-question | 2 of 3 | 0 of 3 |
+| plain-words | 2 of 3 | 3 of 3 |
+| pack-end | 3 of 3 | 3 of 3 |
+| project-untouched | 3 of 3 | 3 of 3 |
+
+- **plain-words:** no name or path outside the vocabulary section and the developer line, in all three runs. The earlier break (a function name in a "possible defect" note) did not recur. Three runs are a small sample, so this does not show the rule is the cause.
+- **one-question went the other way, and the rule did not touch questions.** Reading the four flagged messages:
+  - Two are real: one message asked three questions in a row, another asked two ("my question for you" and then "I need to confirm one thing first").
+  - One lists two open questions, each marked as for the developer, on their own lines. The checker counts them. It should not.
+  - One lists the open question, repeats it in the readiness line and asks it again. This is the pack shape from the first runs.
+- **What this says about variance:** for the same story and the same command text, the same rule held 2 of 3 once and 0 of 3 the next time. Three runs cannot separate a change of the command from the spread between runs.
