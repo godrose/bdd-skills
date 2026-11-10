@@ -62,6 +62,14 @@ If a discovery pack is given and its Readiness says it is not ready, say so and 
      - Step takes a parameter such as `{int}`: the parameter fits any value. Record it and pass.
      - Definition is long or indirect: record the visible assertion and say if a helper was followed. If you cannot tell, record "assertion unknown".
      - On a mismatch, the designer never changes fixture data and never rewrites the step silently. Flag it in the audit table and propose two fixes: (A) change the scenario's data, or (B) write a new step, marked `🆕 intentional because: <reason>`. Say which you prefer. The person chooses at the approval gate.
+   - **Pass D - title check**: for EACH scenario drafted in this run, read its title and list the things it names: each entity, state or value. For each named thing, find the `Then` step that asserts it, and use the strength Pass C recorded. Write the result in the `Claims` column of that `Then` row. This check runs only for the scenarios drafted in this run. Scenarios already in the project are never checked, even when a drafted scenario reuses their steps.
+     - A named thing that no `Then` step asserts: add a row with `(none)` as the step and flag it.
+     - The title names an exact value and the step only checks that something is there (present, not empty, a count): flag it.
+     - Every named thing is asserted: write "matches" in the `Claims` column. No finding.
+     - Definition cannot be read, or the step is new: write "claim unchecked" and flag it. Do not guess. For a new step compare the title with the step's wording only, and say that is all that was compared.
+     - A step that asserts more than the title says is not a finding.
+     - On a finding, the designer never changes a title, fixture data or a step silently. Flag the row and propose two fixes: (A) narrow the title to what is asserted, or (B) add the missing assertion with a new or stronger step, marked `🆕 intentional because: <reason>`. Say which you prefer. The person chooses at the approval gate.
+
 5. **Sweep project conventions** - before drafting NEW steps, read existing step defs in the same domain to learn the project's vocabulary:
    - **Negation form** - `is disabled` vs `is not enabled`; `should not match` vs `should differ`
    - **Data-table column names** already used in the same assertion family (e.g., `| field | matcher |` vs `| field | expected |`)
@@ -126,13 +134,14 @@ Present the designed scenarios to the user. **Before requesting approval, produc
 
 Example:
 
-| Step Text | Status | Existing Analog | Asserts |
-|-----------|--------|------------------|---------|
-| `When I submit the form` | ✅ exact | `steps/forms.ts:42` | n/a (When) |
-| `Then the list shows 2 experiments` | ⚠ assertion mismatch - asserts exact count, scenario data has 3 | `steps/list.ts:31` | exact count |
-| `Then the response should contain:` (table) | ⚠ paraphrase - prefer `the response should match:` | `steps/api.ts:88` | contains rows |
-| `Given the flag is not enabled` | ⚠ convention drift - codebase uses `is disabled` | `steps/flags.ts:17` | n/a (Given) |
-| `Then a toast notification appears` | 🆕 genuinely new - no toast assertions exist yet | - | n/a |
+| Step Text | Status | Existing Analog | Asserts | Claims |
+|-----------|--------|------------------|---------|--------|
+| `When I submit the form` | ✅ exact | `steps/forms.ts:42` | n/a (When) | n/a |
+| `Then the list shows 2 experiments` | ⚠ assertion mismatch - asserts exact count, scenario data has 3 | `steps/list.ts:31` | exact count | matches |
+| `Then the response should contain:` (table) | ⚠ paraphrase - prefer `the response should match:` | `steps/api.ts:88` | contains rows | matches |
+| `Given the flag is not enabled` | ⚠ convention drift - codebase uses `is disabled` | `steps/flags.ts:17` | n/a (Given) | n/a |
+| `Then a toast notification appears` | 🆕 genuinely new - no toast assertions exist yet | - | n/a | claim unchecked (new step, title compared with its wording only) |
+| (none) | ⚠ the title says "reports its waiting time and run time", no step asserts the waiting time | - | - | ⚠ named thing not asserted |
 
 **Resolve every ⚠ row before requesting approval** - either by rewording to the existing analog, or by documenting why the new wording is intentionally different. Then present:
 
@@ -220,6 +229,7 @@ After all scenarios are implemented and verified:
 | Treating planned (unautomated) scenarios as exempt from step-reuse rigor | Every planned step becomes a step def when automated; paraphrases get locked in before anyone notices | Apply identical step-reuse rules to planned and automated scenarios |
 | Abbreviating scenarios in the proposal ("same set-up as ...") | The approver signs off on text they have not seen, and the written file may differ from what they read | Phase 4 - write every scenario out in full with all of its steps |
 | Assuming a reused Then step makes the claim the scenario needs | Same words means same claim is false: the step passes the wording audit and fails at run time on data it does not fit | Phase 2 Pass C - read the definition, record what it asserts in the `Asserts` column, flag a mismatch for the person to resolve |
+| Trusting a title because the steps pass | A scenario can pass while it proves less than its title says. Asserting less than the title claims shows up as a green row with a promise the steps do not keep | Phase 2 Pass D - list what the title names, find the `Then` step for each, fill the `Claims` column, flag a gap and offer two fixes |
 | Silently picking one meaning of a vague AC term | The other readings vanish and the person approving never sees the choice | Phase 1 step 3 - list the assumption with the other readings found, and show it first in the proposal |
 | Presenting scenarios for approval without a per-step audit table | User can't tell which steps are new without manually grepping; review burden falls on reviewers, not the designer | Phase 4 - produce the audit table before requesting approval; every ⚠ row must be reconciled or annotated |
 | Embedding multi-line content inside a quoted step argument | Fails Gherkin parsing | Use a single-line step with a Gherkin DocString (`"""…"""`) directly below it; the step def takes a DocString parameter |

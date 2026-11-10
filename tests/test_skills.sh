@@ -222,6 +222,13 @@ assert_before "$G" "Pass B" "Pass C"
 assert_contains "$I" "assertion does not fit"
 assert_contains "$I" "Do not edit approved scenario data"
 
+# Pass D: a scenario must assert what its title claims (docs/discovery/2026-11-10-design-title-check.md)
+for s in "Pass D" "title check" "| Claims |" "claim unchecked" "names an exact value" "narrow the title" "only for the scenarios drafted in this run" "never changes a title" "Asserting less than the title claims"; do
+  assert_contains "$G" "$s"
+done
+assert_before "$G" "Pass C" "Pass D"
+assert_contains "$ROOT/docs/known-gaps.md" "### G10"
+
 
 # Zero tests ran is never a pass
 RUN="$PLUGIN/commands/run.md"

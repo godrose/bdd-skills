@@ -34,6 +34,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-08-allowed-tools-decision.md` | Keep the broad `allowed-tools` grants (superseded) |
 | `2026-11-08-directory-policy.md` | Meet the directory's file and tool policy: no grants, no scripts or fixtures in the plugin |
 | `2026-11-09-deliver.md` | `/bdd:deliver`: one conversation from a description to verified scenarios, for a PM with a developer watching |
+| `2026-11-10-design-title-check.md` | `bdd:design` checks that a scenario asserts what its title claims (Pass D) |
 
 ## trials/
 
