@@ -84,3 +84,11 @@ Each gap says what is not checked, why it is still open, and what would close it
 **Why.** The check runs while a person approves one change. Findings on old scenarios would pile onto that approval. A project-wide audit needs its own report and its own place to put the findings.
 
 **Closed when.** A command audits every scenario in the features folder and lists each title that asserts less than it claims, without editing a file.
+
+### G11 The design title check and the discover first step were never run in a live session
+
+**Not checked.** Pass D in `design` and Step 0 in `discover` are pinned by text tests only. Nobody has run `/bdd:design` or `/bdd:discover` on a real story with these rules in place. Whether a model scans before the first question, keeps the findings in plain words, and asks a product manager only what it means for them, is not known. Nor is it known how Pass D behaves on a title with several named things.
+
+**Why.** A live run needs a project other than the first trial project, and a person at a terminal. The first trial project has two configurations and a UI, so it would say little about the many projects that have neither.
+
+**Closed when.** `/bdd:discover` and `/bdd:design` are run through the plugin folder of the branch on a small real story in a project with one configuration, and the result is recorded in `docs/trials/`. Release `0.7.0` waits for this, or for the maintainer's decision to release without it.

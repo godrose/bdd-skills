@@ -43,8 +43,8 @@ Step 5 of `plugin/commands/deliver.md` ("Look at the result") is the patch at th
 
 Not done. Each is a small change, and each needs the size gate in `discover.md`.
 
-1. Scan existing scenarios and screens before the first question.
-2. Ask where the shown state comes from.
+1. Done (Step 0 in `discover`, `docs/discovery/2026-11-10-discover-look-first.md`): scan existing scenarios and screens before the first question.
+2. Done in the same pack: ask where the shown state comes from, by finding the source in the code and asking the product manager only about the consequence.
 3. Put the failing step before product code in every layer.
 4. Offer Scenario Outline against separate scenarios by name.
 5. Ask at the end which excluded items should become tickets (G8).
@@ -52,6 +52,8 @@ Not done. Each is a small change, and each needs the size gate in `discover.md`.
 Also possible: say in the `verifier` description that it only runs tests and the type check. Do not rename the role before 1.0.0, because it is a config role.
 
 ## State and constraints
+
+- Done after this note was first written: Pass D (the title check in `design`, `docs/discovery/2026-11-10-design-title-check.md`) and Step 0 in `discover`. Both are pinned by text tests only and have not been run in a live session (G11). `0.7.0` waits for that trial or for the maintainer's decision.
 
 - `/bdd:deliver` is in PR #44 (branch `feat/deliver`, CI green). It is not merged and not released.
 - Do not release `0.7.0` without the user. The directory review of `0.6.0` is still pending.
