@@ -61,6 +61,9 @@ FIRST_BAD='Is it a monthly or a yearly rule?
 What exists: nothing found.'
 rule_case look-first held   "$FIRST_OK" "$READY"
 rule_case look-first broken "$FIRST_BAD" "$READY"
+rule_case look-first held   "What I found:
+- A nightly check already marks it.
+Is that right?" "$READY"
 rule_case one-question held   "$FIRST_OK" "$READY"
 rule_case one-question broken "What exists: nothing.
 Is it monthly?
@@ -73,6 +76,9 @@ For the developer:
 
 Done." "$READY"
 rule_case plain-words held   "$FIRST_OK" "$READY"
+rule_case plain-words held   "$FIRST_OK" 'Here is the pack. Save it to `docs/discovery/`?
+## Readiness
+Ready for `bdd:design`.'
 rule_case plain-words broken "What exists: a check in src/loans/overdue.js.
 Is that right?" "$READY"
 rule_case plain-words broken 'What exists: the `OVERDUE_STATUS` is set.
@@ -83,6 +89,8 @@ For the developer:
 - src/loans/overdue.js:12' "$READY"
 rule_case pack-end held   "$FIRST_OK" "$READY"
 rule_case pack-end broken "$FIRST_OK" "Here is the pack. Thanks."
+rule_case pack-end held   "$FIRST_OK" "## Readiness
+Ready for design."
 rule_case pack-end broken "$FIRST_OK" "## Readiness
 Not ready."
 

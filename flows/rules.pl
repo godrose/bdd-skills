@@ -9,7 +9,7 @@ sub row { my ($rule, $broken, $detail) = @_; print join("\t", $rule, $broken ? "
 
 # look-first: the first message says what exists, or that it found nothing, before its first question
 my $first = $msg[0] // "";
-my $found = $first =~ /(what exists|found nothing)/i ? $-[0] : -1;
+my $found = $first =~ /(what exists|what i found|found nothing|already)/i ? $-[0] : -1;
 my $q = index($first, "?");
 row("look-first", !($found >= 0 && ($q < 0 || $found < $q)), "message 1");
 
@@ -22,6 +22,7 @@ row("one-question", scalar(@bad), join(", ", map { "message $_" } @bad));
 my @pw;
 for my $i (0 .. $#msg) {
   my $t = strip_dev($msg[$i]);
+  $t =~ s/`?bdd:\w+`?//g; $t =~ s{`?docs/discovery/?`?}{}g;
   push @pw, $i + 1 if $t =~ /`[^`]+`/ || $t =~ m{[\w.-]+(?:/[\w.-]+)+\.\w{1,5}\b} || $t =~ /\b[\w-]+\.(?:js|ts|cs|py|feature|json|yml|yaml|md|sh)\b/;
 }
 row("plain-words", scalar(@pw), join(", ", map { "message $_" } @pw));
@@ -33,7 +34,7 @@ if ($last =~ /^([#*\s]*readiness.*)\z/smi) {
   my $sec = $1; $sec =~ s/^[#*\s]*readiness[:*\s\-]*//i;
   if ($sec =~ /\b(not ready|ready)\b[ \t:.\-]*([^\n]*)((?:\n.*)?)/i) {
     my ($tail, $more) = ($2, $3);
-    my @w = split ' ', $tail; $ok = 1 if @w >= 3 || $more =~ /\S/;
+    my @w = split ' ', $tail; $ok = 1 if $sec !~ /\bnot ready\b/i || @w >= 3 || $more =~ /\S/;
   }
 }
 row("pack-end", !$ok, "last message");
