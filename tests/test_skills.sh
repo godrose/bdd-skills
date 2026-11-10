@@ -360,6 +360,10 @@ for s in "Step 0: Look first" "before the first question" "For the developer:" "
   assert_contains "$D" "$s"
 done
 assert_before "$D" "Step 0: Look first" "#### Step 1: Understand the story"
+
+for s in "Write the whole pack in plain words" "except Vocabulary check" "paths go on one \"For the developer\" line"; do
+  assert_contains "$D" "$s"
+done
 for s in "try the words nearby" "Say which words you tried" "Keep field names, status names and log names out of these sentences" "are roles" "nobody can check it" "record the unknown as an assumption" "Put one question to the product manager in a message"; do
   assert_contains "$D" "$s"
 done
