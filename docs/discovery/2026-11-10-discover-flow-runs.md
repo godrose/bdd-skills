@@ -39,6 +39,7 @@ The plugin is a set of commands. Text tests pin sentences in them, and six eval 
 | 7 | Where does it live? | At the repo root under `evals/`, not in `plugin/`. It reuses `claude -p` with `--resume`. | The directory policy keeps scripts out of the plugin folder. No new tool is needed. |
 | 8 | Which models? | Haiku plays the product manager. Sonnet judges plain words. The model under test is the default. | The eval notes found the Haiku judge weak. The product manager's role needs only short answers. |
 | 9 | Where may a pack name a file or a code name? | Nowhere except the "Vocabulary check" section, and on one "For the developer" line. The whole pack is plain words, because the product manager reads it. | The builder's call after the first real runs. The vocabulary section exists to carry the project's own words to `design`, so it needs them. `discover.md` gained a rule, and the checker skips that section. |
+| 10 | Does a question that the pack restates count as a second question? | No. The open-questions section, the readiness lines and any line marked for the developer are not counted. A message with two real questions to the product manager is a break. | The builder's call. The pack is the record. The one question asked at the end is the question. |
 
 ## Existing users
 
@@ -73,7 +74,7 @@ Three runs on each fixture, through `flows/run.sh`, with the branch plugin, Haik
 | Seconds per run | 61, 83, 72 | 81, 74, 93 |
 | Usage per run, notional USD | 0.81, 1.12, 0.79 | 1.35, 0.87, 1.33 |
 | look-first | 3 of 3 | 3 of 3 |
-| one-question | 3 of 3 | 2 of 3 |
+| one-question | 3 of 3 | 3 of 3 |
 | plain-words | 3 of 3 | 2 of 3 |
 | pack-end | 3 of 3 | 3 of 3 |
 | project-untouched | 3 of 3 | 3 of 3 |
@@ -108,7 +109,7 @@ Refinements to the examples:
 
 Left open:
 
-- The two-question rule counts lines with a question mark. A pack that lists an open question and then asks it counts as two. Whether that is a break or the shape of the pack is not decided.
+- Decided: see decision 10.
 - The builder decided it: see decision 9. The command now says so.
 - Nothing is run twice for the same reply, so how much of the variance comes from the product manager model is not known.
 
@@ -119,14 +120,15 @@ Three more runs of fixture B with the new rule in `discover.md` and the vocabula
 | Rule | Before the rule | After the rule |
 |---|---|---|
 | look-first | 3 of 3 | 3 of 3 |
-| one-question | 2 of 3 | 0 of 3 |
+| one-question | 3 of 3 | 1 of 3 |
 | plain-words | 2 of 3 | 3 of 3 |
 | pack-end | 3 of 3 | 3 of 3 |
 | project-untouched | 3 of 3 | 3 of 3 |
 
 - **plain-words:** no name or path outside the vocabulary section and the developer line, in all three runs. The earlier break (a function name in a "possible defect" note) did not recur. Three runs are a small sample, so this does not show the rule is the cause.
-- **one-question went the other way, and the rule did not touch questions.** Reading the four flagged messages:
+- **one-question went the other way, and the rule did not touch questions.** Under the first checker the scores were 2 of 3 before and 0 of 3 after. Reading the four flagged messages:
   - Two are real: one message asked three questions in a row, another asked two ("my question for you" and then "I need to confirm one thing first").
   - One lists two open questions, each marked as for the developer, on their own lines. The checker counts them. It should not.
   - One lists the open question, repeats it in the readiness line and asks it again. This is the pack shape from the first runs.
+- **After decision 10** the same transcripts score 3 of 3 before the rule and 1 of 3 after. The two real breaks remain. A fixture A rescore stays at 3 of 3.
 - **What this says about variance:** for the same story and the same command text, the same rule held 2 of 3 once and 0 of 3 the next time. Three runs cannot separate a change of the command from the spread between runs.

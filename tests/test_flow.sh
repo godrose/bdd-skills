@@ -65,6 +65,19 @@ rule_case look-first held   "What I found:
 - A nightly check already marks it.
 Is that right?" "$READY"
 rule_case one-question held   "$FIRST_OK" "$READY"
+rule_case one-question held   '## Open questions
+1. Who is an administrator?
+2. Where is that set?
+
+## Readiness
+Not ready. Missing: who is an administrator?
+
+Which one do you want, A or B?' "$READY"
+rule_case one-question held   'Notes
+1. How does it know who asks? This is for the developer.
+2. Where are refusals kept? This is for the developer.
+
+Which file type do you want?' "$READY"
 rule_case one-question broken "What exists: nothing.
 Is it monthly?
 Is it yearly?" "$READY"
