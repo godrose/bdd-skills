@@ -83,6 +83,8 @@ The agreed scenarios become automated checks, so later changes cannot silently b
 
 > 🧪 **Trivial change?** A one-line fix, a rename or a copy edit skips discovery. The plugin says so in one sentence and moves on.
 
+For a product manager with a developer watching, `/bdd:deliver <description>` runs the four steps in one conversation. It asks one question at a time, shows the agreed examples for approval, then the scenarios for a go-ahead, implements them, and ends with a report in plain words: each example passed, failed or couldn't be checked, and whether the earlier scenarios of the same feature still pass. It uses the commands above and does not replace them. Answers that shaped a scenario are written beside it in the `.feature` file. Exclusions and removals go in one list, `docs/out-of-scope.md`, so the next description is not asked for what was ruled out.
+
 If you run a command before `/bdd:init`, it stops and tells you to run it.
 
 ## Modes
@@ -105,7 +107,7 @@ There are two ways to install. The plugin is the recommended one.
 
 The commands are in the Quick start. On Claude Code 2.1.275 or later, one step also works: `/plugin install bdd --marketplace godrose/bdd-skills`.
 
-The plugin namespaces its commands: `/bdd:discover`, `/bdd:design`, `/bdd:implement`, `/bdd:run`, `/bdd:triage` and `/bdd:reconcile`.
+The plugin namespaces its commands: `/bdd:discover`, `/bdd:design`, `/bdd:implement`, `/bdd:run`, `/bdd:triage`, `/bdd:reconcile` and `/bdd:deliver`.
 
 A plugin cannot create files in your project, so run `/bdd:init` once in each project. It copies the template to `.claude/bdd-config.md`. It never overwrites an existing config, and it does not fill in anything: the file still has placeholders. Claude Code may ask you to approve the copy, because it writes into `.claude/`. Open it and fill in the commands and paths for your project, as described under Configure, then commit it.
 
@@ -133,7 +135,7 @@ git clone https://github.com/godrose/bdd-skills.git /tmp/bdd-skills
 
 This copies the skills into `.claude/` with source headers (repo URL + commit hash) and creates `bdd-config.md` from the template. Commit the result. The repo is self-contained after install.
 
-Project files have no plugin namespace, so the commands use a hyphen: `/bdd-discover`, `/bdd-design`, `/bdd-implement`, `/bdd-run`, `/bdd-triage` and `/bdd-reconcile`. Everything else in this README applies to both ways. Where it says `/bdd:design`, type `/bdd-design`.
+Project files have no plugin namespace, so the commands use a hyphen: `/bdd-discover`, `/bdd-design`, `/bdd-implement`, `/bdd-run`, `/bdd-triage`, `/bdd-reconcile` and `/bdd-deliver`. Everything else in this README applies to both ways. Where it says `/bdd:design`, type `/bdd-design`.
 
 </details>
 
@@ -141,7 +143,7 @@ Project files have no plugin namespace, so the commands use a hyphen: `/bdd-disc
 <summary><b>Moving from project files to the plugin</b></summary>
 
 1. Install the plugin as above.
-2. Delete the files the installer created, and only these: `.claude/commands/bdd-discover.md`, `bdd-design.md`, `bdd-implement.md`, `bdd-run.md`, `bdd-triage.md` and `bdd-reconcile.md` in that folder, plus `.claude/agents/bdd-verifier.md`, `.claude/scripts/decisions.sh` and `.claude/schemas/decision.schema.json`. Some may not exist, because older installs did not have every file. That is fine. Having both sets gives you duplicate commands.
+2. Delete the files the installer created, and only these: `.claude/commands/bdd-discover.md`, `bdd-design.md`, `bdd-implement.md`, `bdd-run.md`, `bdd-triage.md`, `bdd-reconcile.md` and `bdd-deliver.md` in that folder (delete `bdd-deliver.md` only if its first lines carry the installer's `# Source:` header, because the installer keeps a file of your own with that name), plus `.claude/agents/bdd-verifier.md`, `.claude/scripts/decisions.sh` and `.claude/schemas/decision.schema.json`. Some may not exist, because older installs did not have every file. That is fine. Having both sets gives you duplicate commands.
    Keep your own skills, such as `bdd-<project>-knowledge.md` or a sync skill. They are not part of the plugin.
 3. Keep `.claude/bdd-config.md`. In its Skill Roles table, change `bdd-design` to `bdd:design`, and the same for the other skills and the verifier.
 4. Tell the maintainer if you still need the project-file install. It stays for a few releases.
@@ -202,6 +204,7 @@ Every row below is optional. If a row is absent, the default applies.
 | `prepare` | none | Command that builds what the tests launch, run before generate and test |
 | `step_batch` | `auto` | Steps per test run in `implement`: `auto` groups by risk, or `1`, a number or `all` |
 | `discovery_dir` | `docs/discovery` | Where a saved discovery pack goes |
+| `out_of_scope_file` | `docs/out-of-scope.md` | Where `/bdd:deliver` and `/bdd:discover` list what was excluded or removed, one line each |
 
 </details>
 
@@ -259,6 +262,7 @@ plugin/                         # The plugin. Claude Code installs this folder
     run.md                      # Run tests by tag/name/suite - config-driven, any framework
     triage.md                   # Turn pasted channel discussion into scenario edits and decision records
     reconcile.md                # Report drift between the decision log and the scenarios
+    deliver.md                  # Carry a change from a description to verified scenarios in one conversation
   agents/
     verifier.md                 # Run tests + type check, report results (read-only, no edits)
   bdd-config.template.md        # Project config template - fill in your tooling and conventions
@@ -289,6 +293,7 @@ bdd:design (methodology: what scenarios to create)
 
 bdd:triage (optional: channel discussion to approved edits and decision records)
 bdd:reconcile (optional: report drift between the decision log and the scenarios)
+bdd:deliver (composes discover, design, implement and run: two approvals, a report in plain words)
 ```
 
 Skills reference each other by **role** (from `bdd-config.md`), not by name. The optional roles `reconciler` and `feedback-intake` point at `bdd:reconcile` and `bdd:triage`.

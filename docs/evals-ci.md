@@ -4,7 +4,7 @@ The plugin evals run in GitHub Actions from `.github/workflows/evals.yml`. How t
 
 ## In CI
 
-`.github/workflows/evals.yml` runs four of the five cases: `init-audit`, `design-vague-ac`, `triage-approval-gate` and `run-zero-tests`. It has two triggers.
+`.github/workflows/evals.yml` runs five of the six cases: `init-audit`, `design-vague-ac`, `triage-approval-gate`, `run-zero-tests` and `deliver-first-gate`. It has two triggers.
 
 - **Manual (`workflow_dispatch`):** run it from the Actions tab. Do this first. It is the only way to learn whether the login, the Linux sandbox and the grants work on a runner, because the docs do not cover `claude plugin eval` in CI.
 - **Nightly (`schedule`):** it does nothing until you set the repository variable `EVALS_NIGHTLY` to `true`. Set it after one good manual run.

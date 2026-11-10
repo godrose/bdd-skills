@@ -20,6 +20,7 @@ The user provides one or more of:
 - A feature area to cover (e.g., "user profile settings")
 - A gap to fill (e.g., "we test field presence but not field values")
 - A discovery pack from `bdd:discover` (agreed examples, edge cases and exclusions)
+- An approved checklist of agreed examples from `bdd:deliver`. That checklist counts as the approval of the examples, so do not ask for it again. Still show the scenarios in plain words and wait for the go-ahead.
 
 ### Mode
 
@@ -167,6 +168,8 @@ In `specify-only` mode, also produce a **spec PR summary** for a reader who has 
 - Add edge cases
 
 #### Phase 5: Implement
+
+When the request came from `bdd:deliver`, the go-ahead can come from either the product manager or the developer. Write each answer that shaped a scenario as one line in the text under `Feature:` of the `.feature` file: `Decision (YYYY-MM-DD): <answer>. Why: <reason>.` Write it in the same change as the scenarios.
 
 In `specify-only` mode, do not implement. Write the `.feature` files and tag each scenario with the project's unautomated tag (the **unautomated_tag** row, default `@pending`), placed where **status_scope** says (default `scenario`): a scenario tag, a feature tag, or a directory (**planned_dir**, and **manual_only_dir** for manual-only scenarios). With directory scope and a partly approved feature, say that automated scenarios live in the automated directory and the rest stay. Scenarios that carry the **manual_only_tag** are not tagged as planned. Save the spec PR summary beside the feature file as `<feature>.spec-summary.md`. Then run the **generate** command once. If it fails on undefined steps, report that and point the builder at the framework setting that defers missing steps to run time (for Playwright-BDD, `missingSteps: 'fail-on-run'` in the Playwright config). Do not add a tag filter to the generate row: `implement` must generate the scenario it is working on, and that scenario keeps its tag until the verifier passes. Do not work around the failure. In `specify-only` mode the designer does not invoke the implementer. Say how to resume: run `/bdd:implement <feature path>` after the scenarios are approved. Then skip to Phase 6.
 

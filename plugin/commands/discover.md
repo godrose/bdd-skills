@@ -51,6 +51,7 @@ Before you treat the story as new work, look for the behavior in the code. Searc
 1. If the behavior already exists, say so and name the files. Then change the story to acceptance scenarios for existing behavior. Use the code as the source for exact values and messages, and mark each one "from code". Re-check your examples and exclusions against it. An exclusion the code contradicts becomes "needs decision" for the builder.
 2. Note values in the code that look wrong (for example a message that shows an id where the others show a name). List them as possible defects to raise separately. Do not change the behavior to fit the scenario.
 3. If the repo holds no source, only features, say so and continue. Ask the builder where the behavior is defined.
+4. Look for what was ruled out. Read the out-of-scope list, the file named by **out_of_scope_file**, and propose nothing it excludes. Features may have been deleted: search them for the story's key terms with `git log --diff-filter=D --name-only -- '*.feature'` and `git log -S`. This uses local git only. In a shallow clone with no history, say that you cannot look.
 
 #### Step 4: Decide what is out
 
@@ -71,6 +72,9 @@ Present the discovery pack (below). It stays in the conversation by default. Sav
 
 ## Candidate examples
 <concrete examples in plain words, each marked confirmed or proposed>
+
+## Agreed examples
+<only when the builder has confirmed examples: a numbered checklist in plain words, E1, E2 and so on, each marked confirmed. `bdd:deliver` shows this list to the product manager for approval>
 
 ## Edge and negative cases
 <cases with the agreed outcome, or the question still open>
@@ -102,4 +106,5 @@ Older `bdd-config.md` files do not have the newer rows. A value still in `<...>`
 - No **glossary_file**: skip the glossary read.
 - No **lint** command: skip the lint step.
 - No **discovery_dir**: use `docs/discovery` when the builder asks to save.
+- No **out_of_scope_file**: use `docs/out-of-scope.md`. If the file is missing, there is nothing ruled out yet.
 - No **features_dir** or **steps_dir** entries that exist on disk: report "nothing to mine".

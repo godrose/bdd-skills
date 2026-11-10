@@ -103,6 +103,14 @@ Re-run the test. If the group now passes, move to the next group. If a group fai
 
 **Max retries per step: 3.** If a step fails 3 times, stop and report what you've learned from the evidence. The user may need to provide guidance.
 
+**Reporting an open decision.** When a stop is a product decision and not a technical one, for example the data does not fit the scenario or the code shows a behavior nobody described, report it in this shape, so that a caller can turn it into one question for the product owner:
+
+```
+Open decision: <the behavior in one plain sentence>
+Found: <what the implementation or the run showed>
+Options: <the choices, in plain words>
+```
+
 #### Phase 2.5: Red-first check
 
 The red-first check shows that a scenario can fail for the reason it states. A green that was never seen red is not evidence. Run it once per scenario, after every group has passed and before the verifier is dispatched.

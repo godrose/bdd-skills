@@ -64,7 +64,7 @@ INSTALLED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 # The source tree holds plugin text (bdd:design, ${CLAUDE_PLUGIN_ROOT}). A project install uses
 # prefixed file names and .claude/ paths, so convert the text back.
 to_project() {
-  sed -E '/^> Plugin note:/{N;d;}; s#"\$\{CLAUDE_PLUGIN_ROOT\}"/scripts/decisions\.sh#.claude/scripts/decisions.sh#g; s/bdd:(discover|design|implement|run|triage|reconcile|verifier)/bdd-\1/g; s/^name: verifier(\r?)$/name: bdd-verifier\1/'
+  sed -E '/^> Plugin note:/{N;d;}; s#"\$\{CLAUDE_PLUGIN_ROOT\}"/scripts/decisions\.sh#.claude/scripts/decisions.sh#g; s/bdd:(discover|design|implement|run|triage|reconcile|deliver|verifier)/bdd-\1/g; s/^name: verifier(\r?)$/name: bdd-verifier\1/'
 }
 
 # The plugin carries no pre-approved tools, because the directory refuses them. A project install is not scanned,
@@ -76,6 +76,7 @@ tools_for() {
     run) echo '["Agent", "Bash", "Read", "Write", "Grep", "Glob", "AskUserQuestion"]' ;;
     triage) echo '["Agent", "Bash", "Read", "Edit", "Write", "Grep", "Glob", "AskUserQuestion"]' ;;
     reconcile) echo '["Bash", "Read", "Grep", "Glob"]' ;;
+    deliver) echo '["Agent", "Bash", "Read", "Write", "Edit", "Grep", "Glob", "AskUserQuestion"]' ;;
     *) echo "" ;;
   esac
 }
@@ -84,6 +85,12 @@ tools_for() {
 install_skill() {
   local src="$1"
   local dst="$2"
+  local protect="${3:-}"
+  if [ -n "$protect" ] && [ -e "$dst" ] && ! grep -q "^# Source:" "$dst"; then
+    echo "  skipped $dst: it is not an installer copy (no '# Source:' line). Rename your file to keep it, then run install.sh again."
+    DELIVER_SKIPPED=1
+    return 0
+  fi
   local body
   body=$(mktemp)
   local tools
@@ -126,8 +133,10 @@ for legacy in \
 done
 
 # Install skills with source headers
-for s in discover design implement run triage reconcile; do
-  install_skill "$PLUGIN_DIR/commands/$s.md" "$CLAUDE_DIR/commands/bdd-$s.md"
+for s in discover design implement run triage reconcile deliver; do
+  protect=""
+  [ "$s" = deliver ] && protect=1
+  install_skill "$PLUGIN_DIR/commands/$s.md" "$CLAUDE_DIR/commands/bdd-$s.md" "$protect"
 done
 cp "$SCRIPTS_DIR/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
 chmod +x "$CLAUDE_DIR/scripts/decisions.sh"
@@ -141,6 +150,7 @@ echo "  $CLAUDE_DIR/commands/bdd-implement.md"
 echo "  $CLAUDE_DIR/commands/bdd-run.md"
 echo "  $CLAUDE_DIR/commands/bdd-triage.md"
 echo "  $CLAUDE_DIR/commands/bdd-reconcile.md"
+[ -z "${DELIVER_SKIPPED:-}" ] && echo "  $CLAUDE_DIR/commands/bdd-deliver.md"
 echo "  $CLAUDE_DIR/scripts/decisions.sh"
 echo "  $CLAUDE_DIR/schemas/decision.schema.json"
 echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
@@ -164,6 +174,7 @@ report_missing_row() {
 report_missing_row workflow_mode "specify-and-implement"
 report_missing_row glossary_file "skipped"
 report_missing_row discovery_dir "docs/discovery"
+report_missing_row out_of_scope_file "docs/out-of-scope.md"
 report_missing_row lint "skipped"
 report_missing_row prepare "skipped"
 report_missing_row step_batch "auto"

@@ -20,7 +20,7 @@ assert_equals gennadyverdel-plugins "$(jq -r .name "$MK" 2>/dev/null)" "marketpl
 assert_equals "Gennady Verdel" "$(jq -r .author.name "$PJ" 2>/dev/null)" "plugin author is the full name"
 assert_equals "Gennady Verdel" "$(jq -r .owner.name "$MK" 2>/dev/null)" "marketplace owner is the full name"
 
-for c in discover design implement run triage reconcile init; do
+for c in discover design implement run triage reconcile init deliver; do
   assert_file "$PLUGIN/commands/$c.md"
 done
 assert_file "$PLUGIN/agents/verifier.md"
@@ -37,7 +37,7 @@ assert_equals 0 "$n" "files with a bdd- prefix in commands and agents"
 PLUGIN_TEXT=("$PLUGIN"/commands/*.md "$PLUGIN"/agents/*.md "$PLUGIN/bdd-config.template.md")
 for f in "${PLUGIN_TEXT[@]}"; do
   if grep -qE '\.claude/(scripts|schemas)/' "$f"; then fail "$f has a project-install path"; else pass; fi
-  if sed -e 's/bdd-implement-scenario//g' -e 's/bdd-scenario-design//g' "$f" | grep -qE 'bdd-(discover|design|implement|run|triage|reconcile|verifier)'; then fail "$f has a project-install skill name"; else pass; fi
+  if sed -e 's/bdd-implement-scenario//g' -e 's/bdd-scenario-design//g' "$f" | grep -qE 'bdd-(discover|design|implement|run|triage|reconcile|deliver|verifier)'; then fail "$f has a project-install skill name"; else pass; fi
 done
 for c in design triage reconcile; do
   assert_contains "$PLUGIN/commands/$c.md" '"${CLAUDE_PLUGIN_ROOT}"/scripts/decisions.sh'
@@ -48,7 +48,7 @@ for c in design triage reconcile; do
   assert_contains "$PLUGIN/commands/$c.md" "the decision log script is not part of the plugin"
 done
 
-for c in design implement run triage reconcile; do
+for c in design implement run triage reconcile deliver; do
   assert_contains "$PLUGIN/commands/$c.md" "> Plugin note: if \`.claude/bdd-config.md\` is missing, tell the user to run \`/bdd:init\`"
 done
 

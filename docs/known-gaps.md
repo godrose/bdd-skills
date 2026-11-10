@@ -30,7 +30,7 @@ Each gap says what is not checked, why it is still open, and what would close it
 
 ### G4 `design-lint-draft` runs only by hand
 
-**Not checked.** The nightly runs four of the five eval cases. `design-lint-draft` needs plain `Bash`, and the agent's shell can see the variables that carry the login token.
+**Not checked.** The nightly runs five of the six eval cases. `design-lint-draft` needs plain `Bash`, and the agent's shell can see the variables that carry the login token.
 
 **Why.** Running it in CI would hand the token to a shell the agent controls. The narrow `Bash(...)` grants that the other cases use deny its chained commands.
 
@@ -52,3 +52,27 @@ Each gap says what is not checked, why it is still open, and what would close it
 **Why.** The eval tool loads only the plugin folder, and the plugin cannot carry the script. A case that needs it must put the script into the fixture, and the fixture is not scanned.
 
 **Closed when.** A case's scaffold copies `scripts/decisions.sh` into the fixture as `.claude/scripts/decisions.sh`, and runs a project-install copy of the commands against it.
+
+### G7 No eval runs a whole `deliver` flow
+
+**Not checked.** `deliver-first-gate` stops at the first question. Nothing runs `/bdd:deliver` through the second gate, the implement and run steps, the two kinds of stop, or the final report. The report shape, the out-of-scope list and the feature-description lines are checked only as text in `tests/test_deliver.sh`.
+
+**Why.** A whole flow needs several answers from a user and a fixture with a test runner that works on the CI machine. The eval tool runs one prompt per case.
+
+**Closed when.** A case drives `deliver` through a scripted conversation on a fixture with a working test runner, and checks the report and the files it writes.
+
+### G8 Out-of-scope items are not linked to a tracker
+
+**Not checked.** `deliver` writes each exclusion as one line in the out-of-scope file. In a team that uses Jira, Monday or a similar tracker, each excluded item would usually become a ticket of its own, so it is planned and not forgotten. Nothing creates the ticket, links the line to it, or tells you when the ticket is done and the line is stale. The first trial on a real project wrote its exclusions to a file only.
+
+**Why.** Reaching a tracker needs the optional **requirements-sync** skill, and its role has no "create an item" action. The file works for one repository and needs no setup.
+
+**Closed when.** An exclusion can name a tracker key in its line, `deliver` offers to create the ticket through the configured skill, and a later run on the same story reads the key and says whether the ticket is closed. This is a design decision first, so it starts with discovery.
+
+### G9 The deliver gate eval can fail on its one-question grader
+
+**Not checked.** `deliver-first-gate` has a grader, `one-question`, that fails when the agent puts two questions in one message. It did in 1 of 6 runs on 2026-11-09. The case runs in the nightly with a 0.8 threshold, so a night with two bad runs of three turns it red without a regression.
+
+**Why.** The command says to ask one question at a time, and the model sometimes pairs a question with a closely related one. The grader is stricter than the other graders in the case, which are stable.
+
+**Closed when.** The grader is split into a deterministic count of question marks plus a one-clause judge, as was done for G1, and the case passes in a week of nightly runs.

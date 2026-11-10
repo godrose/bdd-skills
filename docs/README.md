@@ -35,6 +35,14 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-08-directory-policy.md` | Meet the directory's file and tool policy: no grants, no scripts or fixtures in the plugin |
 | `2026-11-09-deliver.md` | `/bdd:deliver`: one conversation from a description to verified scenarios, for a PM with a developer watching |
 
+## trials/
+
+Records of real working sessions with the plugin, kept as examples.
+
+| Record | What it shows |
+|--------|---------------|
+| `2026-11-09-deliver-pm-session.md` | Two changes delivered with `/bdd:deliver` by a product manager and an assistant: the questions, the pushback and what it changed |
+
 Maintainer notes for the nightly evals are in `evals-ci.md`.
 
 ## known-gaps.md
