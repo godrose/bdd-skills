@@ -27,7 +27,7 @@ FX="$FLOWS/fixtures/$FIXTURE"
 [ -f "$FLOWS/personas/$PERSONA.md" ] || { echo "no such persona: $PERSONA" >&2; exit 2; }
 [ -n "$OUT" ] || OUT="$FLOWS/results/$(date +%Y%m%dT%H%M%S)"
 BASE="$OUT/$FIXTURE"
-mkdir -p "$BASE"
+mkdir -p "$BASE"; OUT="$(cd "$OUT" && pwd)"; BASE="$OUT/$FIXTURE"
 
 manifest() { (cd "$1" && find . -type f ! -path './docs/discovery/*' -print0 | sort -z | xargs -0 shasum -a 1 2>/dev/null); }
 final_message() { grep -qiE '^[#* ]*readiness' "$1" && grep -qiE '\b(not ready|ready)\b' "$1"; }

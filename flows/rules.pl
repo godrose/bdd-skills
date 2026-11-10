@@ -7,6 +7,7 @@ my @msg = map { local $/; open my $h, '<', $_ or die; my $t = <$h>; $t } @files;
 sub strip_dev { my $t = shift; $t =~ s/^[ \t*_#]*For the developer.*?(?:\n[ \t]*\n|\z)//gsmi; return $t }
 sub row { my ($rule, $broken, $detail) = @_; print join("\t", $rule, $broken ? "broken" : "held", $detail // ""), "\n" }
 
+exit 0 unless @msg;
 # look-first: the first message says what exists, or that it found nothing, before its first question
 my $first = $msg[0] // "";
 my $found = $first =~ /(what exists|what i found|found nothing|already)/i ? $-[0] : -1;

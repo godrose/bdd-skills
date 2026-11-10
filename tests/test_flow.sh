@@ -123,6 +123,14 @@ assert_file "$F/fixtures/b/story.txt"
 assert_file "$F/personas/founder.md"
 assert_file "$F/personas/pm.md"
 
+# A relative output folder works, and a run that got no answer is not scored
+d=$(fresh_script rel "What exists: x. One?" "$READY")
+(cd "$T" && FAKE_DIR="$d" bash "$F/run.sh" --fixture a --runs 1 --out rel-out > /dev/null 2>&1)
+assert_file "$T/rel-out/a/run-1/turn-01-assistant.txt"
+mkdir -p "$T/empty"; FAKE_DIR="$T/empty" bash "$F/run.sh" --fixture a --runs 1 --out "$T/out-empty" > /dev/null 2>&1
+assert_contains "$T/out-empty/a/report.md" "no answer"
+assert_not_contains "$T/out-empty/a/report.md" "0 of"
+
 # S14 no claude: says so, stops, writes nothing
 rm -rf "$T/out-none"
 CLAUDE_BIN=no-such-claude-binary bash "$F/run.sh" --fixture a --runs 1 --out "$T/out-none" > "$T/none.txt" 2>&1; rc=$?
