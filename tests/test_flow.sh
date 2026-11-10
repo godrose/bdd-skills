@@ -92,6 +92,16 @@ Is that right?
 For the developer:
 - src/loans/overdue.js:12' "$READY"
 rule_case pack-end held   "$FIRST_OK" "$READY"
+rule_case plain-words held   "$FIRST_OK" '## Vocabulary check
+- Reused: member, `listMembers`, src/members.js
+
+## Readiness
+Ready.'
+rule_case plain-words broken "$FIRST_OK" '## Candidate exclusions
+- Export in `src/members.js` is out.
+
+## Readiness
+Ready.'
 rule_case pack-end broken "$FIRST_OK" "Here is the pack. Thanks."
 rule_case pack-end held   "$FIRST_OK" "## Readiness
 Ready for design."

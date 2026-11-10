@@ -5,6 +5,7 @@ my $rd = shift or die "usage: rules.pl <run dir>\n";
 my @files = sort glob("$rd/turn-*-assistant.txt");
 my @msg = map { local $/; open my $h, '<', $_ or die; my $t = <$h>; $t } @files;
 sub strip_dev { my $t = shift; $t =~ s/^[ \t*_#]*For the developer.*?(?:\n[ \t]*\n|\z)//gsmi; return $t }
+sub strip_vocab { my $t = shift; $t =~ s{^[#*\s]*vocabulary check.*?(?=^#{1,3} |\z)}{}gsmi; return $t }
 sub row { my ($rule, $broken, $detail) = @_; print join("\t", $rule, $broken ? "broken" : "held", $detail // ""), "\n" }
 
 exit 0 unless @msg;
@@ -22,7 +23,7 @@ row("one-question", scalar(@bad), join(", ", map { "message $_" } @bad));
 # plain-words: no file path, file name or code span outside the developer lines
 my @pw;
 for my $i (0 .. $#msg) {
-  my $t = strip_dev($msg[$i]);
+  my $t = strip_vocab(strip_dev($msg[$i]));
   $t =~ s/`?bdd:\w+`?//g; $t =~ s{`?docs/discovery/?`?}{}g;
   push @pw, $i + 1 if $t =~ /`[^`\n]*(?:[A-Z]{2,}_|_[A-Za-z]|[a-z][A-Z]|\(\)|\w\.\w+\()[^`\n]*`/ || $t =~ m{[\w.-]+(?:/[\w.-]+)+\.\w{1,5}\b} || $t =~ /\b[\w-]+\.(?:js|ts|cs|py|feature|json|yml|yaml|sh|html)\b/;
 }

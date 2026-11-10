@@ -38,6 +38,7 @@ The plugin is a set of commands. Text tests pin sentences in them, and six eval 
 | 6 | What counts as a pass? | Nothing at first. Counts out of 3 per rule, breaks listed. A threshold is chosen from the data. | A threshold chosen before any data is a guess, which is how G9 arose. |
 | 7 | Where does it live? | At the repo root under `evals/`, not in `plugin/`. It reuses `claude -p` with `--resume`. | The directory policy keeps scripts out of the plugin folder. No new tool is needed. |
 | 8 | Which models? | Haiku plays the product manager. Sonnet judges plain words. The model under test is the default. | The eval notes found the Haiku judge weak. The product manager's role needs only short answers. |
+| 9 | Where may a pack name a file or a code name? | Nowhere except the "Vocabulary check" section, and on one "For the developer" line. The whole pack is plain words, because the product manager reads it. | The builder's call after the first real runs. The vocabulary section exists to carry the project's own words to `design`, so it needs them. `discover.md` gained a rule, and the checker skips that section. |
 
 ## Existing users
 
@@ -73,7 +74,7 @@ Three runs on each fixture, through `flows/run.sh`, with the branch plugin, Haik
 | Usage per run, notional USD | 0.81, 1.12, 0.79 | 1.35, 0.87, 1.33 |
 | look-first | 3 of 3 | 3 of 3 |
 | one-question | 3 of 3 | 2 of 3 |
-| plain-words | 2 of 3 | 1 of 3 |
+| plain-words | 3 of 3 | 2 of 3 |
 | pack-end | 3 of 3 | 3 of 3 |
 | project-untouched | 3 of 3 | 3 of 3 |
 
@@ -88,7 +89,7 @@ What the plugin did, seen in the transcripts:
 
 What the rules caught, each a real break:
 
-- A code name or a path outside the "For the developer" line, in the pack's closing notes: three runs. Examples: a page name in a "possible defect" note, a function name, a file in a "reused" list. The findings at the start were clean. The slips are in the long final pack.
+- A code name outside the "For the developer" line and outside the vocabulary section: one run (a function name in a "possible defect" note). Before the builder decided where names may go (decision 9), the checker counted three runs, because it also counted names inside the vocabulary section.
 - Two questions in one message in one run: the pack listed an open question and then asked it again.
 
 What the runs showed about the checker, not the plugin. Each was fixed with a test that failed first:
@@ -108,5 +109,5 @@ Refinements to the examples:
 Left open:
 
 - The two-question rule counts lines with a question mark. A pack that lists an open question and then asks it counts as two. Whether that is a break or the shape of the pack is not decided.
-- The rule that counts code names and paths in the closing pack may be stricter than `discover.md` says. The command speaks of findings. This is for the maintainer to decide.
+- The builder decided it: see decision 9. The command now says so.
 - Nothing is run twice for the same reply, so how much of the variance comes from the product manager model is not known.
