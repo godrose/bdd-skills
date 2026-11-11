@@ -1,7 +1,7 @@
 {
-  "name": "bdd-skills-tests",
+  "name": "bdd-skills-specs",
   "private": true,
-  "description": "The runner for this repo's own test scenarios. Not part of the plugin.",
+  "description": "The specification of this repo, as scenarios that run. Not part of the plugin.",
   "scripts": {
     "test": "bash tests/run.sh",
     "scenarios": "NODE_OPTIONS=--import=tsx cucumber-js",

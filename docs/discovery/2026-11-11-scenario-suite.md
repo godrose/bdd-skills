@@ -30,6 +30,7 @@ The repo teaches a method where a plain sentence is both the specification and t
 - **E11** The release flow, `tests/check_release.sh` and the version rules do not change.
 - **E12** The last pull request in the series removes `tests/lib.sh` and the bash runner loop.
 - **E13** The steps are TypeScript. CI and the local script type-check them with `tsc --noEmit --noUnusedLocals --noUnusedParameters` after the runner is installed and before the tests run. A type error or an unused local fails the run at that step.
+- **E14** In the last pull request of the series, once no bash file is left, `tests/features/` and `tests/steps/` move to a top-level `specs/`. `tests/` then holds only the runner and the CI scripts. The pack, `CLAUDE.md`, the CI workflow and `cucumber.js` are updated in the same pull request.
 
 ## Decisions
 
@@ -43,6 +44,7 @@ The repo teaches a method where a plain sentence is both the specification and t
 | 6 | Which language for the steps? | TypeScript, run through `tsx`, with a `tsc` gate in CI and in the local script. | The builder's review comment. A reference project of the builder's uses TypeScript steps with the same gate. `tsx` runs the steps but does not check types, so the gate is a separate step. A spike confirmed that `@cucumber/cucumber` 11 runs `.ts` steps with `NODE_OPTIONS="--import tsx"`. |
 | 7 | Is `playwright-bdd` the runner? | No. `@cucumber/cucumber` stays. | `playwright-bdd` exists to drive a browser through Playwright fixtures. This suite has no browser. |
 | 8 | Is the rename guard migrated? | No. It is dropped. | The builder's review comment. The rename is long done, and the old file said to drop it. The install addresses it also checked are still covered by the README and manifest tests. |
+| 9 | What are the scenarios called? | Specs. The package is `bdd-skills-specs` now. The folders `tests/features` and `tests/steps` move to `specs/` in the last pull request of the series (E14). | The builder's review comment: in this method the `.feature` files are the specification, and "tests" frames them wrongly. Moving the folders now would touch every later migration pull request, so it waits until the bash files are gone. |
 
 My calls, approved with the checklist: the runner is `@cucumber/cucumber` pinned to 11.3.0, with `tsx`, `typescript` and `@types/node` pinned beside it, as in fixture `c`. A private `package.json` and a lockfile at the repo root. Scenarios in `tests/features/`, step definitions in `tests/steps/`. The local CI script is `tests/ci_local.sh`, a name that `tests/run.sh` does not pick up.
 
