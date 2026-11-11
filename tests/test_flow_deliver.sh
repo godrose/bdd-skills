@@ -144,6 +144,12 @@ d=$(dscript d8b "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); FAKE_WRITE_AT=2 FAKE_WRIT
 assert_equals broken "$(rule_of d8b no-feature-before-go-ahead)" "written after one approval"
 assert_contains "$(DRUN d8b)/rules.tsv" "features/early.feature"
 
+# D8c a plain "go ahead" is an approval, and a reply that is not one is not
+d=$(dscript d8c "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); echo "Fix the wording. Then yes, go ahead." > "$d/pm-2.txt"; FAKE_WRITE_AT=3 FAKE_WRITE_FILE=features/late.feature dharness "$d" "$T/pass.txt"
+assert_equals held "$(rule_of d8c no-feature-before-go-ahead)" "go ahead counts as the second approval"
+d=$(dscript d8d "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); echo "Hmm, not sure yet." > "$d/pm-2.txt"; FAKE_WRITE_AT=3 FAKE_WRITE_FILE=features/late.feature dharness "$d" "$T/pass.txt"
+assert_equals broken "$(rule_of d8d no-feature-before-go-ahead)" "a reply that is not an approval"
+
 # D9 an approval asked a third time is a break
 d=$(dscript d9a "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); dharness "$d" "$T/pass.txt"
 assert_equals held "$(rule_of d9a approval-asked-once)" "two asks"

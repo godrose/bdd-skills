@@ -93,3 +93,22 @@ Fixture `c` gained a script that prints its loans page from sample data, and the
 - **Story 2 found a contradiction the rules do not count.** The report marks two examples "passed" while the Seen line says their pages were not looked at, and the risk section lists the same two as "seen only through the scenarios". `deliver.md` says an example whose result was not looked at is "couldn't be checked". None of the eight rules catches this, because the test output is all green. A candidate ninth rule: an example named in the "Not checked" section is never marked passed.
 - **Run-to-run spread is large.** Seconds fell from 152 to 108 and from 235 to 187 with no change to the plugin. Two runs per story say nothing about a rate.
 - **Slips again:** file names in the step audit table at the second gate, and a closing "what was added, and where" list that names files in the plain report.
+
+## Third runs, after the ninth rule and the path argument
+
+The page script now takes a loans file under `data/`. One run per story. Scored again after one checker fix (below).
+
+| | Story 1 | Story 2 |
+|---|---|---|
+| Turns | 6 | 9 |
+| Seconds | 133 | 157 |
+| Usage (notional) | $1.20 | $1.66 |
+| Report | 4 of 4 passed, after looking at the real page | 4 of 6 passed, 2 "couldn't be checked" |
+| Rules broken | one-question (3 messages), plain-words (2 messages), report-shape | plain-words (3 messages) |
+
+- **Story 1 gave the clean report.** All four examples were passed, and the model looked at the page with more than one set of data. This is the case the fixture was built to show.
+- **A slip the shape rule caught.** Story 1's report carried the line "Not checked, and what it risks: nothing was parked." `deliver.md` says to leave the section out when nothing was parked. The text is clear, and the model wrote it anyway.
+- **A checker error, fixed.** Story 2's product manager model wrote "yes, go ahead" at the second gate, and the rule only counted the word "approved". A plain "go ahead" now counts as an approval. The rule still breaks for a reply that is not one.
+- **The ninth rule held on both runs.** In story 2 the model kept the unchecked example out of "passed" this time.
+- **Totals so far:** six runs, $8.1 notional. The slips that came back every time are the one-question and plain-words ones, and each is about the second gate, where the design output carries a step table with file names.
+- **Still open:** one run per story cannot show a rate. G7 and G12 stay open until the numbers are read over more than one run.

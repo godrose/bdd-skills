@@ -60,7 +60,7 @@ my @feat = map { my $f = $_; $f =~ s/assistant\.txt$/features.txt/; slurp($f) //
 my ($at, @made) = (0);
 for my $i (0 .. $#feat) { if ($feat[$i] =~ /\S/) { $at = $i + 1; @made = grep { length } split /\n/, $feat[$i]; last } }
 my $approvals = 0;
-if ($at) { for my $i (0 .. $at - 2) { $approvals++ if $pm[$i] =~ /approv/i } }
+if ($at) { for my $i (0 .. $at - 2) { $approvals++ if $pm[$i] =~ /approv|go[- ]ahead/i } }
 row("no-feature-before-go-ahead", $at && $approvals < 2, $at ? "message $at, after $approvals approvals: " . join(", ", @made) : "");
 
 # approval-asked-once: at most two messages ask for an approval
