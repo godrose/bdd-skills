@@ -33,7 +33,7 @@ done
 case "$COMMAND" in discover|deliver) ;; *) echo "no such command: '$COMMAND'. Use discover or deliver." >&2; exit 2 ;; esac
 [ -n "$TURNS" ] || { [ "$COMMAND" = deliver ] && TURNS=30 || TURNS=12; }
 TOOLS=(Read Grep Glob LS Write Edit)
-[ "$COMMAND" = deliver ] && TOOLS+=("Bash(npm test)" "Bash(node src/show.js)")
+[ "$COMMAND" = deliver ] && TOOLS+=("Bash(npm test)" "Bash(node src/show.js)" "Bash(node src/show.js data/*)")
 
 command -v "$CLAUDE" > /dev/null 2>&1 || { echo "claude was not found on the path. Install it, or set CLAUDE_BIN." >&2; exit 1; }
 [ -d "$FLOWS/fixtures/$FIXTURE/project" ] || { echo "no such fixture: '$FIXTURE'. Use a, b or c." >&2; exit 2; }

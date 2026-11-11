@@ -82,11 +82,25 @@ if command -v node > /dev/null; then
   printf "%s" "$shown" | grep -q "overdue" && pass || fail "the page does not show the status"
 fi
 
+# D1c show.js takes a loans file under data/ and refuses any other path
+if command -v node > /dev/null; then
+  P="$F/fixtures/c/project"
+  echo '[{"id":1,"book":"Emma","borrowedDaysAgo":3,"status":"open"}]' > "$P/data/_t.json"
+  other=$(cd "$P" && node src/show.js data/_t.json 2>&1)
+  rm -f "$P/data/_t.json"
+  printf "%s" "$other" | grep -q "Emma" && pass || fail "show.js ignored the path it was given"
+  printf "%s" "$other" | grep -q "overdue" && fail "a 3 day loan shows overdue" || pass
+  (cd "$P" && node src/show.js ../../../package.json > "$T/outside.txt" 2>&1); rc=$?
+  [ "$rc" -ne 0 ] && pass || fail "show.js read a file outside data/"
+  assert_contains "$T/outside.txt" "data"
+fi
+
 # D2 the run starts /bdd:deliver with the story, and the model gets the test command and no install command
 d=$(dscript d2 "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); dharness "$d" "$T/pass.txt"
 assert_contains "$d/assistant-args-1.txt" "/bdd:deliver When a loan is overdue"
 assert_contains "$d/assistant-args-1.txt" "Bash(npm test)"
 assert_contains "$d/assistant-args-1.txt" "Bash(node src/show.js)"
+assert_contains "$d/assistant-args-1.txt" "Bash(node src/show.js data/*)"
 assert_not_contains "$d/assistant-args-1.txt" "npm install"
 assert_not_contains "$d/assistant-args-1.txt" "npm ci"
 assert_contains "$d/assistant-args-2.txt" "Approved"
@@ -181,6 +195,36 @@ assert_equals broken "$(rule_of d12c plain-words)" "a path in the plain report"
 d=$(dscript d12d "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); dharness "$d" "$T/pass.txt"
 assert_equals "" "$(rule_of d12d pack-end)" "no Readiness rule for deliver"
 assert_equals held "$(rule_of d12d look-first)" "the shared rules are still counted"
+
+# D12e an example listed in the Not checked section is never marked passed
+BAD_PARKED='Delivered: A late loan shows its days late.
+
+E1 A late loan shows how many days late it is: passed
+E2 The notice stays in view when the member scrolls: couldn'"'"'t be checked - needs a real browser
+E3 Two late loans show two notices: passed
+
+Regression: 1 earlier scenario still passes.
+Seen: the page for E1 only.
+
+Not checked, and what it risks:
+- E2 Members may miss the notice. For the developer: needs a real browser.
+- E3 was seen only through the scenarios. For the developer: print the page.'
+d=$(dscript d12e "$CHECKLIST" "$SCEN" "$BAD_PARKED"); dharness "$d" "$T/some.txt"
+assert_equals broken "$(rule_of d12e parked-not-passed)" "E3 is listed as not checked and marked passed"
+assert_contains "$(DRUN d12e)/rules.tsv" "E3"
+d=$(dscript d12f "$CHECKLIST" "$SCEN" "$REPORT_PARKED"); dharness "$d" "$T/some.txt"
+assert_equals held "$(rule_of d12f parked-not-passed)" "the parked example is not passed"
+d=$(dscript d12g "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); dharness "$d" "$T/pass.txt"
+assert_equals held "$(rule_of d12g parked-not-passed)" "no section, nothing to contradict"
+RANGE='Delivered: x.
+
+E1 A: couldn'"'"'t be checked - x
+E2 B: passed
+
+Not checked, and what it risks:
+- E1-E2 Members may see nothing. For the developer: look.'
+d=$(dscript d12h "$CHECKLIST" "$SCEN" "$RANGE"); dharness "$d" "$T/some.txt"
+assert_equals broken "$(rule_of d12h parked-not-passed)" "a range E1-E2 covers E2, which is passed"
 
 # D13 only what the change needs may be written: features, steps, product code, the out-of-scope list and decisions
 d=$(dscript d13a "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); FAKE_WRITE_AT=3 FAKE_WRITE_FILE=steps/new.steps.js dharness "$d" "$T/pass.txt"

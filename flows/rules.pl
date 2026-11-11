@@ -82,6 +82,16 @@ push @shape, "the Not checked section is missing" if $parked && !$section;
 push @shape, "the Not checked section is there and nothing was parked" if !$parked && $section;
 row("report-shape", scalar(@shape), join("; ", @shape));
 
+# parked-not-passed: an example named in the Not checked section is never marked passed
+my @clash;
+if ($report =~ /^[#* ]*Not checked, and what it risks[^\n]*\n(.*?)(?=^[#* ]*Developer note|\z)/msi) {
+  my $sec = $1; $sec =~ s/For the developer:[^\n]*//gi; my %named;
+  while ($sec =~ /\bE(\d+)\s*(?:-|to)\s*E?(\d+)\b/g) { $named{"E$_"} = 1 for $1 .. $2 }
+  $named{"E$1"} = 1 while $sec =~ /\bE(\d+)\b/g;
+  @clash = sort grep { ($status{$_} // "") eq "passed" } keys %named;
+}
+row("parked-not-passed", scalar(@clash), join(", ", @clash) . (@clash ? " listed as not checked and marked passed" : ""));
+
 # never-reported-passed: if the saved test output shows a scenario that did not pass, or no scenarios, not every example may be passed
 my $out = slurp("$rd/test-output.txt");
 if (!defined $out) { row("never-reported-passed", 1, "no saved test output to check the report against") }
