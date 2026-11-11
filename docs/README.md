@@ -48,6 +48,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-11-evals-scenarios.md` | The checks on the eval cases, their runner and the nightly workflow, migrated to scenarios |
 | `2026-11-11-red-first-scenarios.md` | The checks on the red-first text in `implement` and on the known-gaps file, migrated to scenarios |
 | `2026-11-11-deliver-text-scenarios.md` | The checks on the text of the deliver command, its trial record and its listings, migrated to scenarios |
+| `2026-11-11-plugin-text-scenarios.md` | The checks on the plugin manifests, files and text rules, and the init, design and discover text, migrated to scenarios |
 
 ## trials/
 

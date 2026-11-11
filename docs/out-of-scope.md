@@ -20,3 +20,6 @@
 2026-11-11 | excluded: new red-first or known-gaps checks beyond tests/test_red_first.sh (deliver.md mentioning red-first, a count of each part per gap) | why: a migration adds no checks | revisit when: the migration series is done
 2026-11-11 | excluded: deleting tests/test_red_first.sh in the red-first migration PR | why: the builder runs a mutation check against it first and deletes it afterwards | revisit when: the mutation check is done
 2026-11-11 | excluded: new deliver text checks beyond tests/test_deliver.sh (the allowed-tools check and the no-developer index line are covered by other scenarios, and the default out-of-scope row check stays in tests/test_skills.sh) | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-11 | excluded: new plugin checks beyond tests/test_plugin.sh | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-11 | excluded: a scenario for the install.sh source line (test_plugin.sh line 79) | why: install-fresh-files.feature already runs the installer and checks the source line | revisit when: that scenario is removed
+2026-11-11 | excluded: any change to a file under plugin/ | why: the scenarios read the plugin as it is | revisit when: a check finds a real gap
