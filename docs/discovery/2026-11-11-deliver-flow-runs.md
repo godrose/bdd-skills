@@ -112,3 +112,7 @@ The page script now takes a loans file under `data/`. One run per story. Scored 
 - **The ninth rule held on both runs.** In story 2 the model kept the unchecked example out of "passed" this time.
 - **Totals so far:** six runs, $8.1 notional. The slips that came back every time are the one-question and plain-words ones, and each is about the second gate, where the design output carries a step table with file names.
 - **Still open:** one run per story cannot show a rate. G7 and G12 stay open until the numbers are read over more than one run.
+
+## A change the runs led to
+
+`deliver.md` now says to leave the "Not checked, and what it risks" section out entirely when nothing was parked: no heading and no line saying so. Reason: the third run of story 1 wrote the heading with "nothing was parked" under it, against the older wording. A text pin in `tests/test_deliver.sh` fails if the sentence goes. The effect on real runs is not yet measured.
