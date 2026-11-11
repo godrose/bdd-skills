@@ -19,14 +19,20 @@ Feature: The pages that list the deliver command name it
       | 2026-11-09-deliver-pm-session.md |
 
   Scenario: The README says a file is replaced only if its first lines carry the installer
+    The installer replaces a file only when it recognises its own header. The README promises this, so the promise must stay in the text.
+
     Given the README
     Then it contains "only if its first lines carry the installer"
 
   Scenario: The known-gaps file lists gap G9
+    G9 records that the deliver gate eval can fail on its one-question grader. The entry must stay, so the gap is not forgotten.
+
     Given the file "docs/known-gaps.md"
     Then it contains "### G9"
 
   Scenario: The design-check handoff names no local path and no project
+    A handoff note is committed to a public repo. It must not carry a path from someone's machine or the name of a private trial project. The two strings below are the ones to keep out.
+
     Given the file "docs/handoff/2026-11-09-design-check.md"
     Then it does not contain "/Users/"
     And it does not contain "bdd-netcore"
