@@ -15,4 +15,5 @@ export type World = {
   ci: string;
   subject: string;
   files: string[];
+  kept: string;
 };
