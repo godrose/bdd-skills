@@ -13,4 +13,6 @@ export type World = {
   status: number | null;
   output: string;
   ci: string;
+  subject: string;
+  files: string[];
 };
