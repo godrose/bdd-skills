@@ -10,7 +10,7 @@ if [ ! -x "$RUNNER" ]; then
 fi
 
 echo "== scenarios"
-out=$("$RUNNER" 2>&1) || rc=1
+out=$(NODE_OPTIONS="--import tsx" "$RUNNER" 2>&1) || rc=1
 printf '%s\n' "$out"
 printf '%s\n' "$out" | grep -qE '^[1-9][0-9]* scenarios?' || { echo "No scenario ran. That is not a pass." >&2; rc=1; }
 

@@ -11,6 +11,7 @@ Feature: Running the CI checks locally
       | validate the plugin          |
       | validate the marketplace     |
       | install the scenario runner  |
+      | type-check the steps         |
       | run the tests                |
 
   Scenario: A failing step stops the run and is named
@@ -18,6 +19,13 @@ Feature: Running the CI checks locally
     When the local CI is run
     Then the local CI fails
     And it names the step "validate the plugin"
+    And the step "run the tests" did not run
+
+  Scenario: A type error in a step is named, and the tests do not run
+    Given a copy of the local CI script where the type check fails
+    When the local CI is run
+    Then the local CI fails
+    And it names the step "type-check the steps"
     And the step "run the tests" did not run
 
   Scenario: A failing test run is named

@@ -19,16 +19,17 @@ The repo teaches a method where a plain sentence is both the specification and t
 
 - **E1** `bash tests/run.sh` runs the scenarios and the bash files that remain, and fails if either fails.
 - **E2** With no installed runner, `tests/run.sh` says to run `npm ci` and stops. A run in which no scenario ran is never a pass.
-- **E3** A migrated file's checks are written as plain behavior sentences in `tests/features/`, with the steps in `tests/steps/`, and its bash file is deleted in the same pull request.
+- **E3** A migrated file's checks are written as plain behavior sentences in `tests/features/`, with the steps in `tests/steps/` as TypeScript, and its bash file is deleted in the same pull request.
 - **E4** Each migration pull request records a mutation check: the code is broken in several ways, and the old file and the new scenarios fail the same way.
 - **E5** A scenario about a plugin text names a behavior the command promises, not the wording. Its step does the text check.
 - **E6** CI installs the runner with `npm ci` and runs the same `bash tests/run.sh`. The two validate steps do not change.
 - **E7** A local script runs what CI runs, in order: validate the plugin strictly, validate the marketplace, install the runner, run the tests. It says which step failed. It is run before every push.
 - **E8** Every pull request in the series targets `base/scenario-suite`, and CI runs on it. Merging the base branch into `main` is a final, separate pull request, the builder's call.
 - **E9** The plugin folder never gets a Node file, and the directory-policy test keeps passing.
-- **E10** The first file migrated is `tests/test_rename.sh`, as the pilot. It also carries the root `package.json`, the lockfile and the CI change.
+- **E10** The pilot carries the root `package.json`, the lockfile, the CI change and the scenarios for the test run, the local CI script and the CI job. `tests/test_rename.sh` is deleted without being migrated: the rename is long done, and the file said to drop it once the old name was no longer a risk. (Changed from the first checklist after the builder's review of the pilot.)
 - **E11** The release flow, `tests/check_release.sh` and the version rules do not change.
 - **E12** The last pull request in the series removes `tests/lib.sh` and the bash runner loop.
+- **E13** The steps are TypeScript. CI and the local script type-check them with `tsc --noEmit --noUnusedLocals --noUnusedParameters` after the runner is installed and before the tests run. A type error or an unused local fails the run at that step.
 
 ## Decisions
 
@@ -39,8 +40,11 @@ The repo teaches a method where a plain sentence is both the specification and t
 | 3 | How is it migrated? | Incrementally, one bash file per pull request. The old and the new run side by side until the last file is gone. Each migration shows a mutation check: the code is broken in several ways, and the old file and the new scenarios fail the same way. | Too large for one change, and a lost check can hide for weeks. The mutation check was used in #50 and showed that no check was lost. |
 | 4 | Where do the pull requests go? | A long-lived base branch, `base/scenario-suite`, cut from `main`. Every pull request of the series targets it. Merging it into `main` is a last, separate pull request that the builder decides on. | The builder's call. `main` stays releasable while the suite is in two languages. |
 | 5 | How is CI checked before a push? | A local script runs the same steps as CI and names the step that failed. | The builder's call: run the CI checks locally. CI runs on every pull request, base branch included, so the local run is a check before it, not a replacement. |
+| 6 | Which language for the steps? | TypeScript, run through `tsx`, with a `tsc` gate in CI and in the local script. | The builder's review comment. A reference project of the builder's uses TypeScript steps with the same gate. `tsx` runs the steps but does not check types, so the gate is a separate step. A spike confirmed that `@cucumber/cucumber` 11 runs `.ts` steps with `NODE_OPTIONS="--import tsx"`. |
+| 7 | Is `playwright-bdd` the runner? | No. `@cucumber/cucumber` stays. | `playwright-bdd` exists to drive a browser through Playwright fixtures. This suite has no browser. |
+| 8 | Is the rename guard migrated? | No. It is dropped. | The builder's review comment. The rename is long done, and the old file said to drop it. The install addresses it also checked are still covered by the README and manifest tests. |
 
-My calls, approved with the checklist: the runner is `@cucumber/cucumber` pinned to 11.3.0, as in fixture `c`. A private `package.json` and a lockfile at the repo root. Scenarios in `tests/features/`, step definitions in `tests/steps/`. The first file migrated is `tests/test_rename.sh` (16 lines). The local CI script is `tests/ci_local.sh`, a name that `tests/run.sh` does not pick up.
+My calls, approved with the checklist: the runner is `@cucumber/cucumber` pinned to 11.3.0, with `tsx`, `typescript` and `@types/node` pinned beside it, as in fixture `c`. A private `package.json` and a lockfile at the repo root. Scenarios in `tests/features/`, step definitions in `tests/steps/`. The local CI script is `tests/ci_local.sh`, a name that `tests/run.sh` does not pick up.
 
 ## Existing users
 

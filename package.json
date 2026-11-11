@@ -2,6 +2,15 @@
   "name": "bdd-skills-tests",
   "private": true,
   "description": "The runner for this repo's own test scenarios. Not part of the plugin.",
-  "scripts": { "test": "bash tests/run.sh" },
-  "devDependencies": { "@cucumber/cucumber": "11.3.0" }
+  "scripts": {
+    "test": "bash tests/run.sh",
+    "scenarios": "NODE_OPTIONS=--import=tsx cucumber-js",
+    "typecheck": "tsc --noEmit --noUnusedLocals --noUnusedParameters"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "11.3.0",
+    "@types/node": "22.10.2",
+    "tsx": "4.19.2",
+    "typescript": "5.7.2"
+  }
 }

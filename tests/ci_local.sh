@@ -12,5 +12,6 @@ step() { # <name> <command...>
 step "validate the plugin" bash -c 'command -v claude > /dev/null 2>&1 || { echo "claude is not installed, so the plugin cannot be validated (CI installs @anthropic-ai/claude-code)." >&2; exit 1; }; claude plugin validate plugin --strict'
 step "validate the marketplace" claude plugin validate .
 step "install the scenario runner" npm ci
+step "type-check the steps" npx tsc --noEmit --noUnusedLocals --noUnusedParameters
 step "run the tests" bash tests/run.sh
 echo "All steps passed."

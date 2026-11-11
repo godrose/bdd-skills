@@ -1,1 +1,1 @@
-module.exports = { default: { paths: ["tests/features/**/*.feature"], require: ["tests/steps/**/*.js"], publishQuiet: true } };
+module.exports = { default: { paths: ["tests/features/**/*.feature"], import: ["tests/steps/**/*.ts"], publishQuiet: true } };

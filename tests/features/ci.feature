@@ -4,6 +4,10 @@ Feature: The CI job
     Given the CI workflow
     Then it installs the scenario runner before it runs the tests
 
+  Scenario: CI type-checks the steps before it runs the tests
+    Given the CI workflow
+    Then it type-checks the steps before it runs the tests
+
   Scenario: CI still validates the plugin and the marketplace first
     Given the CI workflow
     Then it validates the plugin strictly before it runs the tests
