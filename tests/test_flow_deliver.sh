@@ -70,10 +70,23 @@ assert_contains "$F/personas/approver.md" "Approved"
 assert_contains "$F/fixtures/c/story-2.txt" "stays in view"
 ns=$(cat "$F"/fixtures/c/project/features/*.feature | grep -c "^ *Scenario"); assert_equals 1 "$ns" "fixture c scenarios"
 
+# D1b the fixture can show its page: a script prints the page built from the loans data
+assert_file "$F/fixtures/c/project/src/show.js"
+assert_file "$F/fixtures/c/project/data/loans.json"
+assert_not_contains "$F/fixtures/c/project/.claude/bdd-config.md" "loans.html"
+[ -e "$F/fixtures/c/project/src/pages/loans.html" ] && fail "a fixed page is left next to the script" || pass
+if command -v node > /dev/null; then
+  shown=$(cd "$F/fixtures/c/project" && node src/show.js 2>&1)
+  printf "%s" "$shown" | grep -q "My loans" && pass || fail "the script does not print the loans page"
+  printf "%s" "$shown" | grep -q "Dune" && pass || fail "the page does not show the loan"
+  printf "%s" "$shown" | grep -q "overdue" && pass || fail "the page does not show the status"
+fi
+
 # D2 the run starts /bdd:deliver with the story, and the model gets the test command and no install command
 d=$(dscript d2 "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); dharness "$d" "$T/pass.txt"
 assert_contains "$d/assistant-args-1.txt" "/bdd:deliver When a loan is overdue"
 assert_contains "$d/assistant-args-1.txt" "Bash(npm test)"
+assert_contains "$d/assistant-args-1.txt" "Bash(node src/show.js)"
 assert_not_contains "$d/assistant-args-1.txt" "npm install"
 assert_not_contains "$d/assistant-args-1.txt" "npm ci"
 assert_contains "$d/assistant-args-2.txt" "Approved"
@@ -174,6 +187,8 @@ d=$(dscript d13a "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); FAKE_WRITE_AT=3 FAKE_WRI
 assert_equals held "$(rule_of d13a project-untouched)" "a step file"
 d=$(dscript d13b "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); FAKE_WRITE_AT=3 FAKE_WRITE_FILE=package.json dharness "$d" "$T/pass.txt"
 assert_equals broken "$(rule_of d13b project-untouched)" "the package file"
+d=$(dscript d13d "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); FAKE_WRITE_AT=3 FAKE_WRITE_FILE=data/loans.json dharness "$d" "$T/pass.txt"
+assert_equals held "$(rule_of d13d project-untouched)" "the sample data"
 d=$(dscript d13c "$CHECKLIST" "$SCEN" "$REPORT_CLEAN"); dharness "$d" "$T/pass.txt"
 assert_equals held "$(rule_of d13c project-untouched)" "the installed runner is not a change"
 

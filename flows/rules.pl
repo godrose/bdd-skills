@@ -47,7 +47,7 @@ row("pack-end", !$ok, "last message") if $cmd eq "discover";
 my $changed = "";
 if (open my $d, '<', "$rd/project-diff.txt") { local $/; $changed = <$d>; }
 my @c = grep { length } split /\n/, $changed;
-@c = grep { !m{^(?:features|steps|src)/|^docs/(?:out-of-scope\.md|decisions/)} } @c if $cmd eq "deliver";
+@c = grep { !m{^(?:features|steps|src|data)/|^docs/(?:out-of-scope\.md|decisions/)} } @c if $cmd eq "deliver";
 row("project-untouched", scalar(@c), join(", ", @c));
 
 # The rules of deliver
