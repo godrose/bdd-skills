@@ -23,7 +23,7 @@ done
 command -v "$CLAUDE" > /dev/null 2>&1 || { echo "claude was not found on the path. Install it, or set CLAUDE_BIN." >&2; exit 1; }
 [ -d "$FLOWS/fixtures/$FIXTURE/project" ] || { echo "no such fixture: '$FIXTURE'. Use a or b." >&2; exit 2; }
 FX="$FLOWS/fixtures/$FIXTURE"
-[ -n "$PERSONA" ] || PERSONA="$(cat "$FX/persona.txt")"
+[ -n "$PERSONA" ] || PERSONA="$(tr -d '\r' < "$FX/persona.txt")"
 [ -f "$FLOWS/personas/$PERSONA.md" ] || { echo "no such persona: $PERSONA" >&2; exit 2; }
 [ -n "$OUT" ] || OUT="$FLOWS/results/$(date +%Y%m%dT%H%M%S)"
 BASE="$OUT/$FIXTURE"
@@ -35,7 +35,7 @@ final_message() { grep -qiE '^[#* ]*readiness' "$1" && grep -qiE '\b(not ready|r
 for i in $(seq 1 "$RUNS"); do
   rd="$BASE/run-$i"; proj="$rd/project"
   mkdir -p "$rd"; cp -R "$FX/project" "$proj"
-  sid=$(uuidgen | tr 'A-Z' 'a-z'); story=$(cat "$FX/story.txt")
+  sid=$(uuidgen | tr 'A-Z' 'a-z'); story=$(tr -d '\r' < "$FX/story.txt")
   start=$(date +%s); cost=0; turns=0; finished=false; reply=""
   for t in $(seq 1 "$TURNS"); do
     tt=$(printf '%02d' "$t")
@@ -51,7 +51,7 @@ for i in $(seq 1 "$RUNS"); do
     turns=$t
     if final_message "$rd/turn-$tt-assistant.txt"; then finished=true; break; fi
     [ "$t" -lt "$TURNS" ] || break
-    { cat "$FLOWS/personas/$PERSONA.md"; printf '\nThe assistant just said:\n\n%s\n\nReply as this person, briefly.\n' "$msg"; } > "$rd/pm-prompt-$tt.txt"
+    { tr -d '\r' < "$FLOWS/personas/$PERSONA.md"; printf '\nThe assistant just said:\n\n%s\n\nReply as this person, briefly.\n' "$msg"; } > "$rd/pm-prompt-$tt.txt"
     pout=$("$CLAUDE" -p --model haiku --output-format json < "$rd/pm-prompt-$tt.txt" 2> "$rd/pm-stderr-$tt.txt")
     reply=$(printf '%s' "$pout" | jq -r '.result // empty' 2> /dev/null)
     [ -n "$reply" ] || { echo "run $i, turn $t: no reply from the product manager model" >&2; break; }

@@ -6,13 +6,13 @@ description: "Carry a change from a plain description to verified scenarios in o
 
 Carry one change from a description to scenarios that pass, in one conversation. This is a **methodology skill** that composes the existing ones: `bdd:discover`, `bdd:design`, `bdd:implement` and `bdd:run`. It does not replace them and does not repeat their work. It sequences them, turns their stops into questions, then looks at the result and writes the report.
 
-It is for a product manager with a developer or architect watching. The product manager describes a change and answers questions about how it should behave. The developer answers what is technical. After the first delivery the team shares one language, and each later change starts as a description and adds visible value on top of what exists.
+It is for a product manager, with or without a developer or architect watching. The product manager describes a change and answers questions about how it should behave. A developer, when there is one, answers what is technical. When there is none, each technical stop becomes a risk in the report, in plain words. After the first delivery the team shares one language, and each later change starts as a description and adds visible value on top of what exists.
 
 **Before starting**, read `.claude/bdd-config.md` for project conventions and skill role mappings. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
 
 > Plugin note: if `.claude/bdd-config.md` is missing, tell the user to run `/bdd:init`. The template is at `${CLAUDE_PLUGIN_ROOT}/bdd-config.template.md`.
 
-This command pre-approves nothing. Claude Code asks before each shell command and each file write, so a developer must be there to answer those prompts.
+This command pre-approves nothing. Claude Code asks before each shell command and each file write, so the person running it must be there to approve each one.
 
 ### Input
 
@@ -71,7 +71,7 @@ If the result cannot be looked at, for example the app cannot be started here, d
 Sort every stop by kind.
 
 - **A product decision is asked at once.** Examples: the data does not fit an agreed example, an earlier scenario now fails and nobody said the change was intended, or the code shows a behavior nobody described. Explain what was found in plain words and ask one question about that behavior, record the answer, and resume. Do not ask the product manager to approve again what they already approved.
-- **A technical stop is parked.** Example: a step failed three times. Report the example as failed or as couldn't be checked, with the evidence for the developer. The independent examples go on. Collect the parked stops into the developer note.
+- **A technical stop is parked.** Example: a step failed three times. Report the example as failed or as couldn't be checked, with the evidence for the developer. The independent examples go on. Collect the parked stops into the "Not checked, and what it risks" section of the report. Give each one plain sentence on what could go wrong for the users, then the evidence on a "For the developer" line. Never name a file, a field, a function or a status in the plain sentence. Do not ask whether there is a developer, and do not word the report differently for a person who has none. A parked example is never reported as passed.
 
 When a check fails against an agreed example, fix the step code or the implementation and re-run, within the fix loop's cap, and never change an approved scenario or its expected values to make a check pass. If the scenario is what is wrong, that is a product decision: ask.
 
@@ -105,7 +105,10 @@ Regression: <N> earlier scenarios in <the affected feature> still pass.
 Seen: <what was looked at, and how: a page, a request, a record>
 <or: not looked at: <why>>
 
-Developer note: <parked technical stops, what to look at, and anything that was not recorded>
+Not checked, and what it risks:
+- E2 <what could go wrong for the users, in plain words>. For the developer: <what to look at>
+
+Developer note: <anything that was not recorded, and anything surprising seen in step 5>
 ```
 
 - "Couldn't be checked" covers an example whose result was not looked at in step 5 (the Seen line says why), a scenario still tagged `@pending`, a scenario that stays manual-only, a scenario the red-first check marked "not seen red", and any run that executed zero tests. A run of zero tests is never a pass.
@@ -113,6 +116,7 @@ Developer note: <parked technical stops, what to look at, and anything that was 
 - Put anything surprising that you saw in step 5 in the developer note, even when it was fixed.
 - Leave the developer note out when there is nothing in it.
 
+- Leave the "Not checked, and what it risks" section out when nothing was parked.
 ### Rules
 
 - Ask one question at a time. Use the project's words.

@@ -97,6 +97,6 @@ Each gap says what is not checked, why it is still open, and what would close it
 
 **Not checked.** `deliver` parks a technical stop for "the developer" and reports it in the developer note. A founder with no developer cannot act on that note. Step 0 in `discover` now has a way out (an unknown the owner cannot check becomes a listed assumption). `deliver`'s other stops have none.
 
-**Why.** The method was built from a trial with a product manager and a developer watching. The one-person case came up later, in a live run of `discover`, and `deliver` was not changed for it.
+**Why.** The method was built from a trial with a product manager and a developer watching. The one-person case came up later, in a live run of `discover`, and `deliver` was not changed for it. It now reports each parked stop as a plain risk with a developer line (`docs/discovery/2026-11-11-deliver-no-developer.md`). That is pinned by text tests only, so the gap stays open.
 
 **Closed when.** A run of `deliver` as a person with no developer reaches a report that names each parked stop as an assumption or a risk the person accepts, and not as a task for someone who does not exist.
