@@ -1,0 +1,7 @@
+{
+  "name": "bdd-skills-tests",
+  "private": true,
+  "description": "The runner for this repo's own test scenarios. Not part of the plugin.",
+  "scripts": { "test": "bash tests/run.sh" },
+  "devDependencies": { "@cucumber/cucumber": "11.3.0" }
+}

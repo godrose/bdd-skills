@@ -20,6 +20,7 @@ jobs:
           npm install -g @anthropic-ai/claude-code@2.1.318
           claude plugin validate plugin --strict
           claude plugin validate .
+      - run: npm ci
       - run: bash tests/run.sh
       - name: Release checks
         if: startsWith(github.event.pull_request.title, 'release:')
