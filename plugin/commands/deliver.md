@@ -116,7 +116,7 @@ Developer note: <anything that was not recorded, and anything surprising seen in
 - Put anything surprising that you saw in step 5 in the developer note, even when it was fixed.
 - Leave the developer note out when there is nothing in it.
 
-- Leave the "Not checked, and what it risks" section out when nothing was parked.
+- Leave the "Not checked, and what it risks" section out entirely when nothing was parked: no heading, and no line that says nothing was parked.
 ### Rules
 
 - Ask one question at a time. Use the project's words.

@@ -144,12 +144,15 @@ assert_not_contains "$T" '/Users/'
 assert_not_contains "$T" "$(printf '\xe2\x80\x94')"
 
 # 21 a person with no developer: parked stops become risks in plain words (docs/discovery/2026-11-11-deliver-no-developer.md)
-for s in 'with or without a developer or architect watching' 'Not checked, and what it risks:' 'one plain sentence on what could go wrong for the users' 'on a "For the developer" line' 'Never name a file, a field, a function or a status in the plain sentence' 'Do not ask whether there is a developer' 'Leave the "Not checked, and what it risks" section out when nothing was parked' 'is never reported as passed'; do
+for s in 'with or without a developer or architect watching' 'Not checked, and what it risks:' 'one plain sentence on what could go wrong for the users' 'on a "For the developer" line' 'Never name a file, a field, a function or a status in the plain sentence' 'Do not ask whether there is a developer' 'Leave the "Not checked, and what it risks" section out entirely when nothing was parked' 'is never reported as passed'; do
   assert_contains "$D" "$s"
 done
 before "$D" 'Not checked, and what it risks:' 'Developer note: <'
 assert_not_contains "$D" 'Developer note: <parked technical stops'
 assert_contains "$ROOT/docs/discovery/2026-11-11-deliver-no-developer.md" 'Decisions'
 assert_contains "$ROOT/docs/README.md" '2026-11-11-deliver-no-developer.md'
+
+# 22 nothing parked: no heading and no line saying so (seen in a real run: "nothing was parked" under the heading)
+assert_contains "$D" 'Leave the "Not checked, and what it risks" section out entirely when nothing was parked: no heading, and no line that says nothing was parked'
 
 finish
