@@ -17,3 +17,5 @@
 2026-11-11 | excluded: deleting tests/test_flow.sh in the discover migration PR | why: the builder runs a mutation check against it first and deletes it afterwards | revisit when: the mutation check is done
 2026-11-11 | excluded: new eval checks beyond tests/test_evals.sh (a real claude plugin eval run, the arguments the runner passes through, the copy-back of results) | why: a migration adds no checks | revisit when: the migration series is done
 2026-11-11 | excluded: deleting tests/test_evals.sh in the evals migration PR | why: the builder runs a mutation check against it first and deletes it afterwards | revisit when: the mutation check is done
+2026-11-11 | excluded: new red-first or known-gaps checks beyond tests/test_red_first.sh (deliver.md mentioning red-first, a count of each part per gap) | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-11 | excluded: deleting tests/test_red_first.sh in the red-first migration PR | why: the builder runs a mutation check against it first and deletes it afterwards | revisit when: the mutation check is done
