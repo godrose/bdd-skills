@@ -48,6 +48,7 @@ Records of real working sessions with the plugin, kept as examples.
 | Record | What it shows |
 |--------|---------------|
 | `2026-11-09-deliver-pm-session.md` | Two changes delivered with `/bdd:deliver` by a product manager and an assistant: the questions, the pushback and what it changed |
+| `2026-11-11-deliver-on-its-own-suite.md` | `/bdd:init` and `/bdd:deliver` run on this repo to migrate one test file: the stops, the equivalence gap the mutation check found, and what it points to |
 
 Maintainer notes for the nightly evals are in `evals-ci.md`.
 
