@@ -44,6 +44,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-11-decisions-scenarios.md` | The checks on the decision log script, migrated to scenarios |
 | `2026-11-11-readme-scenarios.md` | The checks on the README's structure and promises, migrated to scenarios |
 | `2026-11-11-deliver-flow-scenarios.md` | The checks on the deliver flow harness, migrated to scenarios |
+| `2026-11-11-discover-flow-scenarios.md` | The checks on the discover flow harness, migrated to scenarios |
 
 ## trials/
 
