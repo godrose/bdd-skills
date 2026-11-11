@@ -17,4 +17,5 @@ export type World = {
   files: string[];
   kept: string;
   run: { args: string[]; env: NodeJS.ProcessEnv } | null;
+  flow: import("./flow-support").Flow;
 };
