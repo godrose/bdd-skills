@@ -1,4 +1,4 @@
-import { Given, Then } from "@cucumber/cucumber";
+import { Given, Then, type DataTable } from "@cucumber/cucumber";
 import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
@@ -71,4 +71,24 @@ Given("the text files of the repo outside docs", function (this: World) { this.f
 Then("none of them has an em-dash", function (this: World) {
   const bad = this.files.filter((f) => fs.readFileSync(abs(f), "utf8").includes(EM_DASH));
   assert.deepStrictEqual(bad, [], "files with an em-dash: " + bad.join(", "));
+});
+
+Then("every one starts with a frontmatter block and has a description or name line", function (this: World) {
+  const bad = this.files.filter((f) => {
+    const lines = read(f).split("\n");
+    return lines[0] !== "---" || !lines.some((l) => /^(description|name):/.test(l));
+  });
+  assert.deepStrictEqual(bad, [], "no frontmatter, or no description or name: " + bad.join(", "));
+});
+
+Then("every skill role named in the config template has a command or agent file", function (this: World) {
+  const roles = [...new Set([...this.subject.matchAll(/`bdd:([a-z-]*)`/g)].map((m) => m[1]))];
+  assert.ok(roles.length > 0, "no skill roles found in the config template");
+  const bad = roles.filter((r) => !fs.existsSync(abs(`plugin/commands/${r}.md`)) && !fs.existsSync(abs(`plugin/agents/${r}.md`)));
+  assert.deepStrictEqual(bad, [], "roles with no skill file: " + bad.join(", "));
+});
+
+Then("it does not contain:", function (this: World, table: DataTable) {
+  const bad = table.raw().flat().filter((t) => this.subject.includes(t));
+  assert.deepStrictEqual(bad, [], "has: " + bad.join(", "));
 });
