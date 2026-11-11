@@ -16,4 +16,5 @@ export type World = {
   subject: string;
   files: string[];
   kept: string;
+  run: { args: string[]; env: NodeJS.ProcessEnv } | null;
 };

@@ -41,6 +41,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-11-deliver-flow-runs.md` | A scripted flow run for `bdd:deliver`, and a way to compare two runs to see a regression |
 | `2026-11-11-scenario-suite.md` | The repo's own test suite as scenarios that run, migrated one file at a time |
 | `2026-11-11-layout-scenarios.md` | The checks on the plugin folder layout, migrated to scenarios |
+| `2026-11-11-decisions-scenarios.md` | The checks on the decision log script, migrated to scenarios |
 
 ## trials/
 

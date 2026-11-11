@@ -5,3 +5,6 @@
 2026-11-11 | excluded: new install checks beyond tests/test_install.sh (other commands protected from overwrite, the legacy-file cleanup, the version in the source line) | why: a migration adds no checks | revisit when: the migration series is done
 2026-11-11 | excluded: the "lib.sh sets PLUGIN" check from tests/test_layout.sh | why: it tests the bash helper, not the repo layout, and the library is deleted at the end of the series | revisit when: never, tests/test_lib.sh covers the library
 2026-11-11 | excluded: new layout checks beyond tests/test_layout.sh (for example untracked files in plugin/, unquoted tool lists) | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-11 | excluded: new decision log checks beyond tests/test_decisions.sh | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-11 | excluded: the bash file's own helpers and exit-code counting as scenarios | why: they test the harness, not the script | revisit when: never
+2026-11-11 | excluded: exact message wording beyond the fragments the old file matched | why: the scenarios keep to the old fragments | revisit when: the migration series is done
