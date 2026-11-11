@@ -39,6 +39,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-10-discover-flow-runs.md` | A scripted flow run for `bdd:discover`: a real headless session, a model playing the product manager, rules counted on the transcript |
 | `2026-11-11-deliver-no-developer.md` | `bdd:deliver` reports parked technical stops as plain risks, for a person with no developer |
 | `2026-11-11-deliver-flow-runs.md` | A scripted flow run for `bdd:deliver`, and a way to compare two runs to see a regression |
+| `2026-11-11-scenario-suite.md` | The repo's own test suite as scenarios that run, migrated one file at a time |
 
 ## trials/
 
