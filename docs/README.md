@@ -30,7 +30,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-05-rename-repo-bdd-skills.md` | Rename the repo to `bdd-skills` (marketplace name superseded in part) |
 | `2026-11-08-red-first-and-known-gaps.md` | The red-first check in `implement`, and a known-gaps file |
 | `2026-11-08-plugin-in-subfolder.md` | Move the plugin into a `plugin/` folder, so the directory scan reads only plugin files |
-| `2026-11-08-evals-ci-out-of-plugin.md` | Move the CI token setup out of the plugin folder, after the second validation report |
+| `2026-11-08-evals-ci-out-of-plugin.md` | Move the CI token setup out of the plugin folder, after the second validation report |
 | `2026-11-08-allowed-tools-decision.md` | Keep the broad `allowed-tools` grants (superseded) |
 | `2026-11-08-directory-policy.md` | Meet the directory's file and tool policy: no grants, no scripts or fixtures in the plugin |
 | `2026-11-09-deliver.md` | `/bdd:deliver`: one conversation from a description to verified scenarios, for a PM with a developer watching |
@@ -40,6 +40,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-11-deliver-no-developer.md` | `bdd:deliver` reports parked technical stops as plain risks, for a person with no developer |
 | `2026-11-11-deliver-flow-runs.md` | A scripted flow run for `bdd:deliver`, and a way to compare two runs to see a regression |
 | `2026-11-11-scenario-suite.md` | The repo's own test suite as scenarios that run, migrated one file at a time |
+| `2026-11-11-layout-scenarios.md` | The checks on the plugin folder layout, migrated to scenarios |
 
 ## trials/
 

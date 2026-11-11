@@ -8,7 +8,7 @@ const at = (text: string, needle: string): number => {
   return i;
 };
 
-Given("the CI workflow", function (this: World) { this.ci = read(".github/workflows/ci.yml"); });
+Given("the CI workflow", function (this: World) { this.ci = read(".github/workflows/ci.yml"); this.subject = this.ci; });
 Then("it installs the scenario runner before it runs the tests", function (this: World) {
   assert.ok(at(this.ci, "npm ci") < at(this.ci, "bash tests/run.sh"));
 });

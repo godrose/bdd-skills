@@ -3,3 +3,5 @@
 2026-11-11 | excluded: failing a feature PR that changes the plugin and keeps the version | why: feature PRs never bump the version, only release PRs do | revisit when: the policy changes
 2026-11-11 | excluded: checks on the changelog entry and on the marketplace version in the release scenarios | why: other checks cover them, outside this change
 2026-11-11 | excluded: new install checks beyond tests/test_install.sh (other commands protected from overwrite, the legacy-file cleanup, the version in the source line) | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-11 | excluded: the "lib.sh sets PLUGIN" check from tests/test_layout.sh | why: it tests the bash helper, not the repo layout, and the library is deleted at the end of the series | revisit when: never, tests/test_lib.sh covers the library
+2026-11-11 | excluded: new layout checks beyond tests/test_layout.sh (for example untracked files in plugin/, unquoted tool lists) | why: a migration adds no checks | revisit when: the migration series is done
