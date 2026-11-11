@@ -26,7 +26,7 @@ A record of one working session, kept as an example. The plugin was run on its o
 - **A passing scenario is not proof that nothing was lost.** The scenarios passed and still lost two checks. The mutation check against the old file found it. `deliver` has no step for "specify existing tests, and show that the new ones fail wherever the old ones did", so that check was the author's, outside the plugin.
 - **The plugin proposed extra checks** (messages, a case with no `main`) because it saw them in the code. For a migration that is the wrong default, and a product manager has to say so. It listed them as examples and let the author drop them.
 
-## Second run: the install checks?
+## Second run: the install checks
 ?
 The same flow on `tests/test_install.sh`: 25 examples approved, then 64 cases in 7 feature files after the author asked for a split. The mutation check (22 installer breaks, old file against new scenarios) agreed on every break that applied. Two things came out:
 
@@ -42,3 +42,39 @@ The same flow on `tests/test_install.sh`: 25 examples approved, then 64 cases in
 ## Limits as evidence
 
 One session, one product manager who wrote the method, one existing-behavior story with no screen. It shows that the flow works end to end on a Cucumber and TypeScript project, and where it stopped. It says nothing about a new user.
+
+## Lessons learned
+
+From one session and one product manager who wrote the method, so evidence and not proof.
+
+### What the plugin did well
+
+1. **Look first caught a wrong story.** The story said a pull request that changes the plugin must not keep the version. The plugin read the code and `CLAUDE.md`, saw that the rule holds only for release pull requests, and asked before writing anything. Without it, the scenarios would have specified a rule that reverses "feature pull requests never bump the version".
+2. **The report was honest.** It said which checks it could not run and why, and it flagged the equivalence gap in its own developer note before any outside check did. This is the "Not checked, and what it risks" section in a real run, where the stops came from permissions and not from a planted case.
+3. **"From code" marking kept the examples exact.** Each value came from the checks, not from the story.
+4. **It took correction well.** Given the mutation finding, it changed the scenarios and proved the fix by breaking only one check. It did not argue and did not ask again for approvals it already had.
+
+### What the plugin does not do
+
+1. **A passing scenario is not proof that nothing was lost.** The first nine scenarios passed and still lost two checks. Only a mutation check against the old file found it, and that check was the author's. `deliver` has no step for "specify existing tests, and show that the new ones fail wherever the old ones did". This is the most useful finding.
+2. **Its default is to add.** It proposed message assertions and a "no main" case because it saw them in the code. For a migration that is the wrong default, and the product manager has to say "no new checks".
+3. **A headless session cannot write under `.claude/`.** No form of approval worked, because there is no prompt. The plugin refused to work around the block, which is right.
+4. **Grants decide how much the report can claim.** The run had neither the whole test run nor the type check, so those went under "Not checked". A user would grant them in a real session.
+
+### What the process taught
+
+1. **Mutation checks earn their cost.** They found the equivalence gap here and were the proof in the earlier migration pull requests. Each migration carries one.
+2. **Type and test gates caught the author's own mistakes.** A field that was never added, a scan that walked the installed dependencies, a package script that never landed. Checking that a gate fails when it should was worth the minutes.
+3. **Line endings fail silently.** The working copy has Windows line endings, so several scripted edits did not apply and gave no error. Check every edit.
+4. **Behavior is where the plugin adds most.** The rename and repo files were text checks, which the plugin fits poorly. The release rules were behavior, and its discovery added something there.
+
+### Where the author fell short
+
+- The plugin was not used until the builder asked. The first two migrations and the discovery pack were by hand, which missed the point of applying the method to itself from the start.
+- The story given to `deliver` was careless about which pull request the rule applied to. The plugin's question was a fair correction of the author, not of the code.
+
+### What this led to
+
+1. From the next migration on, `bdd:deliver` is used from the start, on files with real behavior.
+2. Whether `deliver` needs an "equivalence" step for specifying existing behavior is open. Two more files will say whether this was a one-off.
+3. A line in `init` that it needs an interactive session to write the config is a small candidate fix.
