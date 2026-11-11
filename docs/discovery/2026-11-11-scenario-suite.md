@@ -62,3 +62,10 @@ A contributor clones the repo, runs `npm ci` once, then `bash tests/run.sh`. Wit
 - Adding or changing what is tested. Reason: the migration keeps every check and adds none. New checks come in their own changes.
 - A second runner such as bats. Reason: the point is one language.
 - Any Node file in the plugin folder. Reason: the directory policy.
+
+## Follow-ups after the series
+
+Not part of the migration. Each is its own change, once the bash files are gone and `specs/` exists.
+
+- **Message assertions for the release check.** `bdd:deliver` proposed scenarios that check the message a failing release check prints, such as "version 0.4.0 is not higher than 0.4.0 on main". The old bash test checked only the exit status, so the migration keeps to that, and the message checks wait. The builder's call. A rewording of a message would then fail a scenario on purpose.
+- **A check for "no main to compare with".** The plugin's discovery found that the release check fails when there is no `main`. No old test covered it, so it was left out of the migration.
