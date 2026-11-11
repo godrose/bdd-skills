@@ -27,6 +27,7 @@ A record of one working session, kept as an example. The plugin was run on its o
 - **The plugin proposed extra checks** (messages, a case with no `main`) because it saw them in the code. For a migration that is the wrong default, and a product manager has to say so. It listed them as examples and let the author drop them.
 
 ## Second run: the install checks
+
 The same flow on `tests/test_install.sh`: 25 examples approved, then 64 cases in 7 feature files after the author asked for a split. The mutation check (22 installer breaks, old file against new scenarios) agreed on every break that applied. Two things came out:
 
 - **Both suites miss the same two things:** the removal of legacy command files, and the "skipped" line in the install list. Neither the old checks nor the new scenarios fail when the installer drops them. Listed as follow-ups, not fixed here, because the migration keeps behavior.
