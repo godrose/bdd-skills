@@ -26,3 +26,15 @@ Then("it runs on every pull request", function (this: World) {
   assert.ok(/^on:\n(?:.*\n)*?\s+pull_request:\s*\n/m.test(this.ci), "no pull_request trigger");
   assert.ok(!/pull_request:\s*\n\s+branches:/.test(this.ci), "pull requests are filtered by branch");
 });
+
+Then("it runs on pushes", function (this: World) { at(this.ci, "push:"); });
+Then("it runs on pull requests", function (this: World) { at(this.ci, "pull_request:"); });
+Then("it has a job named {string}", function (this: World, name: string) {
+  assert.ok(new RegExp(`^  ${name}:\\s*$`, "m").test(this.ci), `no job named ${name}`);
+});
+Then("it checks out the repository", function (this: World) { at(this.ci, "actions/checkout@"); });
+Then("it runs the test suite", function (this: World) { at(this.ci, "bash tests/run.sh"); });
+Then("it runs the release check only for pull requests whose title starts with {string}", function (this: World, prefix: string) {
+  at(this.ci, `startsWith(github.event.pull_request.title, '${prefix}')`);
+  at(this.ci, "tests/check_release.sh");
+});
