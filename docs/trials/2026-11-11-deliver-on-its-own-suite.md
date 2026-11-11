@@ -26,6 +26,13 @@ A record of one working session, kept as an example. The plugin was run on its o
 - **A passing scenario is not proof that nothing was lost.** The scenarios passed and still lost two checks. The mutation check against the old file found it. `deliver` has no step for "specify existing tests, and show that the new ones fail wherever the old ones did", so that check was the author's, outside the plugin.
 - **The plugin proposed extra checks** (messages, a case with no `main`) because it saw them in the code. For a migration that is the wrong default, and a product manager has to say so. It listed them as examples and let the author drop them.
 
+## Second run: the install checks?
+?
+The same flow on `tests/test_install.sh`: 25 examples approved, then 64 cases in 7 feature files after the author asked for a split. The mutation check (22 installer breaks, old file against new scenarios) agreed on every break that applied. Two things came out:
+
+- **Both suites miss the same two things:** the removal of legacy command files, and the "skipped" line in the install list. Neither the old checks nor the new scenarios fail when the installer drops them. Listed as follow-ups, not fixed here, because the migration keeps behavior.
+- **The report was honest about what it did not run:** it said it could not run `install.sh` by hand, because the grant was missing. It also counted 55 scenarios where there were 64, which the author caught on the run.
+
 ## Gaps and ideas this points to
 
 - **`init` and a headless session:** a config write under `.claude/` cannot be approved without a prompt. It is a limit of the session, not a defect of the plugin, but `init` could say plainly that it needs an interactive session.
