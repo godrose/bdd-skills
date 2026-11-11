@@ -12,3 +12,6 @@
 2026-11-11 | excluded: new flow harness checks beyond tests/test_flow_deliver.sh (including a one-question case for deliver) | why: a migration adds no checks | revisit when: the migration series is done
 2026-11-11 | excluded: the discover-only checks of tests/test_flow.sh in the deliver scenarios (missing claude, relative output folder, CRLF fixtures, runs with no answer) | why: they belong to the discover harness migration | revisit when: that migration is done
 2026-11-11 | excluded: a real model run in the scenarios | why: the scenarios use a fake claude and a fake npm, as the bash file does | revisit when: never
+2026-11-11 | removed: the exclusion of the discover-only checks of tests/test_flow.sh (missing claude, relative output folder, CRLF fixtures, runs with no answer) | why: the discover harness migration is now under way, so they are in scope | revisit when: never
+2026-11-11 | excluded: new flow harness checks beyond tests/test_flow.sh and the one install.sh guard rail | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-11 | excluded: deleting tests/test_flow.sh in the discover migration PR | why: the builder runs a mutation check against it first and deletes it afterwards | revisit when: the mutation check is done

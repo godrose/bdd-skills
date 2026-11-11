@@ -59,6 +59,12 @@ export type Flow = {
   fixtureFiles: string[];
   scenarioCount: number;
   reports: string[];
+  command: string;
+  fixture: string;
+  story: string;
+  turns: number | null;
+  relativeOut: boolean;
+  noClaude: boolean;
 };
 
 export function flow(world: World): Flow {
@@ -74,6 +80,7 @@ export function flow(world: World): Flow {
     world.flow = {
       tmp, messages: [], replies: new Map(), write: null, testOutput: TEST_OUTPUT.passed, installFails: false, plays: 0,
       scriptDir: "", outDir: "", harness: path.join(FLOWS, "run.sh"), fixtureFiles: [], scenarioCount: 0, reports: [],
+      command: "deliver", fixture: "c", story: "1", turns: null, relativeOut: false, noClaude: false,
     };
   }
   return world.flow;
@@ -81,9 +88,10 @@ export function flow(world: World): Flow {
 
 export const cacheDir = (f: Flow): string => path.join(f.tmp, "cache");
 export const npmLog = (f: Flow): string => path.join(f.tmp, "npm.log");
-export const runDir = (f: Flow): string => path.join(f.outDir, "c-story-1/run-1");
+export const baseDir = (f: Flow): string => path.join(f.outDir, f.story ? `${f.fixture}-story-${f.story}` : f.fixture);
+export const runDir = (f: Flow): string => path.join(baseDir(f), "run-1");
 
-// One run of fixture c, story 1, with deliver. The messages come from the script folder, "Approved" answers the first two.
+// One run of the harness, by default deliver on fixture c, story 1. The messages come from the script folder. A deliver run answers "Approved" to the first two.
 export function play(world: World, harness: string = path.join(FLOWS, "run.sh")): void {
   const f = flow(world);
   f.plays += 1;
@@ -93,7 +101,7 @@ export function play(world: World, harness: string = path.join(FLOWS, "run.sh"))
   fs.mkdirSync(f.scriptDir);
   f.messages.forEach((m, i) => {
     fs.writeFileSync(path.join(f.scriptDir, `assistant-${i + 1}.txt`), m + "\n");
-    fs.writeFileSync(path.join(f.scriptDir, `pm-${i + 1}.txt`), (i < 2 ? "Approved" : `A. reply ${i + 1}`) + "\n");
+    fs.writeFileSync(path.join(f.scriptDir, `pm-${i + 1}.txt`), (f.command === "deliver" && i < 2 ? "Approved" : `A. reply ${i + 1}`) + "\n");
   });
   for (const [n, text] of f.replies) fs.writeFileSync(path.join(f.scriptDir, `pm-${n}.txt`), text + "\n");
   const npmOut = path.join(f.tmp, "npm-out.txt");
@@ -110,9 +118,14 @@ export function play(world: World, harness: string = path.join(FLOWS, "run.sh"))
     FAKE_WRITE_FILE: f.write ? f.write.file : "",
   };
   if (f.installFails) env.FAKE_NPM_FAIL = "1";
-  const r = spawnSync("bash", [harness, "--command", "deliver", "--fixture", "c", "--story", "1", "--runs", "1", "--out", f.outDir], { env, encoding: "utf8" });
+  if (f.noClaude) env.CLAUDE_BIN = "no-such-claude-binary";
+  const args = [harness, "--command", f.command, "--fixture", f.fixture, ...(f.story ? ["--story", f.story] : []), "--runs", "1"];
+  if (f.turns !== null) args.push("--turns", String(f.turns));
+  args.push("--out", f.relativeOut ? path.basename(f.outDir) : f.outDir);
+  const r = spawnSync("bash", args, { env, encoding: "utf8", cwd: f.relativeOut ? f.tmp : undefined });
   world.status = r.status;
   world.output = (r.stdout ?? "") + (r.stderr ?? "");
 }
 
-export const readRun = (world: World, name: string): string => fs.readFileSync(path.join(runDir(flow(world)), name), "utf8");
+export const readReport = (world: World): string => fs.readFileSync(path.join(baseDir(flow(world)), "report.md"), "utf8");
+export const readRun =(world: World, name: string): string => fs.readFileSync(path.join(runDir(flow(world)), name), "utf8");

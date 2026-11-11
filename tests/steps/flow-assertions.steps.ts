@@ -4,7 +4,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { ROOT, read, type World } from "./support";
-import { FLOWS, cacheDir, flow, npmLog, readRun, runDir } from "./flow-support";
+import { FLOWS, cacheDir, flow, npmLog, readReport, readRun, runDir } from "./flow-support";
 
 const column = (table: DataTable): string[] => table.raw().map((r) => r[0]);
 
@@ -36,7 +36,7 @@ Then("the file {string} of the run contains:", function (this: World, name: stri
   for (const item of column(table)) assert.ok(text.includes(item), `${name} lacks "${item}": ${text}`);
 });
 Then("the report of the harness contains {string}", function (this: World, text: string) {
-  const report = fs.readFileSync(path.join(flow(this).outDir, "c-story-1/report.md"), "utf8");
+  const report = readReport(this);
   assert.ok(report.includes(text), report);
 });
 
