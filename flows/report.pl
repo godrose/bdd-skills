@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 # Writes the report for one fixture: counts per rule out of the runs, the breaks, and turns, time and usage. No verdict.
 use strict; use warnings;
-my ($base, $fixture, $runs, $cap) = @ARGV;
+my ($base, $fixture, $runs, $cap, $cmd, $story) = @ARGV;
+$cmd //= "discover";
 my (%held, %breaks, @order, @rows, @noans);
 my $scored = 0;
 for my $i (1 .. $runs) {
@@ -19,7 +20,7 @@ for my $i (1 .. $runs) {
   my ($c) = $meta =~ /"cost_usd":\s*([\d.e+-]+)/; my ($f) = $meta =~ /"finished":\s*(\w+)/;
   push @rows, [$i, $t, $s, $c, $f];
 }
-print "# Flow report: fixture $fixture\n\n";
+print "# Flow report: $cmd, fixture $fixture", (length($story // "") ? ", story $story" : ""), "\n\n";
 print "Runs: $runs. Turn cap: $cap. Counts only: this report gives no verdict.\n\n";
 print "| Rule | Runs that held it |\n|---|---|\n";
 printf "| %s | %d of %d |\n", $_, $held{$_} // 0, $scored for @order;
