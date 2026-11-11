@@ -1,0 +1,3 @@
+[
+  { "id": 1, "book": "Dune", "borrowedDaysAgo": 15, "status": "open" }
+]

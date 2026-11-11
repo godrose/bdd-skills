@@ -1,0 +1,1 @@
+When a loan is overdue, the member should see a notice at the top of their loans page that stays in view when they scroll, so they cannot miss it.

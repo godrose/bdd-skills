@@ -1,0 +1,6 @@
+{
+  "name": "library-loans",
+  "private": true,
+  "scripts": { "test": "cucumber-js" },
+  "devDependencies": { "@cucumber/cucumber": "11.3.0" }
+}
