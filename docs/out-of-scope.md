@@ -31,3 +31,5 @@
 2026-11-12 | excluded: a mutation run by the agent in PR 3 of 3 | why: the builder runs the mutation check as the red proof | revisit when: the builder asks for it
 2026-11-12 | excluded: tighter versions of the short triage words (open, change, question, approve) | why: a migration adds no checks | revisit when: the migration series is done
 2026-11-12 | excluded: scenarios for README phrases that readme-order and readme-folded already hold, and for the reconciler and feedback-intake rows | why: a scenario that another covers adds nothing | revisit when: one of those scenarios is removed
+2026-11-12 | excluded: a cross-check that each flag and code named in reconcile.md is accepted by decisions.sh | why: the approach review kept the phrase checks and did not add checks | revisit when: the reconcile text or the script changes
+2026-11-12 | excluded: running a subset of the eval cases or the flow harness on every push | why: they cost money and the approach review did not change them | revisit when: G7 or G12 is worked on

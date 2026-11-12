@@ -1,20 +1,10 @@
 @skills-text
-Feature: The implement command is framework neutral and gates UI advice by the config
+Feature: The implement command has no UI-first advice
 
   These scenarios read the text of the command. They check what it says and run nothing.
 
   Decision (2026-11-12): The checks of tests/test_skills.sh move here and none is added. Why: a migration adds no checks.
-
-  Scenario: UI and language advice applies only when the config sets it
-    Given the plugin command "implement"
-    Then it contains:
-      | apply when the config sets |
-      | visual-debug flag          |
-      | page objects or helpers    |
-      | explicit file extensions   |
-      | UI projects only           |
-      | the system under test      |
-      | no UI evidence             |
+  Decision (2026-11-12): After the approach review only the scenarios that check an earlier decision was not undone stay. Why: the wording checks pinned phrases, not outcomes.
 
   Scenario: The command has no UI-first advice
     Given the plugin command "implement"
