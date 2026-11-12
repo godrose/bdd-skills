@@ -1,5 +1,7 @@
 # Discovery: the skills text checks as scenarios (PR 2 of 3)
 
+> Superseded in part by `2026-11-12-approach-review.md`. Many of the phrase checks written here were dropped or trimmed afterwards. Kept as the record of the migration.
+
 Input: `tests/test_skills.sh`, `tests/features/`, `tests/steps/`, and a dialogue with the builder. Part 2 of 3 of `docs/discovery/2026-11-11-skills-text-scenarios.md`. Part of `docs/discovery/2026-11-11-scenario-suite.md`.
 
 ## Story

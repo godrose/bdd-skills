@@ -1,5 +1,7 @@
 # Discovery: the plugin text checks as scenarios
 
+> Superseded in part by `2026-11-12-approach-review.md`. Many of the phrase checks written here were dropped or trimmed afterwards. Kept as the record of the migration.
+
 Input: `tests/test_plugin.sh` (the source of every example), the scenario-suite pack (`2026-11-11-scenario-suite.md`), and a dialogue with the builder. The behavior already exists. Values are marked "from code".
 
 ## Story
