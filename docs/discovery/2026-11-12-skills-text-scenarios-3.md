@@ -4,7 +4,7 @@ Input: `tests/test_skills.sh` (387 lines), `tests/features/`, `tests/steps/`, an
 
 ## Story
 
-Move every check still in `tests/test_skills.sh` that no scenario holds to scenarios. About 113 checks. After this part the bash file is deleted, so nothing may be left behind.
+Move every check still in `tests/test_skills.sh` that no scenario holds to scenarios. About 113 checks, 109 after the review (decision 8). After this part the bash file is deleted, so nothing may be left behind.
 
 ## Kind of check
 
@@ -21,7 +21,7 @@ These are checks of what text says. Nothing runs. Each scenario reads a Markdown
 - **E2** `skills-reconcile-config`, `skills-triage-config`: a missing config stops, and the template is named. 4 checks.
 - **E3** `skills-triage-phrases`, `-fragments`: the triage text keeps its approval rules, and shows the JSON fragments and the date form. 21 checks.
 - **E4** `skills-readme-install`, `-init`, `-detect`, `-migration`, `-private`, `-phrases`: what the README says on install, init, detect, moving to the plugin, the private repo, and the other phrases. 54 checks.
-- **E5** `skills-listings`: the dry-run doc, the packaging design doc and known-gaps G10 and G12. 4 checks.
+- **E5** `skills-listings`: the dry-run doc, the packaging design doc and known-gaps G10 and G12. 4 checks. Dropped after review, see decision 8.
 - **E6** `skills-init-text`: the init text on steps entries, IDE generation, the audit's closing line. 5 checks.
 
 ## Tally of the whole old file, by line range
@@ -34,7 +34,7 @@ Counts are by hand. The last line of the pull request description repeats them, 
 | 28, 66, 87, 312, 339 | skipped: em-dash scans in `plugin-text-rules` | 6 |
 | 43-46 | E4 (3), skipped `## The flow` in `readme-order` (1) | 3 + 1 |
 | 73-75 | E4 (4), skipped Optional config rows summary in `readme-folded` (1) | 4 + 1 |
-| 76 | E5 | 1 |
+| 76 | E5, dropped (decision 8) | 1 |
 | 78-80 | skipped: `plugin-files`, `plugin-renames-and-text` | 2 |
 | 81-86 | E1 (10), E3 (15) | 25 |
 | 88 | skipped: `skills-template`, `plugin-renames-and-text` | 2 |
@@ -44,15 +44,15 @@ Counts are by hand. The last line of the pull request description repeats them, 
 | 136-140 | E2 (4), skipped deliver in `deliver-shape` (2), parts 1 and 2 (9) | 4 + 2 + 9 |
 | 144-150 | E4 (11), skipped marketplace line in `readme-order` (1) | 11 + 1 |
 | 154-157 | E4 (5), skipped `/bdd:init` in `readme-order` (1) | 5 + 1 |
-| 170-173 | E4 (5), E5 (1) | 6 |
+| 170-173 | E4 (5), E5 dropped (1) | 6 |
 | 176-184 | E4 | 12 |
-| 230-231 | E5 | 2 |
+| 230-231 | E5, dropped (decision 8) | 2 |
 | 285 | E4 | 1 |
 | 326-329 | E4 (1), E6 (2), parts 1 and 2 (4) | 3 + 4 |
 | 332-333, 342-343 | E6 | 4 |
 | 385-386 | part 1 (1), E4 (1) | 2 |
 
-New: 113. Skipped as an existing overlap in part 3: 15 (the lines above that say skipped, plus the em-dash scans).
+New: 109 (113 before decision 8). Skipped as an existing overlap in part 3: 15 (the lines above that say skipped, plus the em-dash scans).
 
 ## Decisions
 
@@ -65,6 +65,7 @@ New: 113. Skipped as an existing overlap in part 3: 15 (the lines above that say
 | 5 | The init text lines go in `skills-init-text`. | The builder approved the name. No named prefix fits them. |
 | 6 | The builder deletes `tests/test_skills.sh` and edits `tests/run.sh`, `tests/ci_local.sh` and the docs that name it. This change does not. Reversal: it replaces the plan that the agent deletes the file. | The builder asked to do them. Until then the migrated checks run twice. |
 | 7 | The builder's mutation check is the red proof. No mutation is run in this change. | The builder asked for it. |
+| 8 | `skills-listings` is not written. Its four checks are dropped: the dry-run doc exists, the packaging design doc holds `/bdd:init --detect`, and G10 and G12 headings are in the known-gaps file. | A review of PR 3 said they test an implementation detail, not an outcome. They check that old working papers exist and that a heading is there, and no reader gets anything from that. This replaces the plan in E5 and the builder's "migration adds no checks" rule for these four. The wider question, whether phrase checks on prompt text are worth keeping, goes to the approach review. |
 
 ## Exclusions
 
