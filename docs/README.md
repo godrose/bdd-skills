@@ -85,4 +85,4 @@ These papers use the old project-form names (`bdd-design`, `.claude/scripts/deci
 
 ## demo/
 
-The recording shown at the top of the README.
+The recording shown at the top of the README, and a second one of a `/bdd:deliver` session (`deliver.gif`). It is a cut of a real run on a small demo app, in six steps from the description to the plain-words report.
