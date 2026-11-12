@@ -54,6 +54,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-11-plugin-text-scenarios.md` | The checks on the plugin manifests, files and text rules, and the init, design and discover text, migrated to scenarios |
 | `2026-11-12-approach-review.md` | Which text checks stay after the migration, and the rule for keeping them |
 | `2026-11-12-required-setup-check.md` | `bdd:design` checks the setup a scenario depends on and reports a missing prerequisite as a setup error (issue 41) |
+| `2026-11-12-deliver-gate2-plain-words.md` | `bdd:deliver` shows the second gate in plain words, and the audit table goes under a developer line |
 | `2026-11-12-mutation-survivors.md` | Triage of the mutation survivors of the migrations, and the fix for the decisions script |
 
 ## trials/

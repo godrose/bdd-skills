@@ -140,3 +140,4 @@ Feature: The mutation runner breaks a copy of the project and says which breaks 
       | evals   |
       | install |
       | mutate  |
+      | deliver-text |

@@ -1,0 +1,17 @@
+# Breaks of the second gate text in plugin/commands/deliver.md. Run with:
+# tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @skills-text' tests/mutations/deliver-text.tsv
+gate 2 drops the reuse sentence	plugin/commands/deliver.md	s/plain sentence on reuse/plain sentence/
+gate 2 drops the blank line before the table	plugin/commands/deliver.md	s/then a blank line, then the table/then the table/
+gate 2 drops the designer's preferred fix	plugin/commands/deliver.md	s/Take the fix the designer prefers/Ask about it/
+developer note drops the second gate remarks	plugin/commands/deliver.md	s/and the technical remarks and fixes from the second gate//
+old second gate text back	plugin/commands/deliver.md	s/Design writes the scenarios, audits step reuse and lints the draft\./Design writes the scenarios, audits step reuse and lints the draft, and then shows the scenarios in plain words and waits for the go-ahead./
+gate 2 drops the label on each remark	plugin/commands/deliver.md	s/Put every other technical remark on its own line that starts "For the developer:"/Put every other technical remark under the table/
+gate 2 allows a list after the table	plugin/commands/deliver.md	s/one line each, never in a list after the table/in a list/
+gate 2 lets the go-ahead ride with the question	plugin/commands/deliver.md	s/Send that question alone, without the request for the go-ahead\./Ask it./
+gate 2 asks for the go-ahead in the same message	plugin/commands/deliver.md	s/ask for the go-ahead in a later message/ask for the go-ahead/
+step 5 allows a command of its own	plugin/commands/deliver.md	s/and not with a command you write yourself/or any command you write/
+step 5 asks the product manager to approve	plugin/commands/deliver.md	s/Never ask the product manager to approve a command\./Ask the product manager to approve a command./
+gate 2 names files in the plain text	plugin/commands/deliver.md	s/Name a file in plain words in the rest of the message/Name files as you like/
+gate 2 allows file names outside the developer lines	plugin/commands/deliver.md	s/Names of files and code go only on "For the developer" lines\./Names of files and code are fine./
+step 5 and the look-first message cite the command	plugin/commands/deliver.md	s/Say what you ran in plain words, such as "ran the real export", and put the command on a "For the developer:" line\./Say what you ran./g
+the Seen line keeps the command in the body	plugin/commands/deliver.md	s/The command goes on a "For the developer:" line/The command goes in the line/
