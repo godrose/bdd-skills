@@ -17,8 +17,8 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 
 | Convention | Value |
 |-----------|-------|
-| features_dir | `tests/features` |
-| steps_dir | `tests/steps` |
+| features_dir | `specs/features` |
+| steps_dir | `specs/steps` |
 | config_file | `cucumber.js` |
 | test_results_dir | `<path to test output artifacts>` |
 | error_context | `<path pattern for failure context, or empty if using stdout>` |

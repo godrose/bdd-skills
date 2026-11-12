@@ -10,7 +10,7 @@ bash flows/run.sh --fixture b --runs 3   # nothing to find: no scenarios and no 
 - Run it by hand. It starts real sessions and uses your plan's limit. It is not part of `tests/run.sh` and not in the nightly.
 - Options: `--runs` (default 3), `--turns` (cap, default 12), `--persona pm|founder`, `--out DIR`. Results go to `flows/results/`, which git ignores.
 - The run folder holds every message (`turn-NN-assistant.txt`, `turn-NN-pm.txt`), `meta.json`, `rules.tsv` and a copy of the project.
-- `tests/test_flow.sh` tests the harness with a fake `claude`. It checks the harness, not the model.
+- `specs/features/flow-*.feature` test the harness with a fake `claude`. It checks the harness, not the model.
 
 ## Flow runs for `deliver`
 

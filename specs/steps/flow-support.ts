@@ -1,4 +1,4 @@
-// Helpers shared by the flow harness step definitions. They play flows/run.sh against the fake claude and fake npm of tests/fixtures.
+// Helpers shared by the flow harness step definitions. They play flows/run.sh against the fake claude and fake npm of specs/fixtures.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -73,7 +73,7 @@ export function flow(world: World): Flow {
     const bin = path.join(tmp, "bin");
     fs.mkdirSync(bin);
     for (const [from, to] of [["fake-claude.sh", "claude"], ["fake-npm.sh", "npm"]]) {
-      fs.copyFileSync(path.join(ROOT, "tests/fixtures", from), path.join(bin, to));
+      fs.copyFileSync(path.join(ROOT, "specs/fixtures", from), path.join(bin, to));
       fs.chmodSync(path.join(bin, to), 0o755);
     }
     fs.writeFileSync(path.join(tmp, "npm.log"), "");

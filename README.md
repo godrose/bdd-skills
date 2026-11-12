@@ -272,7 +272,8 @@ scripts/decisions.sh             # Check, fingerprint, status and story page for
 schemas/decision.schema.json    # Record schema read by decisions.sh. Copied by install.sh
 evals/                          # Eval cases and evals/run.sh. Not part of the plugin
 install.sh                      # Copy the skills into a project's .claude/ directory as bdd-<name> files
-tests/                          # The repo's own test suite
+specs/                          # The repo's own specification: scenarios in specs/features, their steps in specs/steps
+tests/                          # The test runner and the CI scripts
 docs/                           # Discovery packs, the known gaps, the demo recording
 ```
 
