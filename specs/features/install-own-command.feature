@@ -19,3 +19,14 @@ Feature: A user's own command with the same name is kept
     Then the output mentions:
       | bdd-deliver.md |
       | skipped        |
+
+  Scenario: The list of installed files leaves out the command that was skipped
+    Given a project with its own file "commands/bdd-deliver.md" that reads "MY OWN COMMAND"
+    When the installer is run on it
+    Then no output line ends with "commands/bdd-deliver.md"
+    And an output line ends with "commands/bdd-design.md"
+
+  Scenario: The list of installed files names the deliver command when nothing was skipped
+    Given a project with no .claude folder
+    When the installer is run on it
+    Then an output line ends with "commands/bdd-deliver.md"

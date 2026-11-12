@@ -23,7 +23,7 @@ One survivor led to a defect. `check` requires `resolves` to be a list, and `sho
 
 Judged from the name of the break only. Each needs a look at the code before a scenario is written.
 
-- **Install (2):** legacy file removal and the "skipped" line. Real behavior of the installer. Next change.
+- **Install (2):** fixed. Legacy file removal (3 names) and the "skipped" listing line each have a scenario, and breaking either one fails it. See `specs/features/install-legacy-files.feature` and `install-own-command.feature`.
 - **Deliver flow harness (15):** rule counting edge cases that look real (the developer line, out-of-scope, approvals, ranges, failed status, a page file, paths, the Delivered line, counts written another way). Report and persona wording (`report title changed`, `second report header renamed`, `persona changed`) looks like wording.
 - **Discover flow harness (8):** the same rule counting. `developer note not stripped` is already caught by the deliver scenarios.
 - **Evals (8):** five break the README or the CI guide text (`CI guide drops EVALS_NIGHTLY`, `drops setup-token`, `README drops only for this case`, `drops usage`, `drops run.sh`). By the approach review these are phrase checks and are not worth a scenario. Three change an eval case or the runner (`fake-lint drops the ticket rule`, `lint: draft file pattern dropped`, `run.sh drops the tool call`) and may be real.
@@ -37,7 +37,7 @@ The only change to a shipped file is one line in `scripts/decisions.sh`, which `
 - No change to the plugin text and no new rule in the script.
 - No scenario for the two equivalent mutants.
 - No message checks beyond the two that the break showed to be unchecked.
-- The harness, install and eval survivors are not fixed here.
+- The harness and eval survivors are not fixed here. The install ones are, in a later change.
 
 ## Decisions
 
