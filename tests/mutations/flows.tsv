@@ -13,7 +13,7 @@ ranges not read	flows/rules.pl	s/\(\?:-\|to\)/(?:-)/
 range hyphen not read	flows/rules.pl	s/\(\?:-\|to\)/(?:to)/
 range not read at all	flows/rules.pl	s/while \(\$sec =~ \/\\bE\(\\d\+\)\\s\*\(\?:-\|to\)\\s\*E\?\(\\d\+\)\\b\/g\)/while (0)/
 missing test output allowed	flows/rules.pl	s/row\("never-reported-passed", 1,/row("never-reported-passed", 0,/
-look-first drops already	flows/rules.pl	s/\|already\)/)/
+look-first drops already	flows/rules.pl	s/\|already\|/|/
 look-first drops what exists	flows/rules.pl	s/what exists\|//
 look-first drops what i found	flows/rules.pl	s/what i found\|//
 look-first drops found nothing	flows/rules.pl	s/found nothing\|//
@@ -32,3 +32,8 @@ story crlf not removed	flows/run.sh	s/story=\$\(tr -d '\\r' < "\$STORYFILE"\)/st
 Not ready unknown to pack-end	flows/rules.pl	s/\(not ready\|ready\)/(ready)/	equivalent
 developer table not read	flows/rules.pl	s/\(\?:\\n\[ \\t\]\*\\n\(\?:\[ \\t\]\*\\\|\[\^\\n\]\*\(\?:\\n\|\\z\)\)\+\|\\n\[ \\t\]\*\\n\|\\z\)\/\/gsmi;/(?:\\n[ \\t]*\\n|\\z)\/\/gsmi;/
 any line after the developer line read as the table	flows/rules.pl	s/\(\?:\[ \\t\]\*\\\|\[\^\\n\]\*\(\?:\\n\|\\z\)\)\+/(?:[^\\n]+(?:\\n|\\z))+/
+look-first drops i looked	flows/rules.pl	s/\|looked([|)])/$1/
+look-first drops i checked	flows/rules.pl	s/\|checked([|)])/$1/
+look-first drops i read	flows/rules.pl	s/\|read([|)])/$1/
+look-first drops i searched	flows/rules.pl	s/\|searched([|)])/$1/
+look-first drops i ran	flows/rules.pl	s/\(\?:ran\|/(?:/
