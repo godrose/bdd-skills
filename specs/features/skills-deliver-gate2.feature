@@ -23,6 +23,12 @@ Feature: The deliver command shows the second gate in plain words
       | Name a file in plain words in the rest of the message |
       | Names of files and code go only on "For the developer" lines |
 
+  Scenario: What was run is said in plain words and the command goes on a developer line
+    Given the plugin command "deliver"
+    Then it contains:
+      | Say what you ran in plain words, such as "ran the real export" |
+      | The command goes on a "For the developer:" line |
+
   Scenario: Each technical remark has its own developer line
     Given the plugin command "deliver"
     Then it contains:

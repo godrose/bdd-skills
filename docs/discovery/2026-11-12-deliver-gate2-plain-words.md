@@ -41,6 +41,7 @@ At the second gate the product manager approves the scenarios. `bdd:design` show
 | 11 | Where may a file be named at the second gate? | Only on "For the developer" lines. In the rest of the message it is "the out-of-scope list" or "the feature file". | Run 4 opened with the out-of-scope file path and headed the Gherkin with the feature file path, outside any developer line. |
 | 12 | How does discover ask a question with a guess? | The guess is a statement before the question. The message ends on the question, with no closing line that asks for a confirmation. | Run 4 messages 2 and 3 ended with "Is that right?" after a question, two question lines. This was already seen in the discover flow runs. One run cannot show that the text holds. |
 | 13 | How does a run see a no-match filter and an empty filter? | The fixture ships `data/filter-none.json` and `data/filter-empty.json`, and the README names them. | Run 4 said that making the files needed approval, when it had the file tools. A fixture that carries them removes the quirk and keeps the generic text free of a special case. Decision 8 stays. |
+| 14 | How does the assistant say what it ran? | In plain words ("ran the real export"). The command goes on a "For the developer:" line. This holds for the first message, step 5 and the Seen line. | Run 5 held every other rule. Two messages cited `node src/show.js` in the body, which the rule counts. The product manager reads the Seen line and does not need the command. |
 
 ## Existing users
 

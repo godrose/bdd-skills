@@ -28,7 +28,7 @@ Apply the size gate from `bdd:discover`. A one-line fix, a rename or a copy edit
 
 #### Step 1: Discover
 
-Invoke the **discoverer** skill (`bdd:discover`) with the description. Ask one question at a time and wait for each answer. Read the out-of-scope list (see Recording below) before you propose anything, and do not propose what it excludes. If the answer would reverse an entry, ask that as one question.
+Invoke the **discoverer** skill (`bdd:discover`) with the description. Ask one question at a time and wait for each answer. Read the out-of-scope list (see Recording below) before you propose anything, and do not propose what it excludes. If the answer would reverse an entry, ask that as one question. Say what you ran in plain words, such as "ran the real export", and put the command on a "For the developer:" line.
 
 If the behavior already exists, discovery turns the description into scenarios for existing behavior, with the exact values marked "from code". If every agreed example is already covered and passing, say that the change already works and stop after the report.
 
@@ -66,7 +66,7 @@ Invoke the **test-runner** skill (`bdd:run`) for the new scenarios and for the a
 
 Passing scenarios do not show that they describe what a person sees. A passing run shows that the scenarios and the system agree with each other. It does not show that either matches the agreed examples. This step looks at the system itself and does not run the suite again. Run a scenario again only to take a screenshot during it.
 
-Before the report, look at the real result of every new or changed example, by the means its layer offers. Use the same data the scenarios use. Look with the means the project already has, such as a script or the command its README names, and not with a command you write yourself. A command you write may need approval that the product manager cannot give. If you cannot run it, the example was not looked at: say so, and put the command on a "For the developer:" line. Never ask the product manager to approve a command.
+Before the report, look at the real result of every new or changed example, by the means its layer offers. Use the same data the scenarios use. Look with the means the project already has, such as a script or the command its README names, and not with a command you write yourself. A command you write may need approval that the product manager cannot give. If you cannot run it, the example was not looked at: say so, and put the command on a "For the developer:" line. Never ask the product manager to approve a command. Say what you ran in plain words, such as "ran the real export", and put the command on a "For the developer:" line.
 
 - **A screen.** Open the app on that data and look at each page the change touches. In a browser-driven project, take a screenshot during a run of the scenario, or use the project's own way to start the app, and read it. Compare it with the agreed examples: every value, status and row the change touches, and anything the page shows that no scenario names, such as an empty field or a leftover label.
 - **No screen.** For an API or a service, make a real request to the running system and read the response. For stored data, read the stored record. For a background job, read the log or the record it writes. Compare it with the agreed examples in the same way.
@@ -112,7 +112,7 @@ E3 <example in plain words>: couldn't be checked - <why>
 Regression: <N> earlier scenarios in <the affected feature> still pass.
 <or, for each earlier scenario that now fails: what used to be true, and the decision that was made>
 
-Seen: <what was looked at, and how: a page, a request, a record>
+Seen: <what was looked at, and how, in plain words: a page, a request, a record. The command goes on a "For the developer:" line>
 <or: not looked at: <why>>
 
 Not checked, and what it risks:

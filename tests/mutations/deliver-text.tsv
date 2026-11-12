@@ -13,3 +13,5 @@ step 5 allows a command of its own	plugin/commands/deliver.md	s/and not with a c
 step 5 asks the product manager to approve	plugin/commands/deliver.md	s/Never ask the product manager to approve a command\./Ask the product manager to approve a command./
 gate 2 names files in the plain text	plugin/commands/deliver.md	s/Name a file in plain words in the rest of the message/Name files as you like/
 gate 2 allows file names outside the developer lines	plugin/commands/deliver.md	s/Names of files and code go only on "For the developer" lines\./Names of files and code are fine./
+step 5 and the look-first message cite the command	plugin/commands/deliver.md	s/Say what you ran in plain words, such as "ran the real export", and put the command on a "For the developer:" line\./Say what you ran./g
+the Seen line keeps the command in the body	plugin/commands/deliver.md	s/The command goes on a "For the developer:" line/The command goes in the line/
