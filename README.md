@@ -18,9 +18,9 @@
 [![Stars](https://img.shields.io/github/stars/godrose/bdd-skills?style=flat)](https://github.com/godrose/bdd-skills/stargazers)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-<img src="docs/demo/story.gif" alt="Terminal recording: /bdd:triage, /bdd:design and /bdd:implement on a small demo app" width="800" />
+<img src="docs/demo/deliver.gif" alt="Terminal recording: /bdd:deliver takes one sentence to verified scenarios on a small demo app" width="800" />
 
-<sub>A real session, cut for length: triage, design, implement.</sub>
+<sub>A real /bdd:deliver session, cut for length: one sentence in, a plain-words report out. The same flow [step by step](docs/demo/story.gif): triage, design, implement.</sub>
 
 </div>
 

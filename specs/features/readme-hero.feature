@@ -21,19 +21,21 @@ Feature: The README opens with a hero block
       | > 🧪 **Trivial change?** |
       | > 🔒 **Never deletes:**  |
 
-  Scenario: The demo GIF exists and the README shows it
+  Scenario: The deliver GIF is shown and the step by step GIF is linked
     Given the repository
     Then the repo has these files:
-      | docs/demo/story.gif |
+      | docs/demo/deliver.gif |
+      | docs/demo/story.gif   |
     Given the README
     Then it contains:
-      | <img src="docs/demo/story.gif" |
+      | <img src="docs/demo/deliver.gif"    |
+      | [step by step](docs/demo/story.gif) |
 
   Scenario: The centered block and the demo GIF come before Contents
     Given the README
     Then each of these comes before "## Contents":
       | <div align="center"> |
-      | docs/demo/story.gif  |
+      | docs/demo/deliver.gif |
 
   Scenario: The README names three related projects with their links
     Given the README
