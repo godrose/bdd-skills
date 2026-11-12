@@ -57,12 +57,11 @@ Then("the repo file {string} can be run", function (this: World, rel: string) {
 });
 
 const SKIPPED_FOLDERS = [".git", "docs", "results", "node_modules"];
-const SKIPPED_FILES = ["lib.sh", "test_lib.sh"];
 const textFiles = (dir: string): string[] =>
   fs.readdirSync(abs(dir), { withFileTypes: true }).flatMap((e) => {
     const rel = dir === "" ? e.name : path.join(dir, e.name);
     if (e.isDirectory()) return SKIPPED_FOLDERS.includes(e.name) ? [] : textFiles(rel);
-    if (!e.isFile() || SKIPPED_FILES.includes(e.name)) return [];
+    if (!e.isFile()) return [];
     return fs.readFileSync(abs(rel)).includes(0) ? [] : [rel];
   });
 
