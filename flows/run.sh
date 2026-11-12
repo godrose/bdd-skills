@@ -2,7 +2,7 @@
 # Run /bdd:discover or /bdd:deliver on a fixture project as a whole conversation, with a small model playing the product manager.
 # Counts the rules on the transcript. Gives counts and breaks, no verdict. Run it by hand: it starts real sessions.
 #
-# Usage: flows/run.sh --fixture a|b|c [--command discover|deliver] [--story N] [--runs 3] [--turns N] [--persona NAME] [--out DIR]
+# Usage: flows/run.sh --fixture a|b|c|d [--command discover|deliver] [--story N] [--runs 3] [--turns N] [--persona NAME] [--out DIR]
 #        flows/run.sh --compare REPORT REPORT
 # Set CLAUDE_BIN or NPM_BIN to use a different binary. FLOWS_CACHE moves the installed-runner cache.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -36,7 +36,7 @@ TOOLS=(Read Grep Glob LS Write Edit)
 [ "$COMMAND" = deliver ] && TOOLS+=("Bash(npm test)" "Bash(node src/show.js)" "Bash(node src/show.js data/*)")
 
 command -v "$CLAUDE" > /dev/null 2>&1 || { echo "claude was not found on the path. Install it, or set CLAUDE_BIN." >&2; exit 1; }
-[ -d "$FLOWS/fixtures/$FIXTURE/project" ] || { echo "no such fixture: '$FIXTURE'. Use a, b or c." >&2; exit 2; }
+[ -d "$FLOWS/fixtures/$FIXTURE/project" ] || { echo "no such fixture: '$FIXTURE'. Use a, b, c or d." >&2; exit 2; }
 FX="$FLOWS/fixtures/$FIXTURE"
 if [ -n "$STORY" ]; then STORYFILE="$FX/story-$STORY.txt"; else STORYFILE="$FX/story.txt"; fi
 [ -f "$STORYFILE" ] || { echo "no such story file: $STORYFILE" >&2; exit 2; }
