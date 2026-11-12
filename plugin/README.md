@@ -2,11 +2,11 @@
 
 BDD workflow skills for Claude Code. They take a story from discussion to scenarios that pass, in any test framework.
 
-- `/bdd:discover` asks the questions, finds the edge cases and writes a discovery pack.
-- `/bdd:design` turns acceptance criteria into scenarios, audits step reuse and lints the draft before you see it. You approve the scenarios.
+- `/bdd:discover` looks at what the project already has, then asks one question at a time, finds the edge cases and writes a discovery pack.
+- `/bdd:design` turns acceptance criteria into scenarios, audits step reuse, checks that each scenario asserts what its title says and that the setup it needs exists, and lints the draft before you see it. You approve the scenarios.
 - `/bdd:implement` writes the step code, sees each scenario fail for the stated reason, then pass.
 - `/bdd:run` runs scenarios and never counts a run with zero tests as a pass.
-- `/bdd:deliver` carries a change from a plain description to verified scenarios in one conversation. It uses the commands above, asks for two approvals, and ends with a report in plain words.
+- `/bdd:deliver` carries a change from a plain description to verified scenarios in one conversation. It uses the commands above, asks for two approvals, looks at the real result, and ends with a report in plain words that says what passed, failed or could not be checked.
 - `/bdd:triage` and `/bdd:reconcile` keep an optional decision log in step with the scenarios.
 - `/bdd:init` sets up and audits the project config, `bdd-config.md`.
 
