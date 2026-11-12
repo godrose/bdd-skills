@@ -43,7 +43,7 @@ Invoke the **designer** skill (`bdd:design`) with the checklist. The approved ch
 - The scenarios in plain words and as text.
 - One plain sentence on reuse, for example "3 steps are reused and 3 are new", or "there are no steps to reuse yet".
 - The **Assumptions** list and the **Assumed, not checked** list, as design writes them. They are in plain words already.
-- Every finding that changes what a scenario proves (a title that claims more than the steps assert, data that does not fit a reused step, a setup that is assumed and not checked) as one plain question about the behavior, asked one at a time. Record the answer and update the scenarios.
+- Every finding that changes what a scenario proves (a title that claims more than the steps assert, data that does not fit a reused step, a setup that is assumed and not checked) as one plain question about the behavior, asked one at a time. Send that question alone, without the request for the go-ahead. Record the answer, update the scenarios, and ask for the go-ahead in a later message.
 - A finding that is only technical (a paraphrase of an existing step, a naming difference) is not asked. Take the fix the designer prefers and list it in the developer block.
 
 Put the per-step audit table under a line that starts "For the developer", then a blank line, then the table. Put every other technical remark on its own line that starts "For the developer:", one line each, never in a list after the table. Technical remarks are anything with file names or code, such as the lint did not run or the decision log script is missing. The product manager does not need to read them.
@@ -66,7 +66,7 @@ Invoke the **test-runner** skill (`bdd:run`) for the new scenarios and for the a
 
 Passing scenarios do not show that they describe what a person sees. A passing run shows that the scenarios and the system agree with each other. It does not show that either matches the agreed examples. This step looks at the system itself and does not run the suite again. Run a scenario again only to take a screenshot during it.
 
-Before the report, look at the real result of every new or changed example, by the means its layer offers. Use the same data the scenarios use.
+Before the report, look at the real result of every new or changed example, by the means its layer offers. Use the same data the scenarios use. Look with the means the project already has, such as a script or the command its README names, and not with a command you write yourself. A command you write may need approval that the product manager cannot give. If you cannot run it, the example was not looked at: say so, and put the command on a "For the developer:" line. Never ask the product manager to approve a command.
 
 - **A screen.** Open the app on that data and look at each page the change touches. In a browser-driven project, take a screenshot during a run of the scenario, or use the project's own way to start the app, and read it. Compare it with the agreed examples: every value, status and row the change touches, and anything the page shows that no scenario names, such as an empty field or a leftover label.
 - **No screen.** For an API or a service, make a real request to the running system and read the response. For stored data, read the stored record. For a background job, read the log or the record it writes. Compare it with the agreed examples in the same way.
