@@ -4,13 +4,13 @@
 #
 # Usage: flows/run.sh --fixture a|b|c|d [--command discover|deliver] [--story N] [--runs 3] [--turns N] [--persona NAME] [--out DIR]
 #        flows/run.sh --compare REPORT REPORT
-# Set CLAUDE_BIN or NPM_BIN to use a different binary. FLOWS_CACHE moves the installed-runner cache.
+# Set CLAUDE_BIN, NPM_BIN or TSX_BIN to use a different binary. FLOWS_CACHE moves the installed-runner cache.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FLOWS="$ROOT/flows"
 CLAUDE="${CLAUDE_BIN:-claude}"
 NPM="${NPM_BIN:-npm}"
 CACHE="${FLOWS_CACHE:-$FLOWS/results/cache}"
-TSX="$ROOT/node_modules/.bin/tsx"
+TSX="${TSX_BIN:-$ROOT/node_modules/.bin/tsx}"
 COMMAND=discover; TURNS=""; RUNS=3; FIXTURE=""; PERSONA=""; OUT=""; STORY=""
 
 [ -x "$TSX" ] || { echo "the flow scripts need the installed tools. Run npm ci first." >&2; exit 1; }

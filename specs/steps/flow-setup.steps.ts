@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { ROOT, type World } from "./support";
-import { FIXTURE_PROJECT, FLOWS, copyHarness, MESSAGES, TEST_OUTPUT, cacheDir, flow, npmLog, play, runDir } from "./flow-support";
+import { FIXTURE_PROJECT, FLOWS, MESSAGES, TEST_OUTPUT, TSX, cacheDir, copyHarness, flow, npmLog, play, runDir, toolsOf } from "./flow-support";
 
 After(function (this: World) {
   if (this.flow) fs.rmSync(this.flow.tmp, { recursive: true, force: true });
@@ -37,13 +37,11 @@ Given("an empty cache for the installed runner", function (this: World) {
 Given("the install of the runner fails", function (this: World) { flow(this).installFails = true; });
 Given("the conversation has been played once", function (this: World) { play(this); });
 
-const TSX = path.join(ROOT, "node_modules/.bin/tsx");
-
-Given("a copy of the harness where npm ci has not run", function (this: World) { copyHarness(this, "bare", false); });
+Given("the installed tools of the harness are missing", function (this: World) { flow(this).noTools = true; });
 
 // A copy of the harness outside the repo, so that its lockfile can change.
 Given("the lockfile of the fixture is changed in a copy of the harness", function (this: World) {
-  const copy = copyHarness(this, "lk", true);
+  const copy = copyHarness(this, "lk");
   fs.appendFileSync(path.join(copy, "fixtures/c/project/package-lock.json"), '{"x":1}\n');
 });
 
@@ -69,11 +67,11 @@ Given("a second report that reads:", function (this: World, text: string) { flow
 When("the harness plays the conversation", function (this: World) { play(this, flow(this).harness); });
 When("the harness of the copy plays the conversation", function (this: World) { play(this, flow(this).harness); });
 
-function compare(world: World, second: string, harness: string = path.join(FLOWS, "run.sh")): void {
+function compare(world: World, second: string): void {
   const f = flow(world);
   const first = path.join(f.tmp, "first.md");
   fs.writeFileSync(first, f.reports[0]);
-  const r = spawnSync("bash", [harness, "--compare", first, second], { encoding: "utf8" });
+  const r = spawnSync("bash", [path.join(FLOWS, "run.sh"), "--compare", first, second], { encoding: "utf8", env: { ...process.env, TSX_BIN: toolsOf(f) } });
   world.status = r.status;
   world.output = (r.stdout ?? "") + (r.stderr ?? "");
 }
@@ -83,12 +81,6 @@ When("the two reports are compared", function (this: World) {
   const second = path.join(f.tmp, "second.md");
   fs.writeFileSync(second, f.reports[1]);
   compare(this, second);
-});
-When("the two reports are compared by the harness of the copy", function (this: World) {
-  const f = flow(this);
-  const second = path.join(f.tmp, "second.md");
-  fs.writeFileSync(second, f.reports[1]);
-  compare(this, second, f.harness);
 });
 When("the first report is compared with a report that does not exist", function (this: World) {
   compare(this, path.join(flow(this).tmp, "none.md"));

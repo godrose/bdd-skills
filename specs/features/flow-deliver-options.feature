@@ -56,14 +56,14 @@ Feature: The options of the harness decide what the model is asked and allowed
   Scenario: Without the installed tools the harness stops at once and says to run npm ci
     Given the assistant says the checklist and then the scenarios
     And the assistant ends with the clean report
-    And a copy of the harness where npm ci has not run
-    When the harness of the copy plays the conversation
+    And the installed tools of the harness are missing
+    When the harness plays the conversation
     Then the run fails
     And the output mentions "npm ci"
     And no session was started
 
   Scenario: Without the installed tools a report comparison stops and says to run npm ci
-    Given a copy of the harness where npm ci has not run
+    Given the installed tools of the harness are missing
     And a first report that reads:
       """
       | rule | 1 of 1 |
@@ -72,7 +72,7 @@ Feature: The options of the harness decide what the model is asked and allowed
       """
       | rule | 1 of 1 |
       """
-    When the two reports are compared by the harness of the copy
+    When the two reports are compared
     Then the run fails
     And the output mentions "npm ci"
 
