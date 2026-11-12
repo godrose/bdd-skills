@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["tests/steps/**/*.ts"]
+  "include": ["specs/steps/**/*.ts"]
 }

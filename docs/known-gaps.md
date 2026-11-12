@@ -38,7 +38,7 @@ Each gap says what is not checked, why it is still open, and what would close it
 
 ### G5 The red-first check has text tests and no eval
 
-**Not checked.** `tests/features/implement-red-first.feature` checks that `commands/implement.md` states the red-first check. Nothing runs `implement` on a fixture project and looks for the `Red-first:` line, or that the file with the forced break was restored.
+**Not checked.** `specs/features/implement-red-first.feature` checks that `commands/implement.md` states the red-first check. Nothing runs `implement` on a fixture project and looks for the `Red-first:` line, or that the file with the forced break was restored.
 
 **Why.** An `implement` eval needs a fixture with a test runner that works on the CI machine, which is a larger piece of work than the check itself.
 

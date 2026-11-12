@@ -19,7 +19,7 @@ function mainWith(world: World, version: string | null, oldRoot: boolean): void 
   world.dir = fs.mkdtempSync(path.join(os.tmpdir(), "release-"));
   const plugin = oldRoot ? world.dir : path.join(world.dir, "plugin");
   fs.mkdirSync(path.join(world.dir, "tests"));
-  fs.copyFileSync(path.join(ROOT, "tests/lib.sh"), path.join(world.dir, "tests/lib.sh"));
+  fs.copyFileSync(path.join(ROOT, "tests/check_release.sh"), path.join(world.dir, "tests/check_release.sh"));
   fs.mkdirSync(path.join(plugin, ".claude-plugin"), { recursive: true });
   fs.mkdirSync(path.join(plugin, "commands"));
   fs.writeFileSync(path.join(plugin, ".claude-plugin/plugin.json"), manifest(version));
@@ -63,7 +63,7 @@ const CHECKS: Record<string, string> = {
 When("the {string} check is run", function (this: World, check: string) {
   const fn = CHECKS[check];
   if (!fn) throw new Error(`unknown check: ${check}`);
-  const r = spawnSync("bash", ["-c", `ROOT="$PWD"; . tests/lib.sh; ${fn}; finish`], { cwd: this.dir, encoding: "utf8" });
+  const r = spawnSync("bash", ["-c", `ROOT="$PWD"; . tests/check_release.sh; ${fn}; finish`], { cwd: this.dir, encoding: "utf8" });
   this.status = r.status;
   this.output = (r.stdout || "") + (r.stderr || "");
 });

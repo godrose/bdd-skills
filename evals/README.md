@@ -45,7 +45,7 @@ bash evals/run.sh --scaffold --runs 1 --ablation none --model haiku --judge-mode
 ```
 
 The grant lets the agent run any shell command as you. Use it only for this case, which you wrote, and never together with a glob that selects other cases. The run happens in a throwaway directory with its own home.
-- The evals are not part of `bash tests/run.sh`. `tests/test_evals.sh` only checks the folder's structure.
+- The evals are not part of `bash tests/run.sh`. `specs/features/evals-*.feature` check the folder's structure.
 
 ## What the spike found
 

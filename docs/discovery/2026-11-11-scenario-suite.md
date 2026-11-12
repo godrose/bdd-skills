@@ -69,3 +69,21 @@ Not part of the migration. Each is its own change, once the bash files are gone 
 
 - **Message assertions for the release check.** `bdd:deliver` proposed scenarios that check the message a failing release check prints, such as "version 0.4.0 is not higher than 0.4.0 on main". The old bash test checked only the exit status, so the migration keeps to that, and the message checks wait. The builder's call. A rewording of a message would then fail a scenario on purpose.
 - **A check for "no main to compare with".** The plugin's discovery found that the release check fails when there is no `main`. No old test covered it, so it was left out of the migration.
+
+## Outcome of the last pull request (2026-11-12)
+
+The series is done. No bash test file is left. E12 and E14 are carried out:
+
+- `tests/features`, `tests/steps` and `tests/fixtures` moved to `specs/features`, `specs/steps` and `specs/fixtures`. `tests/` holds `run.sh`, `ci_local.sh` and `check_release.sh`. `cucumber.js`, `tsconfig.json`, `.claude/bdd-config.md`, `CLAUDE.md`, the README and the READMEs of `evals/` and `flows/` follow.
+- `tests/run.sh` runs the scenarios only. The scenarios for the bash loop in `test-run.feature` are removed: the passing and failing cases keep one scenario each, and the case of a failing bash file is gone.
+- `tests/lib.sh` and `tests/test_lib.sh` are deleted. `test_lib.sh` tested the old em-dash diff helper, which the repo-wide scan scenario replaced.
+
+Decisions, with reasons:
+
+| # | Decision | Reason |
+|---|----------|--------|
+| 1 | `check_release.sh` now holds the three release functions (`base_manifest`, `assert_version_bumped`, `assert_version_higher`) and the pass, fail and finish helpers. The release-version scenarios source it. It runs the checks only when run directly. | CI runs `check_release.sh`, and it sourced `lib.sh`. E11 said the release flow does not change. The behavior does not change, but the file now carries what it needs, so `lib.sh` can go. |
+| 2 | `fixtures` moves with the scenarios. | Only the steps use them. `tests/` then holds only the runner and the CI scripts, as E14 said. |
+| 3 | The old em-dash diff helper is not kept. | The scan in `plugin-repo-rules.feature` reads whole files and covers the same rule. |
+
+The approach review that followed the migration is in `2026-11-12-approach-review.md`.
