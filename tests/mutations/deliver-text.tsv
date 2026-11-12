@@ -15,3 +15,6 @@ gate 2 names files in the plain text	plugin/commands/deliver.md	s/Name a file in
 gate 2 allows file names outside the developer lines	plugin/commands/deliver.md	s/Names of files and code go only on "For the developer" lines\./Names of files and code are fine./
 step 5 and the look-first message cite the command	plugin/commands/deliver.md	s/Say what you ran in plain words, such as "ran the real export", and put the command on a "For the developer:" line\./Say what you ran./g
 the Seen line keeps the command in the body	plugin/commands/deliver.md	s/The command goes on a "For the developer:" line/The command goes in the line/
+checklist lists an untouched scenario	plugin/commands/deliver.md	s/An existing scenario that nobody asked about is not an example: leave it out of the checklist\./An existing scenario is an example./
+checklist rule drops the Regression line	plugin/commands/deliver.md	s/The report counts it on the Regression line\. //
+checklist rule drops the covered example	plugin/commands/deliver.md	s/An agreed example that an existing scenario already covers stays an example\. //

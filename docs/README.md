@@ -56,6 +56,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-12-required-setup-check.md` | `bdd:design` checks the setup a scenario depends on and reports a missing prerequisite as a setup error (issue 41) |
 | `2026-11-12-deliver-gate2-plain-words.md` | `bdd:deliver` shows the second gate in plain words, and the audit table goes under a developer line |
 | `2026-11-12-mutation-survivors.md` | Triage of the mutation survivors of the migrations, and the fix for the decisions script |
+| `2026-11-12-deliver-checklist-existing-scenarios.md` | `bdd:deliver` keeps an existing scenario nobody asked about out of the checklist, and counts it on the Regression line |
 
 ## trials/
 
