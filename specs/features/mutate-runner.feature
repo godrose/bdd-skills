@@ -125,6 +125,27 @@ Feature: The mutation runner breaks a copy of the project and says which breaks 
     And the output lists "SURVIVED  two" before "CAUGHT    three"
     And the output mentions "caught: 2, survived as expected: 0, to look at: 1"
 
+  Scenario: A substitution that is not valid is reported as a break that changed nothing
+    Given a sandbox project whose test passes while code.txt holds GOOD
+    And the breaks file holds:
+      | name | file     | substitution | mark |
+      | bad  | code.txt | GOOD         |      |
+    When the mutation runner is run
+    Then the script exits with status 1
+    And the output mentions "NOCHANGE  bad"
+    And the output mentions "not a substitution"
+
+  Scenario: Without the installed tools the runner stops before it copies anything
+    Given a sandbox project whose test passes while code.txt holds GOOD
+    And the breaks file holds:
+      | name   | file     | substitution | mark |
+      | spoils | code.txt | s/GOOD/BAD/  |      |
+    And the installed tools of the runner are missing
+    When the mutation runner is run
+    Then the script exits with status 2
+    And the output mentions "npm ci"
+    And the sandbox project is as it was before the run
+
   Scenario: A breaks file that does not exist is a bad call
     Given a sandbox project whose test passes while code.txt holds GOOD
     When the mutation runner is run on a breaks file that does not exist
@@ -141,6 +162,7 @@ Feature: The mutation runner breaks a copy of the project and says which breaks 
       | evals   |
       | install |
       | mutate  |
+      | apply-break |
       | deliver-text |
       | discover-text |
       | decisions-steps |

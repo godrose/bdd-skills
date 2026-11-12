@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { ROOT, read, type World } from "./support";
 
-type Sandbox = { root: string; breaks: string; extra: string[]; before: string };
+type Sandbox = { root: string; breaks: string; extra: string[]; before: string; noTools: boolean };
 const boxes = new WeakMap<World, Sandbox>();
 const box = (w: World): Sandbox => {
   const b = boxes.get(w);
@@ -19,10 +19,29 @@ function makeBox(w: World, check: string): void {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), `mutate-${process.pid}-`));
   fs.writeFileSync(path.join(root, "code.txt"), "GOOD\n");
   fs.writeFileSync(path.join(root, "check.sh"), check);
-  boxes.set(w, { root, breaks: path.join(root, "..", `${path.basename(root)}.tsv`), extra: [], before: "" });
+  boxes.set(w, { root, breaks: path.join(root, "..", `${path.basename(root)}.tsv`), extra: [], before: "", noTools: false });
 }
 
+// The script that applies a break, with the tools of the repo.
+const TSX = path.join(ROOT, "node_modules/.bin/tsx");
+const APPLY = path.join(ROOT, "tests/apply-break.ts");
+const texts = new WeakMap<World, string>();
+const unescape = (s: string): string => JSON.parse(`"${s}"`);
+function makeText(w: World, content: string): void {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `apply-${process.pid}-`));
+  const file = path.join(dir, "file.txt");
+  fs.writeFileSync(file, content);
+  texts.set(w, file);
+}
+const textFile = (w: World): string => {
+  const f = texts.get(w);
+  assert.ok(f, "no text file in this scenario");
+  return f;
+};
+
 After(function (this: World) {
+  const t = texts.get(this);
+  if (t) fs.rmSync(path.dirname(t), { recursive: true, force: true });
   const b = boxes.get(this);
   if (!b) return;
   fs.rmSync(b.root, { recursive: true, force: true });
@@ -30,12 +49,32 @@ After(function (this: World) {
 });
 
 Then("no sandbox of the mutation scenarios of this run is left in the temp folder", function () {
-  const left = fs.readdirSync(os.tmpdir()).filter((n) => n.startsWith(`mutate-${process.pid}-`));
+  const left = fs.readdirSync(os.tmpdir()).filter((n) => n.startsWith(`mutate-${process.pid}-`) || n.startsWith(`apply-${process.pid}-`));
   assert.deepStrictEqual(left, [], "left behind: " + left.join(", "));
 });
 
 Given("a sandbox project whose test passes while code.txt holds GOOD", function (this: World) { makeBox(this, "grep -q GOOD code.txt\n"); });
 Given("a sandbox project whose test always fails", function (this: World) { makeBox(this, "exit 1\n"); });
+
+Given("a text file that reads:", function (this: World, text: string) { makeText(this, text); });
+Given("a text file with Windows line endings that reads {string} and {string}", function (this: World, a: string, b: string) {
+  makeText(this, [unescape(a), unescape(b)].join("\r\n") + "\r\n");
+});
+Given("the installed tools of the runner are missing", function (this: World) { box(this).noTools = true; });
+
+function apply(w: World, file: string, sub: string): void {
+  const r = spawnSync(TSX, [APPLY, file, sub], { encoding: "utf8" });
+  w.status = r.status;
+  w.output = (r.stdout ?? "") + (r.stderr ?? "");
+}
+When("the break {string} is applied to the file", function (this: World, sub: string) { apply(this, textFile(this), sub); });
+When("the break {string} is applied to a file that does not exist", function (this: World, sub: string) {
+  apply(this, path.join(os.tmpdir(), `apply-${process.pid}-none.txt`), sub);
+});
+Then("the file reads:", function (this: World, text: string) { assert.strictEqual(fs.readFileSync(textFile(this), "utf8"), text); });
+Then("the file holds the bytes of {string}", function (this: World, text: string) {
+  assert.deepStrictEqual(fs.readFileSync(textFile(this)), Buffer.from(unescape(text), "utf8"));
+});
 
 Given("the breaks file holds:", function (this: World, table: DataTable) {
   const b = box(this);
@@ -53,7 +92,10 @@ Given("the breaks file also has a comment line and a blank line before its break
 function run(w: World, args: string[]): void {
   const b = box(w);
   b.before = snapshot(b.root);
-  const r = spawnSync("bash", [path.join(ROOT, "tests/mutate.sh"), "--root", b.root, "--cmd", "sh check.sh", ...args], { encoding: "utf8" });
+  const r = spawnSync("bash", [path.join(ROOT, "tests/mutate.sh"), "--root", b.root, "--cmd", "sh check.sh", ...args], {
+    encoding: "utf8",
+    env: b.noTools ? { ...process.env, TSX_BIN: "no-such-tsx-binary" } : process.env,
+  });
   w.status = r.status;
   w.output = (r.stdout ?? "") + (r.stderr ?? "");
 }
@@ -84,7 +126,7 @@ Then("every break in {string} changes the file it names", function (this: World,
     const [name, file, sub] = line.split("\t");
     const copy = path.join(tmp, "copy");
     fs.copyFileSync(path.join(ROOT, file), copy);
-    spawnSync("perl", ["-0pi", "-e", sub, copy]);
+    spawnSync(TSX, [APPLY, copy, sub]);
     if (fs.readFileSync(copy, "utf8") === fs.readFileSync(path.join(ROOT, file), "utf8")) stale.push(name);
   }
   fs.rmSync(tmp, { recursive: true, force: true });

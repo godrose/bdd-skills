@@ -1,7 +1,7 @@
 # Breaks of the eval lint fixture and evals/run.sh. Run with:
 # tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @evals' tests/mutations/evals.tsv
 ticket rule dropped	evals/design-lint-draft/fixture/fake-lint.sh	s/if \(prev !~ \/\@TKT-\[0-9\]\+\/\)/if (0)/
-ticket digits not required	evals/design-lint-draft/fixture/fake-lint.sh	s/\@TKT-\[0-9\]\+/\@TKT-/
+ticket digits not required	evals/design-lint-draft/fixture/fake-lint.sh	s/@TKT-\[0-9\]\+/@TKT-/
 outline not matched	evals/design-lint-draft/fixture/fake-lint.sh	s/\^\[ \\t\]\*Scenario\//^[ \\t]*Scenario:\//
 hidden files skipped	evals/design-lint-draft/fixture/fake-lint.sh	s/-name '\*\.feature'/-name '[a-z]*.feature'/
 previous line ignored	evals/design-lint-draft/fixture/fake-lint.sh	s/\{ prev = \$0 \}/{ }/
