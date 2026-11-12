@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { ROOT, type World } from "./support";
-import { FIXTURE_PROJECT, FLOWS, MESSAGES, TEST_OUTPUT, cacheDir, flow, npmLog, play } from "./flow-support";
+import { FIXTURE_PROJECT, FLOWS, MESSAGES, TEST_OUTPUT, cacheDir, flow, npmLog, play, runDir } from "./flow-support";
 
 After(function (this: World) {
   if (this.flow) fs.rmSync(this.flow.tmp, { recursive: true, force: true });
@@ -27,6 +27,7 @@ Given("the product manager replies to message {int} with {string}", function (th
 
 Given("the test run has one pending scenario", function (this: World) { flow(this).testOutput = TEST_OUTPUT.pending; });
 Given("the test run has no scenario", function (this: World) { flow(this).testOutput = TEST_OUTPUT.none; });
+Given("the test run reports:", function (this: World, text: string) { flow(this).testOutput = text + "\n"; });
 
 Given("an empty cache for the installed runner", function (this: World) {
   const f = flow(this);
@@ -94,3 +95,16 @@ function showPage(world: World, args: string[]): void {
   world.status = r.status;
   world.output = (r.stdout ?? "") + (r.stderr ?? "");
 }
+
+// The rules counted straight on a run folder, for what the harness always writes (the saved test output) and so cannot leave out.
+When("the rules are counted on a run folder with no saved test output", function (this: World) {
+  const f = flow(this);
+  f.outDir = path.join(f.tmp, "out-direct");
+  const rd = runDir(f);
+  fs.mkdirSync(rd, { recursive: true });
+  f.messages.forEach((m, i) => fs.writeFileSync(path.join(rd, `turn-${String(i + 1).padStart(2, "0")}-assistant.txt`), m + "\n"));
+  const r = spawnSync("perl", [path.join(FLOWS, "rules.pl"), rd, f.command], { encoding: "utf8" });
+  fs.writeFileSync(path.join(rd, "rules.tsv"), r.stdout ?? "");
+  this.status = r.status;
+  this.output = (r.stdout ?? "") + (r.stderr ?? "");
+});

@@ -44,6 +44,8 @@ Feature: Fixture c is a small project the harness can run deliver on
   Scenario: The config of the fixture does not name a fixed page
     Given the file "flows/fixtures/c/project/.claude/bdd-config.md"
     Then it does not contain "loans.html"
+    And it does not contain ".html"
+    And it does not contain "pages"
 
   Scenario: The page script shows the loans file it is given
     Given a loans file "data/_t.json" in the fixture that holds:
