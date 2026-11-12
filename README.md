@@ -75,8 +75,8 @@ Then start with a story:
 
 For an individual builder:
 
-1. `/bdd:discover <story>` asks one question at a time and finds examples, edge cases and exclusions. Trivial changes skip it.
-2. `/bdd:design` shows the scenarios in plain words, with a reuse audit of every step. You approve them.
+1. `/bdd:discover <story>` first looks at what the project already has, then asks one question at a time and finds examples, edge cases and exclusions. Trivial changes skip it.
+2. `/bdd:design` shows the scenarios in plain words, with a reuse audit of every step. It checks that each scenario asserts what its title claims, and that the setup a scenario depends on is checked. You approve them.
 3. `/bdd:implement` automates the scenarios and `bdd:verifier` checks them.
 
 The agreed scenarios become automated checks, so later changes cannot silently break them.
@@ -271,10 +271,12 @@ plugin/                         # The plugin. Claude Code installs this folder
 scripts/decisions.sh             # Check, fingerprint, status and story page for the decision log (needs jq). Copied by install.sh
 schemas/decision.schema.json    # Record schema read by decisions.sh. Copied by install.sh
 evals/                          # Eval cases and evals/run.sh. Not part of the plugin
+flows/                          # Scripted runs of a whole discover or deliver conversation, with small fixture projects. Run by hand
 install.sh                      # Copy the skills into a project's .claude/ directory as bdd-<name> files
 specs/                          # The repo's own specification: scenarios in specs/features, their steps in specs/steps
-tests/                          # The test runner and the CI scripts
-docs/                           # Discovery packs, the known gaps, the demo recording
+tests/                          # The test runner, the CI scripts, and tests/mutate.sh with its breaks in tests/mutations/
+package.json, tsconfig.json     # The scenario runner (Cucumber and tsx) and its typecheck
+docs/                           # Discovery packs, trial records, the known gaps, the demo recording
 ```
 
 </details>
@@ -339,7 +341,9 @@ Contributions from individuals and from teams are welcome. No sign-off form is n
 
 - Look for issues labeled `good first issue` or `help wanted`, or open an issue with your idea first.
 - This repo uses its own method. A larger change (a new command, a config row, anything in install) starts with a discovery pack in `docs/discovery/`. A small fix, rename or copy edit does not. `CLAUDE.md` has the details.
-- Run `bash tests/run.sh` before you open a pull request. A new test must fail before your change and pass after it.
+- Install the scenario runner once with `npm ci`. Run `bash tests/run.sh` before you open a pull request, and `bash tests/ci_local.sh` before you push: it runs what CI runs and names the step that failed. A new test must fail before your change and pass after it.
+- To see whether the tests notice a change, break the code on purpose with `tests/mutate.sh` (usage in its header). It breaks copies and never your checkout, and it runs by hand.
+- To watch a whole `discover` or `deliver` conversation in a real session, use `flows/run.sh` (see `flows/README.md`). It runs by hand and uses your plan limit.
 - Try the plugin from a clone with `claude --plugin-dir <clone>/plugin`. Check it with `claude plugin validate plugin` and run its evals with `bash evals/run.sh`.
 - Fill in the pull request template.
 - What the plugin does not check is listed in [`docs/known-gaps.md`](docs/known-gaps.md). When you close a gap, remove its entry in the same change.
