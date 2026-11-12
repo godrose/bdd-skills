@@ -83,3 +83,7 @@ Then("they hold {int} scenario(s)", function (this: World, n: number) { assert.s
 Then("none of them contains {string}", function (this: World, text: string) {
   for (const rel of this.files) assert.ok(!read(rel).includes(text), `${rel} has: ${text}`);
 });
+
+Then("call {int} to the assistant has no carriage return", function (this: World, n: number) {
+  assert.ok(!call(this, n).includes("\r"), `call ${n} has a carriage return`);
+});

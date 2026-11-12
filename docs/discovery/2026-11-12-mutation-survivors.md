@@ -24,8 +24,8 @@ One survivor led to a defect. `check` requires `resolves` to be a list, and `sho
 Judged from the name of the break only. Each needs a look at the code before a scenario is written.
 
 - **Install (2):** fixed. Legacy file removal (3 names) and the "skipped" listing line each have a scenario, and breaking either one fails it. See `specs/features/install-legacy-files.feature` and `install-own-command.feature`.
-- **Deliver flow harness (15):** rule counting edge cases that look real (the developer line, out-of-scope, approvals, ranges, failed status, a page file, paths, the Delivered line, counts written another way). Report and persona wording (`report title changed`, `second report header renamed`, `persona changed`) looks like wording.
-- **Discover flow harness (8):** the same rule counting. `developer note not stripped` is already caught by the deliver scenarios.
+- **Deliver flow harness (15):** fixed or judged. Ten rule edges have scenarios in `flow-deliver-rule-edges.feature` (developer lines, allowed changes, the approval wording, ranges, failed and parked status, the Delivered line, the saved test output, code and file leaks in plain words). The config check now also refuses any `.html` or `pages` text. Not pinned, as wording: `report title changed`, `second report header renamed`, `persona changed`. Equivalent: `second report not required` (`compare.pl` fails on a missing file either way).
+- **Discover flow harness (8):** fixed or judged. Four look-first openers, a pack file name in plain words and the story line endings have scenarios in `flow-discover-rule-edges.feature`. Equivalent, so no scenario: `bdd names allowed` (only a made-up name with an underscore differs) and `Not ready not known to pack-end` (the same text is read either way). The other three were already caught or are shared with the deliver scenarios.
 - **Evals (8):** five break the README or the CI guide text (`CI guide drops EVALS_NIGHTLY`, `drops setup-token`, `README drops only for this case`, `drops usage`, `drops run.sh`). By the approach review these are phrase checks and are not worth a scenario. Three change an eval case or the runner (`fake-lint drops the ticket rule`, `lint: draft file pattern dropped`, `run.sh drops the tool call`) and may be real.
 
 ## Existing users and first run
@@ -37,7 +37,7 @@ The only change to a shipped file is one line in `scripts/decisions.sh`, which `
 - No change to the plugin text and no new rule in the script.
 - No scenario for the two equivalent mutants.
 - No message checks beyond the two that the break showed to be unchecked.
-- The harness and eval survivors are not fixed here. The install ones are, in a later change.
+- The eval survivors are not fixed here. The install and flow harness ones are, in later changes.
 
 ## Decisions
 
