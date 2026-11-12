@@ -8,6 +8,7 @@ Feature: The mutation runner breaks a copy of the project and says which breaks 
   Decision (2026-11-12): A break that changes nothing is reported and fails the run. Why: a break that does not apply says nothing about the tests, and a stale break file would look green.
   Decision (2026-11-12): A survivor marked "equivalent" is expected, and an equivalent mark on a break that is caught fails the run. Why: no input can tell an equivalent change from the real code, and a stale mark hides a test that now does tell them apart.
   Decision (2026-11-12): The runner is by hand and not in CI. Why: it runs the whole suite once for each break.
+  Decision (2026-11-12): The sandbox of a scenario is removed when the scenario ends, with its breaks file, and its name carries the process id. Why: about 750 folders had piled up in the temp folder from earlier runs. The check is the last scenario of the file, because it can only see what the earlier ones left behind.
 
   Scenario: A break the tests notice is caught
     Given a sandbox project whose test passes while code.txt holds GOOD
@@ -141,3 +142,7 @@ Feature: The mutation runner breaks a copy of the project and says which breaks 
       | install |
       | mutate  |
       | deliver-text |
+      | discover-text |
+
+  Scenario: The sandboxes of the scenarios above are gone
+    Then no sandbox of the mutation scenarios of this run is left in the temp folder

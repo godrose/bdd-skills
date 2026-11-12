@@ -1,5 +1,5 @@
 // Steps for tests/mutate.sh. The runner is run on a small sandbox project with its own test command, never on this repo.
-import { Given, Then, When, type DataTable } from "@cucumber/cucumber";
+import { After, Given, Then, When, type DataTable } from "@cucumber/cucumber";
 import assert from "node:assert";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -16,11 +16,23 @@ const box = (w: World): Sandbox => {
 };
 
 function makeBox(w: World, check: string): void {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "mutate-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), `mutate-${process.pid}-`));
   fs.writeFileSync(path.join(root, "code.txt"), "GOOD\n");
   fs.writeFileSync(path.join(root, "check.sh"), check);
   boxes.set(w, { root, breaks: path.join(root, "..", `${path.basename(root)}.tsv`), extra: [], before: "" });
 }
+
+After(function (this: World) {
+  const b = boxes.get(this);
+  if (!b) return;
+  fs.rmSync(b.root, { recursive: true, force: true });
+  fs.rmSync(b.breaks, { force: true });
+});
+
+Then("no sandbox of the mutation scenarios of this run is left in the temp folder", function () {
+  const left = fs.readdirSync(os.tmpdir()).filter((n) => n.startsWith(`mutate-${process.pid}-`));
+  assert.deepStrictEqual(left, [], "left behind: " + left.join(", "));
+});
 
 Given("a sandbox project whose test passes while code.txt holds GOOD", function (this: World) { makeBox(this, "grep -q GOOD code.txt\n"); });
 Given("a sandbox project whose test always fails", function (this: World) { makeBox(this, "exit 1\n"); });
