@@ -30,7 +30,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-05-rename-repo-bdd-skills.md` | Rename the repo to `bdd-skills` (marketplace name superseded in part) |
 | `2026-11-08-red-first-and-known-gaps.md` | The red-first check in `implement`, and a known-gaps file |
 | `2026-11-08-plugin-in-subfolder.md` | Move the plugin into a `plugin/` folder, so the directory scan reads only plugin files |
-| `2026-11-08-evals-ci-out-of-plugin.md` | Move the CI token setup out of the plugin folder, after the second validation report |
+| `2026-11-08-evals-ci-out-of-plugin.md` | Move the CI token setup out of the plugin folder, after the second validation report |
 | `2026-11-08-allowed-tools-decision.md` | Keep the broad `allowed-tools` grants (superseded) |
 | `2026-11-08-directory-policy.md` | Meet the directory's file and tool policy: no grants, no scripts or fixtures in the plugin |
 | `2026-11-09-deliver.md` | `/bdd:deliver`: one conversation from a description to verified scenarios, for a PM with a developer watching |
@@ -39,6 +39,23 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-10-discover-flow-runs.md` | A scripted flow run for `bdd:discover`: a real headless session, a model playing the product manager, rules counted on the transcript |
 | `2026-11-11-deliver-no-developer.md` | `bdd:deliver` reports parked technical stops as plain risks, for a person with no developer |
 | `2026-11-11-deliver-flow-runs.md` | A scripted flow run for `bdd:deliver`, and a way to compare two runs to see a regression |
+| `2026-11-11-scenario-suite.md` | The repo's own test suite as scenarios that run, migrated one file at a time |
+| `2026-11-11-layout-scenarios.md` | The checks on the plugin folder layout, migrated to scenarios |
+| `2026-11-11-decisions-scenarios.md` | The checks on the decision log script, migrated to scenarios |
+| `2026-11-11-readme-scenarios.md` | The checks on the README's structure and promises, migrated to scenarios |
+| `2026-11-11-skills-text-scenarios.md` | The checks on the command, agent and template text, migrated to scenarios in three pull requests (PR 1: structure, template, discover, run and verifier) |
+| `2026-11-12-skills-text-scenarios-2.md` | The checks on the design and implement command text, migrated to scenarios (PR 2 of 3) |
+| `2026-11-12-skills-text-scenarios-3.md` | The checks on the triage, reconcile, README and init text, migrated to scenarios (PR 3 of 3), with a tally of the whole old file |
+| `2026-11-11-deliver-flow-scenarios.md` | The checks on the deliver flow harness, migrated to scenarios |
+| `2026-11-11-discover-flow-scenarios.md` | The checks on the discover flow harness, migrated to scenarios |
+| `2026-11-11-evals-scenarios.md` | The checks on the eval cases, their runner and the nightly workflow, migrated to scenarios |
+| `2026-11-11-red-first-scenarios.md` | The checks on the red-first text in `implement` and on the known-gaps file, migrated to scenarios |
+| `2026-11-11-deliver-text-scenarios.md` | The checks on the text of the deliver command, its trial record and its listings, migrated to scenarios |
+| `2026-11-11-plugin-text-scenarios.md` | The checks on the plugin manifests, files and text rules, and the init, design and discover text, migrated to scenarios |
+| `2026-11-12-approach-review.md` | Which text checks stay after the migration, and the rule for keeping them |
+| `2026-11-12-required-setup-check.md` | `bdd:design` checks the setup a scenario depends on and reports a missing prerequisite as a setup error (issue 41) |
+| `2026-11-12-deliver-gate2-plain-words.md` | `bdd:deliver` shows the second gate in plain words, and the audit table goes under a developer line |
+| `2026-11-12-mutation-survivors.md` | Triage of the mutation survivors of the migrations, and the fix for the decisions script |
 
 ## trials/
 
@@ -47,6 +64,7 @@ Records of real working sessions with the plugin, kept as examples.
 | Record | What it shows |
 |--------|---------------|
 | `2026-11-09-deliver-pm-session.md` | Two changes delivered with `/bdd:deliver` by a product manager and an assistant: the questions, the pushback and what it changed |
+| `2026-11-11-deliver-on-its-own-suite.md` | `/bdd:init` and `/bdd:deliver` run on this repo to migrate one test file: the stops, the equivalence gap the mutation check found, and what it points to |
 
 Maintainer notes for the nightly evals are in `evals-ci.md`.
 

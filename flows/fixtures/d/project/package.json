@@ -1,0 +1,6 @@
+{
+  "name": "records-export",
+  "private": true,
+  "scripts": { "test": "cucumber-js" },
+  "devDependencies": { "@cucumber/cucumber": "11.3.0" }
+}

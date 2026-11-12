@@ -112,7 +112,7 @@ The pack is **ready** only when no open question is unanswered and every exclusi
 
 - Reuse the project's existing words. A new term needs a stated reason.
 - Never invent acceptance criteria. Ask.
-- Put one question to the product manager in a message. A question for the developer goes on its own line and is not a second question.
+- Put one question to the product manager in a message. A question for the developer goes on its own line and is not a second question. State a guess as a statement before the question, end the message on the question, and add no closing line that asks for a confirmation.
 
 - Write the whole pack in plain words, as the product manager will read it. Keep file paths, field names, function names and status names out of every section except Vocabulary check. In the other sections, paths go on one "For the developer" line.
 - Never write step definitions or touch the test code. That is the implementer's job.

@@ -1,0 +1,16 @@
+{
+  "name": "bdd-skills-specs",
+  "private": true,
+  "description": "The specification of this repo, as scenarios that run. Not part of the plugin.",
+  "scripts": {
+    "test": "bash tests/run.sh",
+    "scenarios": "NODE_OPTIONS=--import=tsx cucumber-js",
+    "typecheck": "tsc --noEmit --noUnusedLocals --noUnusedParameters"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "11.3.0",
+    "@types/node": "22.10.2",
+    "tsx": "4.19.2",
+    "typescript": "5.7.2"
+  }
+}

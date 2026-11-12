@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "Q1 plan", "status": "open" },
+  { "id": 2, "name": "Q2 plan", "status": "closed" },
+  { "id": 3, "name": "Budget", "status": "open" },
+  { "id": 4, "name": "Audit", "status": "closed" }
+]

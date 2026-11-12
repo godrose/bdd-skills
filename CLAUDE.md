@@ -26,7 +26,8 @@ Spikes and trials on real projects still come after discovery. They find what qu
 ## Rules
 
 - Plugin text uses plugin names (`bdd:design`). `install.sh` converts it for project installs. Do not write project-form names or `.claude/scripts` paths in the plugin tree.
-- Run `bash tests/run.sh` before every commit. A new test must fail before the change.
+- Install the scenario runner once with `npm ci`. Run `bash tests/run.sh` before every commit, and `bash tests/ci_local.sh` before every push: it runs what CI runs and names the step that failed. A new test must fail before the change. The suite is scenarios in `specs/features/` with steps in `specs/steps/`, and `tests/` holds the runner and the CI scripts (see `docs/discovery/2026-11-11-scenario-suite.md`).
+- To see whether a change has a test that notices it, break the code on purpose with `tests/mutate.sh` (usage in its header, break files in `tests/mutations/`). It breaks copies, never the checkout. It runs the whole suite once for each break, so run it by hand and not in CI.
 - Never tell users to delete with a `bdd-*` glob. Their own skills match it.
 - The plugin folder holds only Markdown, text, JSON, YAML and PNG, JPEG, GIF, WebP or ICO files. It holds no file that starts with `#!`, no package-manager config and no `allowed-tools` beyond Read, Grep, Glob and LS. The directory refuses all of these from an organization that is not Verified. Scripts, schemas for them and the evals live at the repo root. A test checks it.
 

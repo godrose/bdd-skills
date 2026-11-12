@@ -1,0 +1,7 @@
+# Breaks of install.sh. Run with:
+# tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @install' tests/mutations/install.tsv
+listing guard removed	install.sh	s/\[ -z "\$\{DELIVER_SKIPPED:-\}" \] && echo/echo/
+legacy bdd-scenario-design not removed	install.sh	s/  "\$CLAUDE_DIR\/commands\/bdd-scenario-design.md" \\\n//
+legacy bdd-implement-scenario not removed	install.sh	s/  "\$CLAUDE_DIR\/commands\/bdd-implement-scenario.md" \\\n//
+legacy test-feature not removed	install.sh	s/ \\\n  "\$CLAUDE_DIR\/commands\/test-feature.md"; do/; do/
+legacy files not deleted	install.sh	s/    rm "\$legacy"\n/    :\n/
