@@ -154,3 +154,56 @@ Feature: Showing the agreed behavior of a story
     Then the script exits with status 0
     And the output mentions "Alpha is exported. (planned) (source: Slack thread, Monday)"
     And the output does not mention "[source]("
+
+  Rule: Decisions about scenarios that are gone, blocked scenarios and text with line breaks
+
+    Background:
+      Given a project with no scenarios
+      And the feature file "s.feature" reads:
+        ```
+        Feature: F
+          @spec-d @blocked
+          Scenario: D
+            Given d
+        ```
+      And the log "S" gets these decisions:
+        | id   | at         | text             | effect                       |
+        | S-01 | 2026-10-01 | Gone is added.   | adds spec-gone (fingerprint cccccccc) |
+        | S-02 | 2026-10-02 | Gone is removed. | removes spec-gone            |
+        | S-03 | 2026-10-03 | D is agreed.     | adds spec-d (as it is now)   |
+      And the log "S" gets these lines:
+        ```
+        {"v":1,"id":"S-04","kind":"decision","story":"S","at":"2026-10-04","text":"Line one\n   line two"}
+        ```
+
+    Scenario: A decision whose scenario was removed is closed and appears only in the history
+      When the story "S" is shown
+      Then the section "## History" mentions "Gone is added. (closed)"
+      And the output above "## History" does not mention "Gone is added."
+
+    Scenario: A blocked scenario is shown as waiting on the product
+      When the story "S" is shown with the options "--blocked-tag @blocked"
+      Then the output mentions "D is agreed. (waiting on the product)"
+
+    Scenario: A line break in a decision text becomes a space
+      When the story "S" is shown
+      Then the output mentions "Line one line two"
+
+  Rule: A decision that resolves an open question with a list of ids
+
+    Background:
+      Given a project with no scenarios
+      And the log "S" gets the open question "S-05" dated "2026-10-05": "Who owns retention?"
+      And the log "S" gets these lines:
+        ```
+        {"v":1,"id":"S-07","kind":"decision","story":"S","at":"2026-10-06","text":"Retention is ninety days.","resolves":["S-05"]}
+        ```
+
+    Scenario: The check accepts the list form
+      When the log is checked
+      Then the script exits with status 0
+
+    Scenario: A question resolved through a list is not shown as still open
+      When the story "S" is shown without a features folder
+      Then the section "## History" mentions "Who owns retention? (closed)"
+      And the output above "## History" does not mention "Who owns retention?"

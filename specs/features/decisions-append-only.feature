@@ -33,6 +33,7 @@ Feature: A decision log only grows
       | S-01 | 2026-10-31 | Header row is exported. | adds spec-header-row (fingerprint aaaaaaaa) |
     When the log is checked against the base "HEAD"
     Then the script exits with status 2
+    And the output mentions "--base needs a git repository"
 
   Rule: A log that is already committed
 
@@ -61,7 +62,9 @@ Feature: A decision log only grows
     Scenario: Emptying a log file fails
       Given the log "S" is emptied
       When the log is checked against the base "HEAD"
-      Then the output mentions "ERROR E-APPEND"
+      Then the output mentions:
+        | ERROR E-APPEND |
+        | S.jsonl:1      |
 
     Scenario: Deleting the first line of a log fails
       Given the log "S" gets these decisions:

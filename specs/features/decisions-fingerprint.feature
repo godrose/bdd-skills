@@ -231,3 +231,68 @@ Feature: Finding a scenario and its fingerprint
       When the log is checked
       Then the output does not mention "spec-fake"
       And the output does not mention "I-LEGACY"
+
+  Scenario: A comment or a tag line inside the scenario does not change the fingerprint
+    Given a project with the header row scenario
+    And the fingerprint of "spec-header-row" is remembered
+    And the feature file "export.feature" reads:
+      ```
+      Feature: Export
+        @spec-header-row @pending
+        Scenario: Header row
+          Given an order list
+          # note
+          @inside
+          When I export it
+          Then the file has a header row
+      ```
+    When the fingerprint of "spec-header-row" is asked for
+    Then the output is the remembered fingerprint
+
+  Scenario: Leading and trailing spaces on a line do not change the fingerprint
+    Given a project with the header row scenario
+    And the fingerprint of "spec-header-row" is remembered
+    And the text "When I export it" is replaced by "   When I export it   " in the feature file "export.feature"
+    When the fingerprint of "spec-header-row" is asked for
+    Then the output is the remembered fingerprint
+
+  Scenario: An id is matched whole, not as the start of a longer id
+    Given the feature file "a.feature" reads:
+      ```
+      Feature: F
+        @spec-xy
+        Scenario: Long
+          Given a long one
+        @spec-x
+        Scenario: Short
+          Given a short one
+      ```
+    And the fingerprint of "spec-xy" is remembered
+    When the fingerprint of "spec-x" is asked for
+    Then the script exits with status 0
+    And the output is 8 characters long
+    And the output is not the remembered fingerprint
+
+  Scenario: A rule heading after a scenario is not part of that scenario
+    Given the feature file "a.feature" reads:
+      ```
+      Feature: F
+        @spec-a
+        Scenario: A
+          Given a
+        Rule: First rule
+        @spec-b
+        Scenario: B
+          Given b
+      ```
+    And the fingerprint of "spec-a" is remembered
+    And the text "Rule: First rule" is replaced by "Rule: Another name" in the feature file "a.feature"
+    When the fingerprint of "spec-a" is asked for
+    Then the output is the remembered fingerprint
+
+  Scenario: A features folder that does not exist exits 2 and says so
+    Given a project with no scenarios
+    And the features folder is missing
+    When the fingerprint of "spec-x" is asked for
+    Then the script exits with status 2
+    And the output mentions "features directory not found"
