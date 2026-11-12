@@ -34,6 +34,8 @@ At the second gate the product manager approves the scenarios. `bdd:design` show
 | 4 | Where do technical remarks go before the report? | On one "For the developer" line where they come up, repeated in the developer note. | The builder is not shown names mid-flow, and the developer finds the remark in the report. The real run said it in the body of the message. |
 | 5 | Does `design.md` change? | No. | The table is also for people who use `bdd:design` alone and read paths. `deliver` decides how it presents what design produces. |
 | 6 | Is the plain-words rule relaxed for tables? | No, beyond the developer block of decision 3. | The rule is the guard against this leak. |
+| 7 | Do the remarks after the table need their own label? | Yes. Each technical remark is its own line that starts "For the developer:", one line each, never a list after the table. This makes decision 4 explicit in the command text. | A real run on fixture d put three bullets with code spans after the table and no label, so the rule counted them. The first wording said "anything else ... under a line", which the model read as one group after the table. |
+| 8 | How does a run look at a filter that matches nothing? | The fixture project has a README that names `node src/show.js data/<records file> data/<filter file>`. | The same run tried `node -e`, which the harness does not allow, and left two examples unchecked. The command was only in the script header. A real project carries such a note. |
 
 ## Existing users
 

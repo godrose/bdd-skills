@@ -9,6 +9,8 @@ Feature: The CSV export fixture holds the acceptance example of issue 41
   Decision (2026-11-12): The scenarios run the harness against the fake claude and the fake npm, and the fixture project with node. Why: no login and no network, as for fixture c. The first real run needs the network once for the runner.
   Decision (2026-11-12): The script takes the filter file as a second argument under data/. Why: a real run of deliver showed that the assistant could not look at a filter that matches nothing without editing the sample data, and the harness already allows `node src/show.js data/*`.
 
+  Decision (2026-11-12): The fixture has a README that names the show command with both arguments. Why: the second real run tried `node -e` and left two examples unchecked, because the command was documented only in the script header. A real project carries such a note.
+
   Scenario: The fixture has what the harness needs
     Then these files exist:
       | flows/fixtures/d/persona.txt                      |
@@ -18,6 +20,7 @@ Feature: The CSV export fixture holds the acceptance example of issue 41
       | flows/fixtures/d/project/cucumber.js              |
       | flows/fixtures/d/project/.claude/bdd-config.md    |
       | flows/fixtures/d/project/docs/out-of-scope.md     |
+      | flows/fixtures/d/project/README.md                |
       | flows/fixtures/d/project/data/records.json        |
       | flows/fixtures/d/project/data/filter.json         |
       | flows/fixtures/d/project/src/export.js            |
@@ -40,6 +43,10 @@ Feature: The CSV export fixture holds the acceptance example of issue 41
       | Approved                                      |
       | no records match                              |
       | contain only the column headers               |
+
+  Scenario: The project readme names the command that shows the download for a filter
+    Given the file "flows/fixtures/d/project/README.md"
+    Then it contains "node src/show.js data/<records file> data/<filter file>"
 
   Scenario: The current filter is the open status
     Given the file "flows/fixtures/d/project/data/filter.json"

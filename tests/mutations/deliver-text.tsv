@@ -5,3 +5,5 @@ gate 2 drops the blank line before the table	plugin/commands/deliver.md	s/then a
 gate 2 drops the designer's preferred fix	plugin/commands/deliver.md	s/Take the fix the designer prefers/Ask about it/
 developer note drops the second gate remarks	plugin/commands/deliver.md	s/and the technical remarks and fixes from the second gate//
 old second gate text back	plugin/commands/deliver.md	s/Design writes the scenarios, audits step reuse and lints the draft\./Design writes the scenarios, audits step reuse and lints the draft, and then shows the scenarios in plain words and waits for the go-ahead./
+gate 2 drops the label on each remark	plugin/commands/deliver.md	s/Put every other technical remark on its own line that starts "For the developer:"/Put every other technical remark under the table/
+gate 2 allows a list after the table	plugin/commands/deliver.md	s/one line each, never in a list after the table/in a list/

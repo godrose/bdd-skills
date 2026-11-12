@@ -46,7 +46,7 @@ Invoke the **designer** skill (`bdd:design`) with the checklist. The approved ch
 - Every finding that changes what a scenario proves (a title that claims more than the steps assert, data that does not fit a reused step, a setup that is assumed and not checked) as one plain question about the behavior, asked one at a time. Record the answer and update the scenarios.
 - A finding that is only technical (a paraphrase of an existing step, a naming difference) is not asked. Take the fix the designer prefers and list it in the developer block.
 
-Put the per-step audit table, and anything else with file names or code (the lint did not run, the decision log script is missing), under a line that starts "For the developer", then a blank line, then the table. The product manager does not need to read it.
+Put the per-step audit table under a line that starts "For the developer", then a blank line, then the table. Put every other technical remark on its own line that starts "For the developer:", one line each, never in a list after the table. Technical remarks are anything with file names or code, such as the lint did not run or the decision log script is missing. The product manager does not need to read them.
 
 Wait for the go-ahead. The go-ahead is the second approval, and it can come from either person.
 
