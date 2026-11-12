@@ -17,6 +17,8 @@ Then("the output mentions:", function (this: World, table: DataTable) {
 });
 
 Then("the output does not mention {string}", function (this: World, text: string) { assert.ok(!this.output.includes(text), this.output); });
+Then("an output line ends with {string}", function (this: World, end: string) { assert.ok(this.output.split(/\r?\n/).some((l) => l.endsWith(end)), this.output); });
+Then("no output line ends with {string}", function (this: World, end: string) { assert.ok(!this.output.split(/\r?\n/).some((l) => l.endsWith(end)), this.output); });
 
 Then("the project has these files in its .claude folder:", function (this: World, table: DataTable) {
   for (const rel of column(table)) assert.ok(fs.statSync(claude(this, rel), { throwIfNoEntry: false })?.isFile(), `missing ${rel}`);
