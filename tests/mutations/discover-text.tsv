@@ -1,0 +1,4 @@
+# Breaks of the one-question text in plugin/commands/discover.md. Run with:
+# tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @skills-text' tests/mutations/discover-text.tsv
+discover lets a closing confirmation line stay	plugin/commands/discover.md	s/and add no closing line that asks for a confirmation\./and add a closing line that asks for a confirmation./
+discover drops the guess as a statement	plugin/commands/discover.md	s/State a guess as a statement before the question, //

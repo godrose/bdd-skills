@@ -38,6 +38,9 @@ At the second gate the product manager approves the scenarios. `bdd:design` show
 | 8 | How does a run look at a filter that matches nothing? | The fixture project has a README that names `node src/show.js data/<records file> data/<filter file>`. | The same run tried `node -e`, which the harness does not allow, and left two examples unchecked. The command was only in the script header. A real project carries such a note. |
 | 9 | Can the question about a finding and the request for the go-ahead share a message? | No. The question goes alone. The go-ahead is asked in a later message, after the scenarios are updated. | Run 3 sent "Question for you" and "Do I have your go-ahead" in one second-gate message, which broke one-question. The go-ahead also answers the question in a way the product manager cannot separate. |
 | 10 | How does step 5 look at the result, and what if it cannot? | With the means the project has (a script, the command its README names), not with a command the assistant writes. A command that needs approval is not run. The example is reported as not looked at, the command goes on a "For the developer:" line, and the product manager is never asked to approve a command. | Run 3 asked the product manager in the body to approve a `node -e` line. It was not a tool denial: the allowed `show.js` with a filter file was never tried. A product manager cannot judge a command. |
+| 11 | Where may a file be named at the second gate? | Only on "For the developer" lines. In the rest of the message it is "the out-of-scope list" or "the feature file". | Run 4 opened with the out-of-scope file path and headed the Gherkin with the feature file path, outside any developer line. |
+| 12 | How does discover ask a question with a guess? | The guess is a statement before the question. The message ends on the question, with no closing line that asks for a confirmation. | Run 4 messages 2 and 3 ended with "Is that right?" after a question, two question lines. This was already seen in the discover flow runs. One run cannot show that the text holds. |
+| 13 | How does a run see a no-match filter and an empty filter? | The fixture ships `data/filter-none.json` and `data/filter-empty.json`, and the README names them. | Run 4 said that making the files needed approval, when it had the file tools. A fixture that carries them removes the quirk and keeps the generic text free of a special case. Decision 8 stays. |
 
 ## Existing users
 
@@ -54,5 +57,6 @@ A fresh project with no steps has nothing to reuse. The second gate shows the sc
 - `design.md` and the audit table itself: unchanged.
 - The Gherkin text of the scenarios: it is shown as text, as now.
 - A config switch to show the table to the product manager. It can be added later, default off.
+- Changing the discover flow harness rule. The text changes, the rule counts as before.
 - Installing the decision log script into the flow fixtures, so the real run does not meet its absence: a separate change to the fixtures.
 - An eval of the second gate: it needs a model run. The flow harness counts the rule when run by hand.

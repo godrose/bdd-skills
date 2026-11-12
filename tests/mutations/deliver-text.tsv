@@ -11,3 +11,5 @@ gate 2 lets the go-ahead ride with the question	plugin/commands/deliver.md	s/Sen
 gate 2 asks for the go-ahead in the same message	plugin/commands/deliver.md	s/ask for the go-ahead in a later message/ask for the go-ahead/
 step 5 allows a command of its own	plugin/commands/deliver.md	s/and not with a command you write yourself/or any command you write/
 step 5 asks the product manager to approve	plugin/commands/deliver.md	s/Never ask the product manager to approve a command\./Ask the product manager to approve a command./
+gate 2 names files in the plain text	plugin/commands/deliver.md	s/Name a file in plain words in the rest of the message/Name files as you like/
+gate 2 allows file names outside the developer lines	plugin/commands/deliver.md	s/Names of files and code go only on "For the developer" lines\./Names of files and code are fine./

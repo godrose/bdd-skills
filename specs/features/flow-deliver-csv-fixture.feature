@@ -23,6 +23,8 @@ Feature: The CSV export fixture holds the acceptance example of issue 41
       | flows/fixtures/d/project/README.md                |
       | flows/fixtures/d/project/data/records.json        |
       | flows/fixtures/d/project/data/filter.json         |
+      | flows/fixtures/d/project/data/filter-none.json    |
+      | flows/fixtures/d/project/data/filter-empty.json   |
       | flows/fixtures/d/project/src/export.js            |
       | flows/fixtures/d/project/src/filter.js            |
       | flows/fixtures/d/project/src/show.js              |
@@ -47,6 +49,10 @@ Feature: The CSV export fixture holds the acceptance example of issue 41
   Scenario: The project readme names the command that shows the download for a filter
     Given the file "flows/fixtures/d/project/README.md"
     Then it contains "node src/show.js data/<records file> data/<filter file>"
+
+  Scenario: The fixture has a filter that matches nothing and one that has no condition
+    Given the file "flows/fixtures/d/project/data/filter-none.json"
+    Then it contains "archived"
 
   Scenario: The current filter is the open status
     Given the file "flows/fixtures/d/project/data/filter.json"
