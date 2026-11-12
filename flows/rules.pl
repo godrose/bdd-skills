@@ -13,7 +13,7 @@ sub row { my ($rule, $broken, $detail) = @_; print join("\t", $rule, $broken ? "
 exit 0 unless @msg;
 # look-first: the first message says what exists, or that it found nothing, before its first question
 my $first = $msg[0] // "";
-my $found = $first =~ /(what exists|what i found|found nothing|already)/i ? $-[0] : -1;
+my $found = $first =~ /(what exists|what i found|found nothing|already|\bi (?:ran|looked|checked|read|searched)\b)/i ? $-[0] : -1;
 my $q = index($first, "?");
 row("look-first", !($found >= 0 && ($q < 0 || $found < $q)), "message 1");
 
