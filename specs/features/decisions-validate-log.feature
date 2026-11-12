@@ -171,3 +171,65 @@ Feature: Validating a decision log
       ```
     When the log is checked with no folder given
     Then the output mentions "ERROR E-SCHEMA"
+
+  Scenario: An unknown record kind fails and names the kind
+    Given a project with the header row scenario
+    And the log "S" gets these lines:
+      ```
+      {"v":1,"id":"S-01","kind":"wish","story":"S","at":"2026-10-31","text":"x"}
+      ```
+    When the log is checked
+    Then the script exits with status 1
+    And the output mentions:
+      | ERROR E-SCHEMA    |
+      | unknown kind wish |
+
+  Scenario: An unknown source kind fails and names the kind
+    Given a project with the header row scenario
+    And the log "S" gets these decisions:
+      | id   | at         | text                    | effect                                      |
+      | S-01 | 2026-10-31 | Header row is exported. | adds spec-header-row (fingerprint aaaaaaaa) |
+    And the log "S" gets these lines:
+      ```
+      {"v":1,"id":"S-02","kind":"confirms","of":"S-01","at":"2026-11-01","sources":[{"kind":"pigeon","ref":"x","role":"agreed"}]}
+      ```
+    When the log is checked
+    Then the script exits with status 1
+    And the output mentions:
+      | ERROR E-SCHEMA      |
+      | unknown source kind pigeon |
+
+  Scenario: An effect with a missing key fails and names the key
+    Given a project with the header row scenario
+    And the log "S" gets these lines:
+      ```
+      {"v":1,"id":"S-01","kind":"decision","story":"S","at":"2026-10-31","text":"x","effects":[{"op":"adds","scenario":"spec-header-row"}]}
+      ```
+    When the log is checked
+    Then the script exits with status 1
+    And the output mentions "effect adds is missing"
+
+  Scenario: A field that must be a list but is not fails and names the field
+    Given a project with the header row scenario
+    And the log "S" gets these decisions:
+      | id   | at         | text                    | effect                                      |
+      | S-01 | 2026-10-31 | Header row is exported. | adds spec-header-row (fingerprint aaaaaaaa) |
+    And the log "S" gets these lines:
+      ```
+      {"v":1,"id":"S-02","kind":"decision","story":"S","at":"2026-11-01","text":"x","supersedes":"S-01"}
+      ```
+    When the log is checked
+    Then the script exits with status 1
+    And the output mentions:
+      | ERROR E-SCHEMA                |
+      | supersedes must be a list     |
+
+  Scenario: A dangling reference fails the check
+    Given a project with the header row scenario
+    And the log "S" gets these lines:
+      ```
+      {"v":1,"id":"S-01","kind":"decision","story":"S","at":"2026-11-01","text":"x","supersedes":["S-99"]}
+      ```
+    When the log is checked
+    Then the script exits with status 1
+    And the output mentions "ERROR E-REF"

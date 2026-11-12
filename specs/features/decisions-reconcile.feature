@@ -185,3 +185,57 @@ Feature: Live decisions and findings when reconciling
       Given the text "Given a" is replaced by "Given a changed" in the feature file "a.feature"
       When the log is checked against the base "HEAD"
       Then the output mentions "WARN W-DRIFT"
+
+    Scenario: A scenario named in a new decision is checked for drift even when its file did not change
+      Given the log "A" gets these decisions:
+        | id   | at         | text      | effect                              |
+        | A-02 | 2026-11-01 | A changes.  | changes spec-a (fingerprint bbbbbbbb) |
+      When the log is checked against the base "HEAD"
+      Then the output mentions "WARN W-DRIFT"
+
+    Scenario: A new feature file that is not yet committed is checked with a base ref
+      Given the feature file "c.feature" reads:
+        ```
+        Feature: C
+          @spec-c
+          Scenario: C
+            Given c
+        ```
+      When the log is checked against the base "HEAD"
+      Then the output mentions "WARN W-UNDECIDED"
+
+    Scenario: An orphan that was already there at the base is not reported with a base ref
+      Given the log "B" gets these decisions:
+        | id   | at         | text  | effect                                |
+        | B-02 | 2026-11-01 | Gone. | adds spec-gone (fingerprint cccccccc) |
+      And the project is committed
+      And the log "B" gets these decisions:
+        | id   | at         | text  |
+        | B-03 | 2026-11-02 | More. |
+      When the log is checked against the base "HEAD"
+      Then the output does not mention "E-ORPHAN"
+
+    Scenario: A conflict between decisions that were already there at the base is not reported with a base ref
+      Given the log "A" gets these decisions:
+        | id   | at         | text   | supersedes |
+        | A-02 | 2026-11-01 | First. | A-01       |
+        | A-03 | 2026-11-02 | Other. | A-01       |
+      And the project is committed
+      And the log "B" gets these decisions:
+        | id   | at         | text  |
+        | B-02 | 2026-11-03 | More. |
+      When the log is checked against the base "HEAD"
+      Then the output does not mention "W-CONFLICT"
+
+  Scenario: A scenario removed by a later decision is no longer expected from a decision that had two effects
+    Given a project with the header row scenario
+    And the log "S" gets these lines:
+      ```
+      {"v":1,"id":"S-01","kind":"decision","story":"S","at":"2026-10-31","text":"Two scenarios.","effects":[{"op":"adds","scenario":"spec-header-row","fp":"aaaaaaaa"},{"op":"adds","scenario":"spec-gone","fp":"bbbbbbbb"}]}
+      ```
+    And the log "S" gets these decisions:
+      | id   | at         | text       | effect                  |
+      | S-02 | 2026-11-01 | One going. | removes spec-gone       |
+    When the log is checked
+    Then the script exits with status 0
+    And the output does not mention "E-ORPHAN"

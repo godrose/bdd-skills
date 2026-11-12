@@ -11,6 +11,7 @@ Given("a project with the header row scenario", function (this: World) {
 });
 Given("a project with no scenarios", function (this: World) { newProject(this); });
 Given("the decisions folder is missing", function (this: World) { fs.rmSync(path.join(this.dir, "docs/decisions"), { recursive: true, force: true }); });
+Given("the features folder is missing", function (this: World) { fs.rmSync(path.join(this.dir, "features"), { recursive: true, force: true }); });
 
 function writeFeature(world: World, rel: string, text: string): void {
   if (!world.dir) newProject(world);

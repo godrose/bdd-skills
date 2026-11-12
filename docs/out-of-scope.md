@@ -33,3 +33,5 @@
 2026-11-12 | excluded: scenarios for README phrases that readme-order and readme-folded already hold, and for the reconciler and feedback-intake rows | why: a scenario that another covers adds nothing | revisit when: one of those scenarios is removed
 2026-11-12 | excluded: a cross-check that each flag and code named in reconcile.md is accepted by decisions.sh | why: the approach review kept the phrase checks and did not add checks | revisit when: the reconcile text or the script changes
 2026-11-12 | excluded: running a subset of the eval cases or the flow harness on every push | why: they cost money and the approach review did not change them | revisit when: G7 or G12 is worked on
+2026-11-12 | excluded: scenarios for the install, flow harness and eval survivors in the decisions survivors change | why: each needs a look at the code first, and the decisions script was the largest group | revisit when: the next change on the installer or the flow harness
+2026-11-12 | excluded: scenarios for the two equivalent mutants of the decisions script | why: no input can tell the two versions apart | revisit when: the append check is rewritten

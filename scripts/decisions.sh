@@ -458,7 +458,7 @@ SHOW_TAIL=$(cat <<'JQ'
   ($live | map(mine)) as $lm
 | ($lm | map(select(. as $d | any($liveeff[]; .id == $d.rec.id)))) as $agreed
 | ($lm | map(select(. as $d | any($agreed[]; .rec.id == $d.rec.id) | not))) as $left
-| ([$recs[] | select(.rec.resolves | type == "string") | .rec.resolves]) as $resolved
+| ([$recs[] | .rec.resolves | if type == "array" then .[] elif type == "string" then . else empty end]) as $resolved
 | ($recs | map(select(.rec.kind == "open" and .rec.story == $story and (.rec.id as $i | any($resolved[]; . == $i) | not)))) as $open
 | ($decs | map(mine)) as $mine
 | ($mine | map(select($superseded[.rec.id] // false))) as $replaced

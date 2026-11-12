@@ -139,3 +139,36 @@ Feature: The status of a scenario
     When the status of "spec-nope" is asked for
     Then the script exits with status 1
     And the output mentions "not found"
+
+  Scenario: A custom manual-only tag works
+    Given the feature file "s.feature" reads:
+      ```
+      Feature: F
+        @spec-x @by-hand
+        Scenario: X
+          Given x
+      ```
+    When the status of "spec-x" is asked for with the options "--manual-only-tag @by-hand"
+    Then the output is exactly "manual-only"
+
+  Scenario: The default manual-only tag is ignored when another one is given
+    Given the feature file "s.feature" reads:
+      ```
+      Feature: F
+        @spec-x @manual-only
+        Scenario: X
+          Given x
+      ```
+    When the status of "spec-x" is asked for with the options "--manual-only-tag @by-hand"
+    Then the output is exactly "automated"
+
+  Scenario: An unknown scope exits 2
+    Given the feature file "s.feature" reads:
+      ```
+      Feature: F
+        @spec-x
+        Scenario: X
+          Given x
+      ```
+    When the status of "spec-x" is asked for with the options "--scope galaxy"
+    Then the script exits with status 2
