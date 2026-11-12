@@ -233,3 +233,6 @@ Feature: Validating a decision log
     When the log is checked
     Then the script exits with status 1
     And the output mentions "ERROR E-REF"
+
+  Scenario: The project folders of the decision scenarios are gone
+    Then no project folder of the decision scenarios of this run is left in the temp folder

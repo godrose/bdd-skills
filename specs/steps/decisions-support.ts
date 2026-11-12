@@ -19,7 +19,8 @@ export const HEADER_ROW_FEATURE = `Feature: Export
 `;
 
 export function newProject(world: World): void {
-  world.dir = fs.mkdtempSync(path.join(os.tmpdir(), "decisions-"));
+  if (world.dir) fs.rmSync(world.dir, { recursive: true, force: true });
+  world.dir = fs.mkdtempSync(path.join(os.tmpdir(), `decisions-${process.pid}-`));
   fs.mkdirSync(path.join(world.dir, "docs/decisions"), { recursive: true });
   fs.mkdirSync(path.join(world.dir, "features"));
 }
