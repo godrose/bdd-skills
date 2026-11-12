@@ -35,3 +35,5 @@
 2026-11-12 | excluded: running a subset of the eval cases or the flow harness on every push | why: they cost money and the approach review did not change them | revisit when: G7 or G12 is worked on
 2026-11-12 | excluded: scenarios for the install, flow harness and eval survivors in the decisions survivors change | why: each needs a look at the code first, and the decisions script was the largest group | revisit when: the next change on the installer or the flow harness
 2026-11-12 | excluded: scenarios for the two equivalent mutants of the decisions script | why: no input can tell the two versions apart | revisit when: the append check is rewritten
+2026-11-12 | excluded: a project-wide scan for empty Given steps | why: the new Pass E reads only steps reused in this run, as Pass D does | revisit when: G10 is worked on
+2026-11-12 | excluded: an eval of the setup check in bdd:design | why: it needs a model run, and a text test pins the reversed wording and the new label | revisit when: the rule is found not to be followed
