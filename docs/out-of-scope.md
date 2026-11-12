@@ -23,10 +23,11 @@
 2026-11-11 | excluded: new plugin checks beyond tests/test_plugin.sh | why: a migration adds no checks | revisit when: the migration series is done
 2026-11-11 | excluded: a scenario for the install.sh source line (test_plugin.sh line 79) | why: install-fresh-files.feature already runs the installer and checks the source line | revisit when: that scenario is removed
 2026-11-11 | excluded: any change to a file under plugin/ | why: the scenarios read the plugin as it is | revisit when: a check finds a real gap
-2026-11-12 | excluded: deleting tests/test_skills.sh in PR 1 of 3 | why: the file still holds the design, implement, triage, reconcile, init and README checks | revisit when: PR 3 of 3
 2026-11-12 | excluded: new text checks beyond tests/test_skills.sh | why: a migration adds no checks | revisit when: the migration series is done
 2026-11-12 | excluded: scenarios for the three assert_no_added_emdash calls in tests/test_skills.sh | why: the repo-wide em-dash scan reads whole files and covers them | revisit when: that scan is removed
 2026-11-12 | excluded: scenarios for phrases that deliver-shape, plugin-text-rules and plugin-renames-and-text already hold | why: a scenario that another covers adds nothing | revisit when: one of those scenarios is removed
-2026-11-12 | excluded: deleting tests/test_skills.sh in PR 2 of 3 | why: the file still holds the triage, reconcile, init, README and docs checks | revisit when: PR 3 of 3
 2026-11-12 | excluded: scenarios for the plugin note to run /bdd:init and the decisions.sh plugin path in design and implement | why: plugin-text-rules already holds them | revisit when: that scenario is removed
 2026-11-12 | excluded: a mutation run by the agent in PR 2 of 3 | why: the builder runs the mutation check as the red proof | revisit when: the builder asks for it
+2026-11-12 | excluded: a mutation run by the agent in PR 3 of 3 | why: the builder runs the mutation check as the red proof | revisit when: the builder asks for it
+2026-11-12 | excluded: tighter versions of the short triage words (open, change, question, approve) | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-12 | excluded: scenarios for README phrases that readme-order and readme-folded already hold, and for the reconciler and feedback-intake rows | why: a scenario that another covers adds nothing | revisit when: one of those scenarios is removed
