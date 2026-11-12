@@ -1,0 +1,19 @@
+@skills-text
+Feature: The design command gives the generate row no tag filter
+
+  These scenarios read the text of the command. They check what it says and run nothing.
+
+  Decision (2026-11-12): The checks of tests/test_skills.sh move here and none is added. Why: a migration adds no checks.
+  Decision (2026-11-12): The old file reversed an earlier hint that filtered the generate row by the unautomated tag. Why: implement needs the scenario it is implementing, so the hint names the framework setting instead.
+
+  Scenario: The generate row gets no tag filter
+    Given the plugin command "design"
+    Then it contains:
+      | missingSteps                                      |
+      | fail-on-run                                       |
+      | Do not add a tag filter to the generate row       |
+      | defers                                            |
+
+  Scenario: The earlier tag filter is gone
+    Given the plugin command "design"
+    Then it does not contain "excluding the unautomated tag"
