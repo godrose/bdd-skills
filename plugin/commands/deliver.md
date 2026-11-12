@@ -32,7 +32,7 @@ Invoke the **discoverer** skill (`bdd:discover`) with the description. Ask one q
 
 If the behavior already exists, discovery turns the description into scenarios for existing behavior, with the exact values marked "from code". If every agreed example is already covered and passing, say that the change already works and stop after the report.
 
-The result is the **checklist of agreed examples**: a numbered list in plain words (`E1`, `E2` and so on), each marked confirmed. Show it to the product manager.
+The result is the **checklist of agreed examples**: a numbered list in plain words (`E1`, `E2` and so on), each marked confirmed. List what the product manager described or confirmed. An existing scenario that nobody asked about is not an example: leave it out of the checklist. The report counts it on the Regression line. An agreed example that an existing scenario already covers stays an example. Show it to the product manager.
 
 **Do not go on until the product manager has approved the checklist.** This is the first approval. If the session ends before the examples are approved, nothing is written.
 
