@@ -15,11 +15,14 @@ Given("the harness runs deliver on fixture {string} and story {string}", functio
   f.story = story;
 });
 
-Given("a records file {string} in the CSV fixture that holds:", function (this: World, rel: string, text: string) {
+function dataFile(world: World, rel: string, text: string): void {
   const file = path.join(CSV_PROJECT, rel);
   fs.writeFileSync(file, text + "\n");
-  flow(this).fixtureFiles.push(file);
-});
+  flow(world).fixtureFiles.push(file);
+}
+
+Given("a records file {string} in the CSV fixture that holds:", function (this: World, rel: string, text: string) { dataFile(this, rel, text); });
+Given("a filter file {string} in the CSV fixture that holds:", function (this: World, rel: string, text: string) { dataFile(this, rel, text); });
 
 function exportScript(world: World, args: string[]): void {
   const r = spawnSync("node", ["src/show.js", ...args], { cwd: CSV_PROJECT, encoding: "utf8" });
@@ -29,3 +32,4 @@ function exportScript(world: World, args: string[]): void {
 
 When("the export script of the CSV fixture is run", function (this: World) { exportScript(this, []); });
 When("the export script of the CSV fixture is run on {string}", function (this: World, rel: string) { exportScript(this, [rel]); });
+When("the export script of the CSV fixture is run on {string} with the filter {string}", function (this: World, rel: string, filter: string) { exportScript(this, [rel, filter]); });

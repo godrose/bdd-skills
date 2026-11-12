@@ -7,6 +7,7 @@ Feature: The CSV export fixture holds the acceptance example of issue 41
   Decision (2026-11-12): The current filter is the file data/filter.json, and show.js prints the file that Export downloads for it. Why: step 5 of deliver looks at the real result, and the export has no screen here.
   Decision (2026-11-12): The persona is approver plus one answer, headers only when no record matches. Why: the issue gives that answer, and a run should not depend on a small model inventing it.
   Decision (2026-11-12): The scenarios run the harness against the fake claude and the fake npm, and the fixture project with node. Why: no login and no network, as for fixture c. The first real run needs the network once for the runner.
+  Decision (2026-11-12): The script takes the filter file as a second argument under data/. Why: a real run of deliver showed that the assistant could not look at a filter that matches nothing without editing the sample data, and the harness already allows `node src/show.js data/*`.
 
   Scenario: The fixture has what the harness needs
     Then these files exist:
@@ -63,6 +64,29 @@ Feature: The CSV export fixture holds the acceptance example of issue 41
 
   Scenario: The export script refuses a file outside the data folder
     When the export script of the CSV fixture is run on "../../../package.json"
+    Then the run fails
+    And the output mentions "data"
+
+  Scenario: The export script reads the filter file it is given
+    Given a records file "data/_t.json" in the CSV fixture that holds:
+      """
+      [{"id":9,"name":"Emma","status":"open"}]
+      """
+    And a filter file "data/_f.json" in the CSV fixture that holds:
+      """
+      {"status":"closed"}
+      """
+    When the export script of the CSV fixture is run on "data/_t.json" with the filter "data/_f.json"
+    Then the script exits with status 0
+    And the output mentions "id,name,status"
+
+  Scenario: A filter file that does not exist is an error
+    When the export script of the CSV fixture is run on "data/records.json" with the filter "data/none.json"
+    Then the run fails
+    And the output mentions "none.json"
+
+  Scenario: The export script refuses a filter file outside the data folder
+    When the export script of the CSV fixture is run on "data/records.json" with the filter "../../../package.json"
     Then the run fails
     And the output mentions "data"
 
