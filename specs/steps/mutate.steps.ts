@@ -30,6 +30,10 @@ Given("the breaks file holds:", function (this: World, table: DataTable) {
   const lines = table.rows().map((row) => row.filter((c, i) => i < 3 || c !== "").join("\t"));
   fs.writeFileSync(b.breaks, [...b.extra, ...lines].join("\n") + "\n");
 });
+Given("the breaks file is written with Windows line endings", function (this: World) {
+  const b = box(this);
+  fs.writeFileSync(b.breaks, fs.readFileSync(b.breaks, "utf8").replace(/\n/g, "\r\n"));
+});
 Given("the breaks file also has a comment line and a blank line before its breaks", function (this: World) {
   box(this).extra = ["# a comment", ""];
 });

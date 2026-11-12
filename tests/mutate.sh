@@ -55,7 +55,7 @@ if ! (cd "$WORK/copy1" && eval "$CMD") > "$WORK/baseline.log" 2>&1; then
   exit 2
 fi
 
-grep -v -e '^[[:space:]]*$' -e '^#' "$FILE" | awk -v w="$WORK" -v n="$JOBS" '{ print NR "\t" $0 > (w "/jobs" ((NR - 1) % n + 1)) }'
+tr -d '\r' < "$FILE" | grep -v -e '^[[:space:]]*$' -e '^#' | awk -v w="$WORK" -v n="$JOBS" '{ print NR "\t" $0 > (w "/jobs" ((NR - 1) % n + 1)) }'
 
 run_job() { # <job number>
   local j="$1" copy="$WORK/copy$1" idx name file sub flag target

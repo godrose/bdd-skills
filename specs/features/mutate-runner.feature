@@ -102,6 +102,16 @@ Feature: The mutation runner breaks a copy of the project and says which breaks 
     Then the script exits with status 0
     And the output mentions "caught: 1"
 
+  Scenario: A breaks file with Windows line endings is read the same
+    Given a sandbox project whose test passes while code.txt holds GOOD
+    And the breaks file holds:
+      | name | file     | substitution      | mark       |
+      | same | code.txt | s/GOOD/GOOD GOOD/ | equivalent |
+    And the breaks file is written with Windows line endings
+    When the mutation runner is run
+    Then the script exits with status 0
+    And the output mentions "(equivalent, expected)"
+
   Scenario: Several jobs give the lines in the order of the file
     Given a sandbox project whose test passes while code.txt holds GOOD
     And the breaks file holds:
