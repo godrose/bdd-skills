@@ -2,6 +2,29 @@
 
 Releases are tagged `vX.Y.Z`. Before `1.0.0` the plugin can still change in ways that need an edit to your config. The notes say when.
 
+## 0.7.0 (2026-11-12)
+
+A new command, `/bdd:deliver`, and changes to `discover`, `design` and `implement`. Nothing in your `bdd-config.md` needs to change.
+
+### What you will notice
+
+- **`/bdd:deliver` (new).** One conversation from a plain description to verified scenarios, for a product manager with or without a developer watching. It runs discover, design, implement and run for you and asks for two approvals: the checklist of agreed examples, then the scenarios. It looks at the real result before it reports, and ends with a report in plain words. A product decision is asked at once. A technical stop is parked and reported as a plain risk, with a line for the developer. The audit table goes under a "For the developer" line.
+- **`/bdd:discover` looks first.** Before the first question it searches the scenarios, steps, screens and code for the story's words, and says in plain words what it found, or that it found nothing and which words it tried. It reads the out-of-scope list and asks where a shown value comes from. It asks one question per message. It offers a Scenario Outline against separate scenarios by those names.
+- **`/bdd:design` checks more.** It checks that a scenario asserts what its title claims (the audit table gains a "Claims" column). It checks the setup a scenario depends on: a reused `Given` that passes when its prerequisite is missing is flagged, and a prerequisite that cannot be checked is listed under "Assumed, not checked". This replaces the old advice to add an informational Background step for such prerequisites.
+- **`/bdd:implement` scopes locators.** It no longer settles a locator that matches several elements with `.first()`. It also reports an open product decision in a fixed shape (Open decision, Found, Options), so a caller can turn it into one question.
+- **Out-of-scope list.** Exclusions and removals go in `docs/out-of-scope.md`, or the file named by the new optional row `out_of_scope_file`. Without the row the default is used, and a missing file means nothing is ruled out.
+
+### Project-file installs
+
+- Re-run `install.sh` to get `bdd-deliver` and the changed commands. A file of your own at `.claude/commands/bdd-deliver.md` that is not an installer copy (no "# Source:" line) is skipped and left as it is. Rename it to keep it, then run `install.sh` again.
+- `bdd-config.md` is never overwritten. `install.sh` prints a note for each newer row your file lacks, with its default. No row is required.
+
+### Repo
+
+- The tests are scenarios, about 670 in `specs/features` with steps in `specs/steps`. The bash tests are gone. `tests/mutate.sh` breaks a copy of the code on purpose to show which changes the tests miss. It runs by hand.
+- `flows/run.sh` plays a whole `discover` or `deliver` conversation in a real headless session, with a model as the product manager, and counts rules on the transcript. It runs by hand and not in CI.
+- Known gaps: G11 (no live run of the design title check and the discover first step) is closed by the maintainer's decision, because the scripted runs count. G7 and G12 stay open.
+
 ## 0.6.0 (2026-11-08)
 
 The plugin now passes the directory's policy for organizations that are not Verified. That policy allows no pre-approved tools beyond Read, Grep, Glob and LS, and no scripts or fixtures in the plugin folder. Two things change for marketplace users. Nothing in your `bdd-config.md` needs to change.
