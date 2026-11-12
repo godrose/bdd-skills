@@ -23,3 +23,7 @@
 2026-11-11 | excluded: new plugin checks beyond tests/test_plugin.sh | why: a migration adds no checks | revisit when: the migration series is done
 2026-11-11 | excluded: a scenario for the install.sh source line (test_plugin.sh line 79) | why: install-fresh-files.feature already runs the installer and checks the source line | revisit when: that scenario is removed
 2026-11-11 | excluded: any change to a file under plugin/ | why: the scenarios read the plugin as it is | revisit when: a check finds a real gap
+2026-11-12 | excluded: deleting tests/test_skills.sh in PR 1 of 3 | why: the file still holds the design, implement, triage, reconcile, init and README checks | revisit when: PR 3 of 3
+2026-11-12 | excluded: new text checks beyond tests/test_skills.sh | why: a migration adds no checks | revisit when: the migration series is done
+2026-11-12 | excluded: scenarios for the three assert_no_added_emdash calls in tests/test_skills.sh | why: the repo-wide em-dash scan reads whole files and covers them | revisit when: that scan is removed
+2026-11-12 | excluded: scenarios for phrases that deliver-shape, plugin-text-rules and plugin-renames-and-text already hold | why: a scenario that another covers adds nothing | revisit when: one of those scenarios is removed
