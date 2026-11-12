@@ -1,0 +1,3 @@
+# Breaks of the cleanup in the decision log steps. Run with:
+# tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @decisions' tests/mutations/decisions-steps.tsv
+project replaced without removing the old one	specs/steps/decisions-support.ts	s/  if \(world\.dir\) fs\.rmSync\(world\.dir, \{ recursive: true, force: true \}\);\r?\n//

@@ -143,6 +143,7 @@ Feature: The mutation runner breaks a copy of the project and says which breaks 
       | mutate  |
       | deliver-text |
       | discover-text |
+      | decisions-steps |
 
   Scenario: The sandboxes of the scenarios above are gone
     Then no sandbox of the mutation scenarios of this run is left in the temp folder

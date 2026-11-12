@@ -1,8 +1,14 @@
 import { Then, type DataTable } from "@cucumber/cucumber";
 import assert from "node:assert";
 import fs from "node:fs";
+import os from "node:os";
 import type { World } from "./support";
 import { fingerprintOf, git, logPath, runScript, section } from "./decisions-support";
+
+Then("no project folder of the decision scenarios of this run is left in the temp folder", function () {
+  const left = fs.readdirSync(os.tmpdir()).filter((n) => n.startsWith(`decisions-${process.pid}-`));
+  assert.deepStrictEqual(left, [], "left behind: " + left.join(", "));
+});
 
 Then("the script exits with status {int}", function (this: World, status: number) { assert.strictEqual(this.status, status, this.output); });
 Then("the output has {int} lines mentioning {string}", function (this: World, count: number, text: string) {
