@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["specs/steps/**/*.ts"]
+  "include": ["specs/steps/**/*.ts", "flows/*.ts"]
 }

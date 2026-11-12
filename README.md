@@ -343,7 +343,7 @@ Contributions from individuals and from teams are welcome. No sign-off form is n
 - This repo uses its own method. A larger change (a new command, a config row, anything in install) starts with a discovery pack in `docs/discovery/`. A small fix, rename or copy edit does not. `CLAUDE.md` has the details.
 - Install the scenario runner once with `npm ci`. Run `bash tests/run.sh` before you open a pull request, and `bash tests/ci_local.sh` before you push: it runs what CI runs and names the step that failed. A new test must fail before your change and pass after it.
 - To see whether the tests notice a change, break the code on purpose with `tests/mutate.sh` (usage in its header). It breaks copies and never your checkout, and it runs by hand.
-- To watch a whole `discover` or `deliver` conversation in a real session, use `flows/run.sh` (see `flows/README.md`). It runs by hand and uses your plan limit.
+- To watch a whole `discover` or `deliver` conversation in a real session, use `flows/run.sh` (see `flows/README.md`). It runs by hand, after `npm ci`, and uses your plan limit.
 - Try the plugin from a clone with `claude --plugin-dir <clone>/plugin`. Check it with `claude plugin validate plugin` and run its evals with `bash evals/run.sh`.
 - Fill in the pull request template.
 - What the plugin does not check is listed in [`docs/known-gaps.md`](docs/known-gaps.md). When you close a gap, remove its entry in the same change.

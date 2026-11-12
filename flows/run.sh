@@ -10,11 +10,14 @@ FLOWS="$ROOT/flows"
 CLAUDE="${CLAUDE_BIN:-claude}"
 NPM="${NPM_BIN:-npm}"
 CACHE="${FLOWS_CACHE:-$FLOWS/results/cache}"
+TSX="$ROOT/node_modules/.bin/tsx"
 COMMAND=discover; TURNS=""; RUNS=3; FIXTURE=""; PERSONA=""; OUT=""; STORY=""
+
+[ -x "$TSX" ] || { echo "the flow scripts need the installed tools. Run npm ci first." >&2; exit 1; }
 
 if [ "$1" = "--compare" ]; then
   [ -f "$2" ] && [ -f "$3" ] || { echo "usage: flows/run.sh --compare REPORT REPORT (both must exist)" >&2; exit 2; }
-  exec perl "$FLOWS/compare.pl" "$2" "$3"
+  exec "$TSX" "$FLOWS/compare.ts" "$2" "$3"
 fi
 
 while [ $# -gt 0 ]; do
@@ -103,8 +106,8 @@ for i in $(seq 1 "$RUNS"); do
   # The real test output, taken by the harness, is what the report is checked against.
   [ "$COMMAND" != deliver ] || [ "$turns" -eq 0 ] || (cd "$proj" && "$NPM" test > "$rd/test-output.txt" 2>&1)
   diff <(manifest "$FX/project") <(manifest "$proj") | grep '^[<>]' | awk '{print $3}' | sed 's|^\./||' | sort -u > "$rd/project-diff.txt"
-  perl "$FLOWS/rules.pl" "$rd" "$COMMAND" > "$rd/rules.tsv"
+  "$TSX" "$FLOWS/rules.ts" "$rd" "$COMMAND" > "$rd/rules.tsv"
 done
 
-perl "$FLOWS/report.pl" "$BASE" "$FIXTURE" "$RUNS" "$TURNS" "$COMMAND" "$STORY" > "$BASE/report.md"
+"$TSX" "$FLOWS/report.ts" "$BASE" "$FIXTURE" "$RUNS" "$TURNS" "$COMMAND" "$STORY" > "$BASE/report.md"
 echo "Report: $BASE/report.md"

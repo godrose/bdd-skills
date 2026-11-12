@@ -42,6 +42,40 @@ Feature: The options of the harness decide what the model is asked and allowed
     Given the file "flows/run.sh"
     Then it contains "TURNS=12"
 
+  Scenario: The flow scripts are TypeScript and no Perl script is left in flows
+    Given the repository
+    Then the repo has these files:
+      | flows/rules.ts   |
+      | flows/report.ts  |
+      | flows/compare.ts |
+    And the repo has none of these paths:
+      | flows/rules.pl   |
+      | flows/report.pl  |
+      | flows/compare.pl |
+
+  Scenario: Without the installed tools the harness stops at once and says to run npm ci
+    Given the assistant says the checklist and then the scenarios
+    And the assistant ends with the clean report
+    And a copy of the harness where npm ci has not run
+    When the harness of the copy plays the conversation
+    Then the run fails
+    And the output mentions "npm ci"
+    And no session was started
+
+  Scenario: Without the installed tools a report comparison stops and says to run npm ci
+    Given a copy of the harness where npm ci has not run
+    And a first report that reads:
+      """
+      | rule | 1 of 1 |
+      """
+    And a second report that reads:
+      """
+      | rule | 1 of 1 |
+      """
+    When the two reports are compared by the harness of the copy
+    Then the run fails
+    And the output mentions "npm ci"
+
   Scenario: The README documents the deliver option
     Given the file "flows/README.md"
     Then it contains "--command deliver"

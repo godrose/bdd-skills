@@ -129,3 +129,13 @@ export function play(world: World, harness: string = path.join(FLOWS, "run.sh"))
 
 export const readReport = (world: World): string => fs.readFileSync(path.join(baseDir(flow(world)), "report.md"), "utf8");
 export const readRun =(world: World, name: string): string => fs.readFileSync(path.join(runDir(flow(world)), name), "utf8");
+
+// A copy of the harness outside the repo. Its parent folder is the root the harness finds its tools in, so the tools are linked in unless the scenario is about their absence.
+export function copyHarness(world: World, name: string, installed = true): string {
+  const f = flow(world);
+  const copy = path.join(f.tmp, name, "flows");
+  fs.cpSync(FLOWS, copy, { recursive: true, filter: (src) => !src.startsWith(path.join(FLOWS, "results")) });
+  if (installed) fs.symlinkSync(path.join(ROOT, "node_modules"), path.join(f.tmp, name, "node_modules"));
+  f.harness = path.join(copy, "run.sh");
+  return copy;
+}
