@@ -54,6 +54,31 @@ A fresh checkout without `npm ci` that runs `tests/mutate.sh` sees one line: "ru
 - No new status in the runner output.
 - The plugin folder and the flow scripts: unchanged.
 
+## Result of the comparison (decision 3)
+
+Done before the Perl line was deleted: the 84 breaks applied to their real files by `perl -0pi` and by `tests/apply-break.ts`, and the two broken files compared.
+
+- 81 were identical at the first try.
+- 3 differed. In each the break, and not the script, depended on Perl. All three were rewritten for the script, and the comparison was repeated:
+  - `ticket digits not required` (evals): the replacement `\@TKT-` relied on Perl dropping the backslash before `@`. Rewritten as `@TKT-`. Now identical.
+  - `baseline failure status` (mutate): the replacement `${1}1` is Perl-only syntax. Rewritten with a lookbehind and the replacement `1`. Now identical.
+  - `carriage returns kept` (mutate): the Perl version never applied its first substitution (`'\r'` in a pattern is a carriage return, and the file holds a backslash and an r) and its second replacement held `
+- A break that differs between Perl and JavaScript and is rewritten could change what it tests. The runs of `tests/mutate.sh` on every changed file are the check: a break that was caught before must be caught after, and the three marked equivalent stay equivalent.
+- Files with odd bytes: the script reads and writes text. A text file that is not valid UTF-8 would change on a round trip. The comparison in E1 covers the files the breaks name.
+
+## Not proven by this change
+
+That the breaks are good ones. This change proves only that they break the same text as before.
+` and `$FILE`, which Perl read as variables, so the broken file was garbled and was caught only because it no longer ran. Rewritten as one substitution that does what the break names. It is the one break whose broken file differs from the Perl one, on purpose, and it is caught.
+- A search found the break files and the script as the only places that named Perl. None is left in `tests/`, `specs/`, `flows/` or the docs outside the packs.
+
+## Result of the breaks (decision 8)
+
+- `tests/mutations/apply-break.tsv`: 22 breaks of the new script. 21 caught, 1 equivalent survives (rewriting a file with the bytes it already has). 0 to look at.
+- `tests/mutations/mutate.tsv`: 14 breaks, 3 of them new (the tools check, the hidden bad substitution, the dropped reason). All caught, including the two rewritten ones.
+- `tests/mutations/evals.tsv`: 11 breaks, all caught, including the rewritten one.
+- The new scenarios failed with the script moved away (34 failures in the run), then passed.
+
 ## Risks
 
 - A break that differs between Perl and JavaScript and is rewritten could change what it tests. The runs of `tests/mutate.sh` on every changed file are the check: a break that was caught before must be caught after, and the three marked equivalent stay equivalent.

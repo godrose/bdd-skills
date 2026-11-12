@@ -1,0 +1,25 @@
+# Breaks of tests/apply-break.ts, the script that applies a break. Run with:
+# tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @apply-break' tests/mutations/apply-break.tsv
+# One break is equivalent: rewriting a file with the bytes it has shows in no test.
+missing file not refused	tests/apply-break.ts	s~if \(!fs\.existsSync\(file\)\) fail\([^\n]*\n~~
+start letter not checked	tests/apply-break.ts	s~sub\[0\] !== "s" \|\| ~~
+letter delimiter allowed	tests/apply-break.ts	s~ \|\| /\[A-Za-z0-9\\s\\\\\]/\.test\(sub\[1\]\)~~
+escaped delimiter ends the part	tests/apply-break.ts	s~if \(c === "\\\\" && i \+ 1 < sub\.length\)~if (false)~
+extra delimiter read as flags end	tests/apply-break.ts	s~ && parts\.length < 3\) \{ parts~) { parts~
+unfinished substitution accepted	tests/apply-break.ts	s~if \(parts\.length < 3\) fail~if (false) fail~
+flag g unknown	tests/apply-break.ts	s~"gims"~"ims"~
+flag i unknown	tests/apply-break.ts	s~"gims"~"gms"~
+flag m unknown	tests/apply-break.ts	s~"gims"~"gis"~
+flag s unknown	tests/apply-break.ts	s~"gims"~"gim"~
+bad pattern reason changed	tests/apply-break.ts	s~not a valid pattern~invalid~
+exit status one	tests/apply-break.ts	s~process\.exit\(2\)~process.exit(1)~
+newline escape not read	tests/apply-break.ts	s~n === "n" \? "\\n"~n === "n" ? "n"~
+tab escape not read	tests/apply-break.ts	s~n === "t" \? "\\t"~n === "t" ? "t"~
+backslash escape not read	tests/apply-break.ts	s~n === "\\\\" \|\| ~~
+dollar escape not read	tests/apply-break.ts	s~ \|\| n === "\$"~~
+delimiter escape not read	tests/apply-break.ts	s~ \|\| n === delim \?~ ?~
+capture one not read	tests/apply-break.ts	s~\[1-9\]~[2-9]~
+capture off by one	tests/apply-break.ts	s~captures\[p - 1\]~captures[p]~
+captures start at the match	tests/apply-break.ts	s~args\.slice\(1,~args.slice(0,~
+file read as latin1	tests/apply-break.ts	s~fs\.readFileSync\(file, "utf8"\)~fs.readFileSync(file, "latin1")~
+file always rewritten	tests/apply-break.ts	s~if \(after !== before\) ~~	equivalent

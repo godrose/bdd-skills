@@ -7,7 +7,10 @@ exit status ignored	tests/mutate.sh	s/\[ "\$bad" -eq 0 \]\n$/true\n/
 stale mark not reported	tests/mutate.sh	s/caught: remove the mark\)/caught)/
 output not sorted	tests/mutate.sh	s/ \| sort -n \| / | /
 comments not skipped	tests/mutate.sh	s/ -e '\^#'//
-baseline failure status	tests/mutate.sh	s/(tail -8 "\$WORK\/baseline.log" >&2\n  exit )2/${1}1/
+baseline failure status	tests/mutate.sh	s/(?<=tail -8 "\$WORK\/baseline.log" >&2\n  exit )2/1/
 break applied to the root	tests/mutate.sh	s/target="\$copy\/\$file"/target="\$ROOT\/\$file"/
-carriage returns kept	tests/mutate.sh	s/tr -d '\r' < "\$FILE" \| grep/grep/; s/grep -v -e '\^\[\[:space:\]\]\*\$' -e '\^#' \| awk/grep -v -e '^[[:space:]]*$' -e '^#' "$FILE" | awk/
+carriage returns kept	tests/mutate.sh	s/tr -d '\\r' < "\$FILE" \| (grep -v -e '\^\[\[:space:\]\]\*\$' -e '\^#') \| awk/$1 "$FILE" | awk/
 sandbox cleanup removed	specs/steps/mutate.steps.ts	s/  fs\.rmSync\(b\.root, \{ recursive: true, force: true \}\);\r?\n//
+tools check removed	tests/mutate.sh	s~\[ -x "\$TSX" \] \|\| [^\n]*\n~~
+bad substitution hidden	tests/mutate.sh	s~if ! err=\$\("\$TSX" "\$APPLY" "\$target" "\$sub" 2>&1\); then~if false; then~
+reason of a bad substitution dropped	tests/mutate.sh	s~NOCHANGE  %s  \(%s\)\\n' "\$idx" "\$name" "\$err"~NOCHANGE  %s\\n' "$idx" "$name"~
