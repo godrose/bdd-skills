@@ -65,6 +65,7 @@ export type Flow = {
   turns: number | null;
   relativeOut: boolean;
   noClaude: boolean;
+  noTools: boolean;
 };
 
 export function flow(world: World): Flow {
@@ -80,7 +81,7 @@ export function flow(world: World): Flow {
     world.flow = {
       tmp, messages: [], replies: new Map(), write: null, testOutput: TEST_OUTPUT.passed, installFails: false, plays: 0,
       scriptDir: "", outDir: "", harness: path.join(FLOWS, "run.sh"), fixtureFiles: [], scenarioCount: 0, reports: [],
-      command: "deliver", fixture: "c", story: "1", turns: null, relativeOut: false, noClaude: false,
+      command: "deliver", fixture: "c", story: "1", turns: null, relativeOut: false, noClaude: false, noTools: false,
     };
   }
   return world.flow;
@@ -119,6 +120,7 @@ export function play(world: World, harness: string = path.join(FLOWS, "run.sh"))
   };
   if (f.installFails) env.FAKE_NPM_FAIL = "1";
   if (f.noClaude) env.CLAUDE_BIN = "no-such-claude-binary";
+  env.TSX_BIN = toolsOf(f);
   const args = [harness, "--command", f.command, "--fixture", f.fixture, ...(f.story ? ["--story", f.story] : []), "--runs", "1"];
   if (f.turns !== null) args.push("--turns", String(f.turns));
   args.push("--out", f.relativeOut ? path.basename(f.outDir) : f.outDir);
@@ -129,3 +131,16 @@ export function play(world: World, harness: string = path.join(FLOWS, "run.sh"))
 
 export const readReport = (world: World): string => fs.readFileSync(path.join(baseDir(flow(world)), "report.md"), "utf8");
 export const readRun =(world: World, name: string): string => fs.readFileSync(path.join(runDir(flow(world)), name), "utf8");
+
+// The rule scripts run with the tsx of the repo, also from a copy of the harness. The harness takes it from TSX_BIN.
+export const TSX = path.join(ROOT, "node_modules/.bin/tsx");
+export const toolsOf = (f: Flow): string => (f.noTools ? "no-such-tsx-binary" : TSX);
+
+// A copy of the harness outside the repo, so that a scenario can change its files.
+export function copyHarness(world: World, name: string): string {
+  const f = flow(world);
+  const copy = path.join(f.tmp, name, "flows");
+  fs.cpSync(FLOWS, copy, { recursive: true, filter: (src) => !src.startsWith(path.join(FLOWS, "results")) });
+  f.harness = path.join(copy, "run.sh");
+  return copy;
+}

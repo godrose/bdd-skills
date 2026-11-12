@@ -7,6 +7,7 @@ bash flows/run.sh --fixture a            # something to find: one scenario, one 
 bash flows/run.sh --fixture b --runs 3   # nothing to find: no scenarios and no screens
 ```
 
+- Run `npm ci` once first. The scripts that count the rules and write the report are TypeScript (`rules.ts`, `report.ts`, `compare.ts`), and `run.sh` stops with one line if they are not installed.
 - Run it by hand. It starts real sessions and uses your plan's limit. It is not part of `tests/run.sh` and not in the nightly.
 - Options: `--runs` (default 3), `--turns` (cap, default 12), `--persona pm|founder`, `--out DIR`. Results go to `flows/results/`, which git ignores.
 - The run folder holds every message (`turn-NN-assistant.txt`, `turn-NN-pm.txt`), `meta.json`, `rules.tsv` and a copy of the project.

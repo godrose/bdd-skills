@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { ROOT, type World } from "./support";
-import { FIXTURE_PROJECT, FLOWS, MESSAGES, TEST_OUTPUT, cacheDir, flow, npmLog, play, runDir } from "./flow-support";
+import { FIXTURE_PROJECT, FLOWS, MESSAGES, TEST_OUTPUT, TSX, cacheDir, copyHarness, flow, npmLog, play, runDir, toolsOf } from "./flow-support";
 
 After(function (this: World) {
   if (this.flow) fs.rmSync(this.flow.tmp, { recursive: true, force: true });
@@ -37,13 +37,12 @@ Given("an empty cache for the installed runner", function (this: World) {
 Given("the install of the runner fails", function (this: World) { flow(this).installFails = true; });
 Given("the conversation has been played once", function (this: World) { play(this); });
 
+Given("the installed tools of the harness are missing", function (this: World) { flow(this).noTools = true; });
+
 // A copy of the harness outside the repo, so that its lockfile can change.
 Given("the lockfile of the fixture is changed in a copy of the harness", function (this: World) {
-  const f = flow(this);
-  const copy = path.join(f.tmp, "lk/flows");
-  fs.cpSync(FLOWS, copy, { recursive: true, filter: (src) => !src.startsWith(path.join(FLOWS, "results")) });
+  const copy = copyHarness(this, "lk");
   fs.appendFileSync(path.join(copy, "fixtures/c/project/package-lock.json"), '{"x":1}\n');
-  f.harness = path.join(copy, "run.sh");
 });
 
 Given("a loans file {string} in the fixture that holds:", function (this: World, rel: string, text: string) {
@@ -72,7 +71,7 @@ function compare(world: World, second: string): void {
   const f = flow(world);
   const first = path.join(f.tmp, "first.md");
   fs.writeFileSync(first, f.reports[0]);
-  const r = spawnSync("bash", [path.join(FLOWS, "run.sh"), "--compare", first, second], { encoding: "utf8" });
+  const r = spawnSync("bash", [path.join(FLOWS, "run.sh"), "--compare", first, second], { encoding: "utf8", env: { ...process.env, TSX_BIN: toolsOf(f) } });
   world.status = r.status;
   world.output = (r.stdout ?? "") + (r.stderr ?? "");
 }
@@ -103,7 +102,7 @@ When("the rules are counted on a run folder with no saved test output", function
   const rd = runDir(f);
   fs.mkdirSync(rd, { recursive: true });
   f.messages.forEach((m, i) => fs.writeFileSync(path.join(rd, `turn-${String(i + 1).padStart(2, "0")}-assistant.txt`), m + "\n"));
-  const r = spawnSync("perl", [path.join(FLOWS, "rules.pl"), rd, f.command], { encoding: "utf8" });
+  const r = spawnSync(TSX, [path.join(FLOWS, "rules.ts"), rd, f.command], { encoding: "utf8" });
   fs.writeFileSync(path.join(rd, "rules.tsv"), r.stdout ?? "");
   this.status = r.status;
   this.output = (r.stdout ?? "") + (r.stderr ?? "");

@@ -1,7 +1,7 @@
 @flow-discover
 Feature: The discover rules read the messages the way the product manager would
 
-  Decision (2026-11-12): Added from the mutation survivors of the discover harness. Why: each scenario here fails when the matching line of `flows/rules.pl`, `flows/run.sh` is broken.
+  Decision (2026-11-12): Added from the mutation survivors of the discover harness. Why: each scenario here fails when the matching line of `flows/rules.ts`, `flows/run.sh` is broken.
   Decision (2026-11-12): No scenario for a "Not ready" that the rule does not know, or for a command name with an underscore. Why: no input separates the two versions, so no scenario can fail.
 
   Decision (2026-11-12): The look-first rule also accepts an opening that says what the assistant did to look, such as "I ran", "I looked", "I checked", "I read" or "I searched". Why: a real run of deliver opened with "I ran the real export ... it exported all 4 records", which is a finding before the question, and the rule broke because the message had none of the older phrases. The rule still breaks when the question comes first.

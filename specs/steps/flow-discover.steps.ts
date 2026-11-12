@@ -4,7 +4,7 @@ import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
 import { ROOT, type World } from "./support";
-import { FLOWS, baseDir, flow, readReport, readRun, runDir } from "./flow-support";
+import { FLOWS, baseDir, copyHarness, flow, readReport, readRun, runDir } from "./flow-support";
 
 const OPENING = `What exists: one scenario covers part of it.
 Is that right?`;
@@ -31,16 +31,13 @@ Given("no claude is on the path", function (this: World) { flow(this).noClaude =
 
 // A copy of the harness outside the repo, whose text fixtures end their lines with CRLF, as a clone with autocrlf does.
 Given("the fixture text files of a copy of the harness have Windows line endings", function (this: World) {
-  const f = flow(this);
-  const copy = path.join(f.tmp, "crlf/flows");
-  fs.cpSync(FLOWS, copy, { recursive: true, filter: (src) => !src.startsWith(path.join(FLOWS, "results")) });
+  const copy = copyHarness(this, "crlf");
   for (const name of fs.readdirSync(path.join(copy, "fixtures"))) {
     for (const file of ["persona.txt", "story.txt"]) {
       const p = path.join(copy, "fixtures", name, file);
       if (fs.existsSync(p)) fs.writeFileSync(p, fs.readFileSync(p, "utf8").replace(/\r?\n/g, "\r\n"));
     }
   }
-  f.harness = path.join(copy, "run.sh");
 });
 
 const files = (dir: string): string[] =>

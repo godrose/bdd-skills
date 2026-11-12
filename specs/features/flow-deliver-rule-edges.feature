@@ -3,7 +3,7 @@ Feature: The deliver rules read the report the way the product manager would
 
   The rules are counted on the saved transcript. These scenarios pin the edges that the older ones leave open: what counts as a developer line, which changes are allowed, how a range of examples is read, and which test counts make the report suspect.
 
-  Decision (2026-11-12): Added from the mutation survivors of the deliver harness. Why: each scenario here fails when the matching line of `flows/rules.pl` is broken.
+  Decision (2026-11-12): Added from the mutation survivors of the deliver harness. Why: each scenario here fails when the matching line of `flows/rules.ts` is broken.
   Decision (2026-11-12): The words of the report title and of the compare header are not pinned. Why: they are wording. No rule reads them.
 
   Rule: A developer line may name files and code

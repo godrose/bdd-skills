@@ -1,39 +1,39 @@
-# Breaks of the flow harness (flows/rules.pl and flows/run.sh). Run with:
+# Breaks of the flow harness (flows/rules.ts and flows/run.sh). Run with:
 # tests/mutate.sh --jobs 4 --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags "@flow-deliver or @flow-discover"' tests/mutations/flows.tsv
-# Three breaks are equivalent: no input tells them from the real code.
-dev block regex	flows/rules.pl	s/\$t =~ s\/\^\[ \\t\*_#\]\*For the developer[^;]*; //
-dev note regex	flows/rules.pl	s/\$t =~ s\/\^\[ \\t\*_#-\]\*Developer note:\.\*\?\(\?:\\n\[ \\t\]\*\\n\|\\z\)\/\/gsmi; //
-dev inline regex	flows/rules.pl	s/ \$t =~ s\/For the developer:\[\^\\n\]\*\/\/gi;//
-oos not allowed	flows/rules.pl	s/\|\^docs\/\(\?:out-of-scope\\\.md\|decisions\/\)//
-src not allowed	flows/rules.pl	s/\(\?:features\|steps\|src\|data\)/(?:features|steps|data)/
-data not allowed	flows/rules.pl	s/\(\?:features\|steps\|src\|data\)/(?:features|steps|src)/
-decisions not allowed	flows/rules.pl	s/out-of-scope\\\.md\|decisions\//out-of-scope\\.md/
-asks approv only	flows/rules.pl	s/\(approv\|go-ahead\|go ahead\)/(approv)/
-ranges not read	flows/rules.pl	s/\(\?:-\|to\)/(?:-)/
-range hyphen not read	flows/rules.pl	s/\(\?:-\|to\)/(?:to)/
-range not read at all	flows/rules.pl	s/while \(\$sec =~ \/\\bE\(\\d\+\)\\s\*\(\?:-\|to\)\\s\*E\?\(\\d\+\)\\b\/g\)/while (0)/
-missing test output allowed	flows/rules.pl	s/row\("never-reported-passed", 1,/row("never-reported-passed", 0,/
-look-first drops already	flows/rules.pl	s/\|already\|/|/
-look-first drops what exists	flows/rules.pl	s/what exists\|//
-look-first drops what i found	flows/rules.pl	s/what i found\|//
-look-first drops found nothing	flows/rules.pl	s/found nothing\|//
-failed status not read	flows/rules.pl	s/\(passed\|failed\|couldn't/(passed|couldn't/
-could not not read	flows/rules.pl	s/\|could not be checked\)\/i/)\/i/
-plain-words ignores paths	flows/rules.pl	s/ \|\| \$t =~ m\{\[\\w\.-\]\+\(\?:\/\[\\w\.-\]\+\)\+\\\.\\w\{1,5\}\\b\}//
-plain-words ignores file names	flows/rules.pl	s/ \|\| \$t =~ \/\\b\[\\w-\]\+\\\.\(\?:js\|ts\|cs\|py\|feature\|json\|yml\|yaml\|sh\|html\)\\b\/;/;/
-plain-words ignores code spans	flows/rules.pl	s/push \@pw, \$i \+ 1 if \$t =~ \/`\[\^`\\n\]\*\(\?:\[A-Z\]\{2,\}_\|_\[A-Za-z\]\|\[a-z\]\[A-Z\]\|\\\(\\\)\|\\w\\\.\\w\+\\\(\)\[\^`\\n\]\*`\/ \|\| /push \@pw, \$i + 1 if /
-no Delivered line allowed	flows/rules.pl	s/push \@shape, "no Delivered line" unless/push \@shape, "no Delivered line" if 0 and/
-counts written another way	flows/rules.pl	s/\(\?:failed\|skipped\|undefined\|pending\|ambiguous\)/(?:failed|pending)/
-singular scenario	flows/rules.pl	s/\^\(\\d\+\) scenarios\?\(\?:/^(\\d+) scenarios(?:/	equivalent
-bdd names allowed	flows/rules.pl	s/\$t =~ s\/`\?bdd:\\w\+`\?\/\/g; //	equivalent
-discovery folder not allowed	flows/rules.pl	s/ \$t =~ s\{`\?docs\/discovery\/\?`\?\}\{\}g;//
+# The substitutions use ~ as the delimiter, because the TypeScript regexes hold many slashes. Three breaks are equivalent: no input tells them from the real code.
+dev block regex	flows/rules.ts	s~  t = t\.replace\(rx\([^\n]*For the developer\.\*\?[^\n]*\n~~
+dev note regex	flows/rules.ts	s~  t = t\.replace\(rx\([^\n]*Developer note:\.\*\?[^\n]*\n~~
+dev inline regex	flows/rules.ts	s~return t\.replace\(/For the developer:\[\^\\n\]\*/gi, ""\);~return t;~
+oos not allowed	flows/rules.ts	s~\|\^docs\\/\(\?:out-of-scope\\\.md\|decisions\\/\)~~
+src not allowed	flows/rules.ts	s~\(\?:features\|steps\|src\|data\)~(?:features|steps|data)~
+data not allowed	flows/rules.ts	s~\(\?:features\|steps\|src\|data\)~(?:features|steps|src)~
+decisions not allowed	flows/rules.ts	s~out-of-scope\\\.md\|decisions\\/~out-of-scope\\.md~
+asks approv only	flows/rules.ts	s~\(approv\|go-ahead\|go ahead\)~(approv)~
+ranges not read	flows/rules.ts	s~\(\?:-\|to\)~(?:-)~
+range hyphen not read	flows/rules.ts	s~\(\?:-\|to\)~(?:to)~
+range not read at all	flows/rules.ts	s~sec\.matchAll\(rx\([^\n]*\(\?:-\|to\)[^\n]*"gi"\)\)~[]~
+missing test output allowed	flows/rules.ts	s~row\("never-reported-passed", true,~row("never-reported-passed", false,~
+look-first drops already	flows/rules.ts	s~\|already\|~|~
+look-first drops what exists	flows/rules.ts	s~what exists\|~~
+look-first drops what i found	flows/rules.ts	s~what i found\|~~
+look-first drops found nothing	flows/rules.ts	s~found nothing\|~~
+failed status not read	flows/rules.ts	s~\(passed\|failed\|couldn't~(passed|couldn't~
+could not not read	flows/rules.ts	s~\|could not be checked\)~)~
+plain-words ignores paths	flows/rules.ts	s~ \|\| /\[\\w\.-\]\+\(\?:\\/\[\\w\.-\]\+\)\+\\\.\\w\{1,5\}\\b/\.test\(t\)~~
+plain-words ignores file names	flows/rules.ts	s~ \|\| /\\b\[\\w-\]\+\\\.\(\?:js\|ts\|cs\|py\|feature\|json\|yml\|yaml\|sh\|html\)\\b/\.test\(t\)~~
+plain-words ignores code spans	flows/rules.ts	s~if \(/`\[\^`\\n\]\*[^\n]*?\.test\(t\) \|\| ~if (~
+no Delivered line allowed	flows/rules.ts	s~if \(!rx\(([^\n]*Delivered:)~if (false && !rx($1~
+counts written another way	flows/rules.ts	s~\(\?:failed\|skipped\|undefined\|pending\|ambiguous\)~(?:failed|pending)~
+singular scenario	flows/rules.ts	s~scenarios\?\(\?: ~scenarios(?: ~	equivalent
+bdd names allowed	flows/rules.ts	s~\.replace\(/`\?bdd:\\w\+`\?/g, ""\)~~	equivalent
+discovery folder not allowed	flows/rules.ts	s~\.replace\(/`\?docs\\/discovery\\/\?`\?/g, ""\)~~
 pack folder counted	flows/run.sh	s/ ! -path '\.\/docs\/discovery\/\*'//
 story crlf not removed	flows/run.sh	s/story=\$\(tr -d '\\r' < "\$STORYFILE"\)/story=\$(cat "\$STORYFILE")/
-Not ready unknown to pack-end	flows/rules.pl	s/\(not ready\|ready\)/(ready)/	equivalent
-developer table not read	flows/rules.pl	s/\(\?:\\n\[ \\t\]\*\\n\(\?:\[ \\t\]\*\\\|\[\^\\n\]\*\(\?:\\n\|\\z\)\)\+\|\\n\[ \\t\]\*\\n\|\\z\)\/\/gsmi;/(?:\\n[ \\t]*\\n|\\z)\/\/gsmi;/
-any line after the developer line read as the table	flows/rules.pl	s/\(\?:\[ \\t\]\*\\\|\[\^\\n\]\*\(\?:\\n\|\\z\)\)\+/(?:[^\\n]+(?:\\n|\\z))+/
-look-first drops i looked	flows/rules.pl	s/\|looked([|)])/$1/
-look-first drops i checked	flows/rules.pl	s/\|checked([|)])/$1/
-look-first drops i read	flows/rules.pl	s/\|read([|)])/$1/
-look-first drops i searched	flows/rules.pl	s/\|searched([|)])/$1/
-look-first drops i ran	flows/rules.pl	s/\(\?:ran\|/(?:/
+Not ready unknown to pack-end	flows/rules.ts	s~\(not ready\|ready\)~(ready)~	equivalent
+developer table not read	flows/rules.ts	s~\(\?:\\\\n\[ \\\\t\]\*\\\\n\(\?:\[ \\\\t\]\*\\\\\|\[\^\\\\n\]\*\(\?:\\\\n\|\$\{EOT\}\)\)\+\|~(?:~
+any line after the developer line read as the table	flows/rules.ts	s~\[ \\\\t\]\*\\\\\|\[\^\\\\n\]\*~[^\\\\n]+~
+look-first drops i looked	flows/rules.ts	s~\|looked([|)])~$1~
+look-first drops i checked	flows/rules.ts	s~\|checked([|)])~$1~
+look-first drops i read	flows/rules.ts	s~\|read([|)])~$1~
+look-first drops i searched	flows/rules.ts	s~\|searched([|)])~$1~
+look-first drops i ran	flows/rules.ts	s~\(\?:ran\|~(?:~
