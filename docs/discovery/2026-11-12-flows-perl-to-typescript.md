@@ -64,7 +64,7 @@ Done before the Perl files were deleted, on the 15 recorded run folders of the r
 
 `tests/mutate.sh` on the rewritten `tests/mutations/flows.tsv`: 36 breaks of the flow code (34 on `rules.ts`, 2 on `run.sh`). 33 caught, 3 survived as expected (the same three marked equivalent before), 0 to look at. The break file now uses `~` as the Perl delimiter, because the TypeScript regexes hold many slashes.
 
-What the move also changed in the tests: a new scenario checks that no flow Perl script is left, two check the "run npm ci first" stop (a run and a comparison), and the steps that copy the harness share one helper that links the installed tools into the copy.
+What the move also changed in the tests: two new scenarios check the "run npm ci first" stop (a run and a comparison), and the steps that copy the harness share one helper that links the installed tools into the copy.
 
 ## Risks
 
