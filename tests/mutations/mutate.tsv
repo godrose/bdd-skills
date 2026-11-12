@@ -1,0 +1,11 @@
+# Breaks of tests/mutate.sh itself. Run with:
+# tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @mutate' tests/mutations/mutate.tsv
+baseline check removed	tests/mutate.sh	s/if ! \(cd "\$WORK\/copy1" && eval "\$CMD"\) > "\$WORK\/baseline.log" 2>&1; then/if false; then/
+restore removed	tests/mutate.sh	s/    cp "\$WORK\/bak\$j" "\$target"\n//
+no-change check removed	tests/mutate.sh	s/if cmp -s "\$target" "\$WORK\/bak\$j"; then/if false; then/
+exit status ignored	tests/mutate.sh	s/\[ "\$bad" -eq 0 \]\n$/true\n/
+stale mark not reported	tests/mutate.sh	s/caught: remove the mark\)/caught)/
+output not sorted	tests/mutate.sh	s/ \| sort -n \| / | /
+comments not skipped	tests/mutate.sh	s/ -e '\^#'//
+baseline failure status	tests/mutate.sh	s/(tail -8 "\$WORK\/baseline.log" >&2\n  exit )2/${1}1/
+break applied to the root	tests/mutate.sh	s/target="\$copy\/\$file"/target="\$ROOT\/\$file"/
