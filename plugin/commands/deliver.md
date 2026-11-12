@@ -38,7 +38,17 @@ The result is the **checklist of agreed examples**: a numbered list in plain wor
 
 #### Step 2: Design
 
-Invoke the **designer** skill (`bdd:design`) with the checklist. The approved checklist counts as the approval of the examples, so do not ask for it again. Design writes the scenarios, audits step reuse and lints the draft, and then shows the scenarios in plain words and waits for the go-ahead. The go-ahead is the second approval, and it can come from either person.
+Invoke the **designer** skill (`bdd:design`) with the checklist. The approved checklist counts as the approval of the examples, so do not ask for it again. Design writes the scenarios, audits step reuse and lints the draft. What the product manager sees at this gate:
+
+- The scenarios in plain words and as text.
+- One plain sentence on reuse, for example "3 steps are reused and 3 are new", or "there are no steps to reuse yet".
+- The **Assumptions** list and the **Assumed, not checked** list, as design writes them. They are in plain words already.
+- Every finding that changes what a scenario proves (a title that claims more than the steps assert, data that does not fit a reused step, a setup that is assumed and not checked) as one plain question about the behavior, asked one at a time. Record the answer and update the scenarios.
+- A finding that is only technical (a paraphrase of an existing step, a naming difference) is not asked. Take the fix the designer prefers and list it in the developer block.
+
+Put the per-step audit table, and anything else with file names or code (the lint did not run, the decision log script is missing), under a line that starts "For the developer", then a blank line, then the table. The product manager does not need to read it.
+
+Wait for the go-ahead. The go-ahead is the second approval, and it can come from either person.
 
 No `.feature` file is written before the go-ahead.
 
@@ -108,7 +118,7 @@ Seen: <what was looked at, and how: a page, a request, a record>
 Not checked, and what it risks:
 - E2 <what could go wrong for the users, in plain words>. For the developer: <what to look at>
 
-Developer note: <anything that was not recorded, and anything surprising seen in step 5>
+Developer note: <anything that was not recorded, anything surprising seen in step 5, and the technical remarks and fixes from the second gate>
 ```
 
 - "Couldn't be checked" covers an example whose result was not looked at in step 5 (the Seen line says why), a scenario still tagged `@pending`, a scenario that stays manual-only, a scenario the red-first check marked "not seen red", and any run that executed zero tests. A run of zero tests is never a pass.

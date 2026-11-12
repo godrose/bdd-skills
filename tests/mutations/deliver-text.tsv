@@ -1,0 +1,7 @@
+# Breaks of the second gate text in plugin/commands/deliver.md. Run with:
+# tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @skills-text' tests/mutations/deliver-text.tsv
+gate 2 drops the reuse sentence	plugin/commands/deliver.md	s/plain sentence on reuse/plain sentence/
+gate 2 drops the blank line before the table	plugin/commands/deliver.md	s/then a blank line, then the table/then the table/
+gate 2 drops the designer's preferred fix	plugin/commands/deliver.md	s/Take the fix the designer prefers/Ask about it/
+developer note drops the second gate remarks	plugin/commands/deliver.md	s/and the technical remarks and fixes from the second gate//
+old second gate text back	plugin/commands/deliver.md	s/Design writes the scenarios, audits step reuse and lints the draft\./Design writes the scenarios, audits step reuse and lints the draft, and then shows the scenarios in plain words and waits for the go-ahead./

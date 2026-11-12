@@ -5,7 +5,7 @@ my $rd = shift or die "usage: rules.pl <run dir> [discover|deliver]\n";
 my $cmd = shift // "discover";
 my @files = sort glob("$rd/turn-*-assistant.txt");
 my @msg = map { local $/; open my $h, '<', $_ or die; my $t = <$h>; $t } @files;
-sub strip_dev { my $t = shift; $t =~ s/^[ \t*_#]*For the developer.*?(?:\n[ \t]*\n|\z)//gsmi; $t =~ s/^[ \t*_#-]*Developer note:.*?(?:\n[ \t]*\n|\z)//gsmi; $t =~ s/For the developer:[^\n]*//gi; return $t }
+sub strip_dev { my $t = shift; $t =~ s/^[ \t*_#]*For the developer.*?(?:\n[ \t]*\n(?:[ \t]*\|[^\n]*(?:\n|\z))+|\n[ \t]*\n|\z)//gsmi; $t =~ s/^[ \t*_#-]*Developer note:.*?(?:\n[ \t]*\n|\z)//gsmi; $t =~ s/For the developer:[^\n]*//gi; return $t }
 sub strip_vocab { my $t = shift; $t =~ s{^[#*\s]*vocabulary check.*?(?=^#{1,3} |\z)}{}gsmi; return $t }
 sub strip_restated { my $t = shift; $t =~ s{^[#*\s]*open questions.*?(?=^#{1,3} |\z)}{}gsmi; $t =~ s{^[#*\s]*readiness[^\n]*\n(?:[^\n]+\n)*}{}gsmi; $t =~ s{^[^\n]*(?:this is |is )?for the developer[^\n]*\n?}{}gmi; return $t }
 sub row { my ($rule, $broken, $detail) = @_; print join("\t", $rule, $broken ? "broken" : "held", $detail // ""), "\n" }

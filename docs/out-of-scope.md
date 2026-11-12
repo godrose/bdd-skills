@@ -43,3 +43,6 @@
 2026-11-12 | removed: the exclusions of deleting tests/test_flow.sh, tests/test_evals.sh and tests/test_red_first.sh in their migration PRs | why: the mutation checks were run and all bash test files are deleted | revisit when: never
 2026-11-12 | removed: the exclusion of tighter versions of the short triage words (open, change, question, approve) | why: the approach review dropped the phrase checks that do not test an outcome, so there is nothing to tighten | revisit when: never
 2026-11-12 | removed: the exclusion of scenarios for the install, flow harness and eval survivors | why: they were added in the install, flow harness and eval survivors changes | revisit when: never
+2026-11-12 | excluded: a config switch to show the audit table to the product manager | why: the table is for the developer, and the builder chose a plain summary | revisit when: a product manager asks to see it
+2026-11-12 | excluded: installing the decision log script into the flow fixtures | why: a separate change to the fixtures, outside the second gate text | revisit when: the real run keeps meeting its absence
+2026-11-12 | excluded: an eval of the second gate of bdd:deliver | why: it needs a model run, and the flow harness counts the plain-words rule when run by hand | revisit when: G7 is worked on

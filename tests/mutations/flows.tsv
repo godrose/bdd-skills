@@ -1,7 +1,7 @@
 # Breaks of the flow harness (flows/rules.pl and flows/run.sh). Run with:
 # tests/mutate.sh --jobs 4 --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags "@flow-deliver or @flow-discover"' tests/mutations/flows.tsv
 # Three breaks are equivalent: no input tells them from the real code.
-dev block regex	flows/rules.pl	s/\$t =~ s\/\^\[ \\t\*_#\]\*For the developer\.\*\?\(\?:\\n\[ \\t\]\*\\n\|\\z\)\/\/gsmi; //
+dev block regex	flows/rules.pl	s/\$t =~ s\/\^\[ \\t\*_#\]\*For the developer[^;]*; //
 dev note regex	flows/rules.pl	s/\$t =~ s\/\^\[ \\t\*_#-\]\*Developer note:\.\*\?\(\?:\\n\[ \\t\]\*\\n\|\\z\)\/\/gsmi; //
 dev inline regex	flows/rules.pl	s/ \$t =~ s\/For the developer:\[\^\\n\]\*\/\/gi;//
 oos not allowed	flows/rules.pl	s/\|\^docs\/\(\?:out-of-scope\\\.md\|decisions\/\)//
@@ -30,3 +30,5 @@ discovery folder not allowed	flows/rules.pl	s/ \$t =~ s\{`\?docs\/discovery\/\?`
 pack folder counted	flows/run.sh	s/ ! -path '\.\/docs\/discovery\/\*'//
 story crlf not removed	flows/run.sh	s/story=\$\(tr -d '\\r' < "\$STORYFILE"\)/story=\$(cat "\$STORYFILE")/
 Not ready unknown to pack-end	flows/rules.pl	s/\(not ready\|ready\)/(ready)/	equivalent
+developer table not read	flows/rules.pl	s/\(\?:\\n\[ \\t\]\*\\n\(\?:\[ \\t\]\*\\\|\[\^\\n\]\*\(\?:\\n\|\\z\)\)\+\|\\n\[ \\t\]\*\\n\|\\z\)\/\/gsmi;/(?:\\n[ \\t]*\\n|\\z)\/\/gsmi;/
+any line after the developer line read as the table	flows/rules.pl	s/\(\?:\[ \\t\]\*\\\|\[\^\\n\]\*\(\?:\\n\|\\z\)\)\+/(?:[^\\n]+(?:\\n|\\z))+/
