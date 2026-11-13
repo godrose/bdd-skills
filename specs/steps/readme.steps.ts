@@ -1,6 +1,6 @@
 import { Then, type DataTable } from "@cucumber/cucumber";
 import assert from "node:assert";
-import type { World } from "./support";
+import { read, type World } from "./support";
 
 const EM_DASH = String.fromCharCode(0x2014);
 const lines = (w: World): string[] => w.subject.split("\n");
@@ -52,4 +52,28 @@ Then("it has no em-dash", function (this: World) {
 Then("its last non-empty line is {string}", function (this: World, expected: string) {
   const last = lines(this).filter((l) => l !== "").pop();
   assert.strictEqual(last, expected);
+});
+
+const section = (w: World, heading: string): string => {
+  const all = lines(w);
+  const level = heading.match(/^#+/)![0].length;
+  const start = all.findIndex((l) => l === heading);
+  assert.ok(start >= 0, `no section '${heading}'`);
+  const end = all.findIndex((l, i) => i > start && new RegExp(`^#{1,${level}} `).test(l));
+  return all.slice(start + 1, end < 0 ? undefined : end).join("\n");
+};
+
+Then("it has a section {string} holding:", function (this: World, heading: string, table: DataTable) {
+  const body = section(this, heading);
+  const missing = table.raw().flat().filter((t) => !body.includes(t));
+  assert.deepStrictEqual(missing, [], `missing from '${heading}': ${missing.join(" | ")}`);
+});
+
+Then("every row named in the section {string} is a row of the config template", function (this: World, heading: string) {
+  const template = read("plugin/bdd-config.template.md");
+  const rows = new Set([...template.matchAll(/^\| (\w+) \|/gm)].map((m) => m[1]));
+  const named = [...section(this, heading).matchAll(/^\| `(\w+)` \|/gm)].map((m) => m[1]);
+  assert.ok(named.length > 0, `'${heading}' names no rows`);
+  const unknown = named.filter((n) => !rows.has(n));
+  assert.deepStrictEqual(unknown, [], "not in the template: " + unknown.join(", "));
 });

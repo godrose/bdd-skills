@@ -59,6 +59,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-12-deliver-checklist-existing-scenarios.md` | `bdd:deliver` keeps an existing scenario nobody asked about out of the checklist, and counts it on the Regression line |
 | `2026-11-12-flows-perl-to-typescript.md` | The flow scripts move from Perl to TypeScript with the same rules, and the flow breaks are rewritten |
 | `2026-11-12-mutation-apply-typescript.md` | The mutation runner applies a break with TypeScript, so Perl is no longer needed (option B, scope A) |
+| `2026-11-13-readme-newcomer.md` | The README for a reader new to BDD and to the plugin |
 
 ## trials/
 
