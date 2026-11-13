@@ -64,10 +64,11 @@ This plugin finds the examples by asking you questions, then writes the scenario
 
 ## Before you start
 
-You need three things:
+You need four things:
 
 - **Claude Code**, and read access to this repository (see Access under Install).
 - **A project to work on.** It can be an app that already exists.
+- **A branch.** The plugin edits files in your project, tests and application code. Work on a branch and read the diff before you merge.
 - **A Gherkin runner.** The plugin does not install one. If your project has none, pick one for your stack first:
 
 | Stack | Runner |
@@ -78,7 +79,7 @@ You need three things:
 
 Not listed? Any Gherkin runner works, for example Behave (Python), Behat (PHP) or godog (Go). Put its commands in the config rows.
 
-Set the runner up as its own documentation says, then run one example: write a scenario with one `Given` step that does nothing, run the runner's test command, and look for one passing scenario. Then come back here. `/bdd:init --detect` reads your build files and proposes the config.
+Set the runner up as its own documentation says, then run one example: follow the runner's own getting-started page until its example passes. Then come back here. `/bdd:init --detect` reads your build files and proposes the config.
 
 ## Quick start
 
@@ -117,7 +118,14 @@ Then start with a story:
 
 ## The flow
 
-For an individual builder:
+### Which path?
+
+- **One conversation, first run:** `/bdd:deliver <description>`. It asks, shows the agreed examples, then the scenarios, builds and checks them, and reports in plain words.
+- **Step by step, with a stop between steps:** `/bdd:discover`, `/bdd:design` and `/bdd:implement`. Add `--specify-only` to stop at the scenarios (see Modes).
+
+Either path suits a developer. A first run is easier with `deliver`.
+
+Step by step:
 
 1. `/bdd:discover <story>` first looks at what the project already has, then asks one question at a time and finds examples, edge cases and exclusions. Trivial changes skip it.
 2. `/bdd:design` shows the scenarios in plain words, with a reuse audit of every step. It checks that each scenario asserts what its title claims, and that the setup a scenario depends on is checked. You approve them.
@@ -127,13 +135,15 @@ The agreed scenarios become automated checks, so later changes cannot silently b
 
 > 🧪 **Trivial change?** A one-line fix, a rename or a copy edit skips discovery. The plugin says so in one sentence and moves on.
 
-For a product manager with a developer watching, `/bdd:deliver <description>` runs the four steps in one conversation. It asks one question at a time, shows the agreed examples for approval, then the scenarios for a go-ahead, implements them, and ends with a report in plain words: each example passed, failed or couldn't be checked, and whether the earlier scenarios of the same feature still pass. It uses the commands above and does not replace them. Answers that shaped a scenario are written beside it in the `.feature` file. Exclusions and removals go in one list, `docs/out-of-scope.md`, so the next description is not asked for what was ruled out.
+`/bdd:deliver <description>` runs the four steps in one conversation. It is written for a product manager with a developer watching, and a developer can use it too. It asks one question at a time, shows the agreed examples for approval, then the scenarios for a go-ahead, implements them, and ends with a report in plain words: each example passed, failed or couldn't be checked, and whether the earlier scenarios of the same feature still pass. It uses the commands above and does not replace them. Answers that shaped a scenario are written beside it in the `.feature` file. Exclusions and removals go in one list, `docs/out-of-scope.md`, so the next description is not asked for what was ruled out.
 
 If you run a command before `/bdd:init`, it stops and tells you to run it.
 
 ### What you get
 
 `/bdd:implement` and `/bdd:deliver` write the step definitions and the support code, run the scenarios, and build the feature in your app until they pass. A scenario for a feature that does not exist yet fails first, on an assertion. That red is expected. It shows the scenario can fail. The scenario turns green when the feature works.
+
+Each `Given` step in a scenario needs code that puts your app in that state, such as an order that has not shipped. `/bdd:implement` writes it, using how your tests and app already create data: an API call, a database helper or a page step. For state that something else provides, such as a seeded user or a deployed service, the scenario gets a step that checks it is there and fails with a setup error when it is not.
 
 If your company has its own way of writing application code, name that skill in the `feature-builder` row of the Skill Roles table in `.claude/bdd-config.md`. The plugin then asks it to write the application code. You can also name a skill in your request, for example "use our X skill for the code", and the plugin uses it for that run without any config. Without either, the plugin makes the smallest change that turns the scenario green and lists the files it changed.
 
@@ -159,9 +169,9 @@ The commands are in the Quick start. On Claude Code 2.1.275 or later, one step a
 
 The plugin namespaces its commands: `/bdd:discover`, `/bdd:design`, `/bdd:implement`, `/bdd:run`, `/bdd:triage`, `/bdd:reconcile` and `/bdd:deliver`.
 
-A plugin cannot create files in your project, so run `/bdd:init` once in each project. It copies the template to `.claude/bdd-config.md`. It never overwrites an existing config, and it does not fill in anything: the file still has placeholders. Claude Code may ask you to approve the copy, because it writes into `.claude/`. Open it and fill in the commands and paths for your project, as described under Configure, then commit it.
+A plugin cannot create files in your project, so run `/bdd:init --detect` once in each project. It copies the template to `.claude/bdd-config.md` and proposes values for it. Claude Code may ask you to approve the copy, because it writes into `.claude/`. Plain `/bdd:init` copies the template and fills in nothing, so you open the file and fill in the commands and paths yourself, as described under Configure. Neither form overwrites an existing config. Commit the file once it is filled in.
 
-To get proposed values instead of filling the file in by hand, run `/bdd:init --detect`. It reads your build files, CI workflows, README and `.feature` files, and proposes a value for each placeholder row, with the file it came from and a confidence level. It writes only the rows you approve, never changes a row that already has a value, never runs your commands, and says `unknown` where the files do not answer. Check the commands it proposes before you rely on them. It also proposes your own skills for the `domain-knowledge` and `requirements-sync` roles, matched by the name and one-line description in `.claude/commands/` and `.claude/skills/`. If several fit, it names the runners-up, and if none fit, it leaves the row alone. It is plugin only.
+With `--detect`, it reads your build files, CI workflows, README and `.feature` files, and proposes a value for each placeholder row, with the file it came from and a confidence level. It writes only the rows you approve, never changes a row that already has a value, never runs your commands, and says `unknown` where the files do not answer. Check the commands it proposes before you rely on them. It also proposes your own skills for the `domain-knowledge` and `requirements-sync` roles, matched by the name and one-line description in `.claude/commands/` and `.claude/skills/`. If several fit, it names the runners-up, and if none fit, it leaves the row alone. It is plugin only.
 
 `/bdd:init` also lists leftover project-file copies of the skills, which give duplicate commands next to the plugin. It only reports them and never deletes. The installer's files are found by the `# Source:` line it writes, and by the old command names it replaced. A `bdd-*` file that matches neither is reported as "origin unknown, left alone".
 
