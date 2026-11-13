@@ -122,6 +122,7 @@ Developer note: <anything that was not recorded, anything surprising seen in ste
 ```
 
 - "Couldn't be checked" covers an example whose result was not looked at in step 5 (the Seen line says why), a scenario still tagged `@pending`, a scenario that stays manual-only, a scenario the red-first check marked "not seen red", and any run that executed zero tests. A run of zero tests is never a pass.
+- Each example is in one place. An example named under "Not checked, and what it risks" has `couldn't be checked` on its own line, never `passed`, even when its scenario passed. Say so in the line: `couldn't be checked - the scenario passed, but the result was not looked at`. An example marked `passed` is not named in that section.
 - Name each example by the words the product manager agreed.
 - Put anything surprising that you saw in step 5 in the developer note, even when it was fixed.
 - Leave the developer note out when there is nothing in it.
