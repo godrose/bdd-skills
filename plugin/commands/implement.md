@@ -158,7 +158,7 @@ Use `By: name` with `Select: <scenario name>` when the scenarios carry no tag, o
 
 The verifier runs the full scenario (without any visual-debug flag) and the strict type check. Failures must be resolved before declaring the scenario done - re-dispatch after each fix.
 
-If dispatching the agent is not possible, run manually: the **prepare** command, then the **generate** command, then the **test** command, then the **typecheck** command (all from BDD config). All must pass with zero errors before the scenario is considered complete.
+If dispatching the agent is not possible, run manually: the **prepare** command, then the **generate** command, then the **test** command, then the **typecheck** command (all from BDD config; skip any that is absent, empty or in `<...>` form and say so). All must pass with zero errors before the scenario is considered complete.
 
 **Common typecheck failures and how to resolve them:**
 - **Unused import / local / parameter** (e.g., `TS6133 declared but never read` in TypeScript projects) - delete the offending line. Use the `_`-prefix convention ONLY when an unused function parameter must remain to satisfy an interface or callback signature; never to silence an unused top-level import.
@@ -188,7 +188,7 @@ Example from a Playwright and TypeScript project. Other stacks use their equival
 
 Read from `.claude/bdd-config.md` - the config is the single source of truth for quality rules. Key principles:
 
-- **Typecheck must pass** with zero errors (run the **typecheck** command)
+- **Typecheck must pass** with zero errors (run the **typecheck** command, when one is set)
 - **No unused code** - imports, locals, parameters, dead methods
 - **State properties declared** - new properties on the state fixture must be added to the state type
 - **Explicit file extensions** - where the module system requires explicit file extensions (Node ESM, TypeScript with node16 or nodenext resolution), imports include the `.js` extension

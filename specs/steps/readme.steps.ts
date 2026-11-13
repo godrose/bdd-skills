@@ -1,6 +1,8 @@
 import { Then, type DataTable } from "@cucumber/cucumber";
 import assert from "node:assert";
-import { read, type World } from "./support";
+import fs from "node:fs";
+import path from "node:path";
+import { ROOT, read, type World } from "./support";
 
 const EM_DASH = String.fromCharCode(0x2014);
 const lines = (w: World): string[] => w.subject.split("\n");
@@ -76,4 +78,16 @@ Then("every row named in the section {string} is a row of the config template", 
   assert.ok(named.length > 0, `'${heading}' names no rows`);
   const unknown = named.filter((n) => !rows.has(n));
   assert.deepStrictEqual(unknown, [], "not in the template: " + unknown.join(", "));
+});
+
+Then("its install line names the marketplace of the marketplace file", function (this: World) {
+  const name = JSON.parse(read(".claude-plugin/marketplace.json")).name as string;
+  assert.ok(this.subject.includes("/plugin install bdd@" + name), "the install line does not name " + name);
+});
+
+Then("every relative link in it points at a file that exists", function (this: World) {
+  const links = [...this.subject.matchAll(/\]\((?!https?:|#|mailto:)([^)\s#]+)/g)].map((m) => m[1]);
+  assert.ok(links.length > 0, "no relative links found");
+  const bad = [...new Set(links)].filter((l) => !fs.existsSync(path.join(ROOT, l)));
+  assert.deepStrictEqual(bad, [], "links to files that do not exist: " + bad.join(", "));
 });

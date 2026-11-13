@@ -38,6 +38,7 @@
 - [Decision log](#decision-log)
 - [What's included](#whats-included)
 - [Update](#update)
+- [Glossary](#glossary)
 - [Related projects](#related-projects)
 - [Contributing](#contributing)
 - [License](#license)
@@ -57,7 +58,7 @@ Feature: Cancel an order
     And the customer sees a refund notice
 ```
 
-A **step definition** is the code behind one line of a scenario. It makes that line run against your app. A **runner** finds the `.feature` files and runs the step definitions.
+A **step definition** is the code behind one line of a scenario. It makes that line run against your app. A **runner** finds the `.feature` files and runs the step definitions. Other words you will meet are in the [Glossary](#glossary).
 
 This plugin finds the examples by asking you questions, then writes the scenarios and the step definitions and runs them.
 
@@ -71,11 +72,13 @@ You need three things:
 
 | Stack | Runner |
 |-------|--------|
-| A web app tested through a browser, in TypeScript | [Playwright-BDD](https://vitalets.github.io/playwright-bdd/) |
-| JavaScript, Java or Kotlin | [Cucumber](https://cucumber.io/docs/installation/) |
+| A web app tested through a browser with Playwright | [Playwright-BDD](https://vitalets.github.io/playwright-bdd/) |
+| Any other JavaScript project, or Java, Kotlin or Ruby | [Cucumber](https://cucumber.io/docs/installation/) |
 | .NET | [Reqnroll](https://reqnroll.net/), the successor of SpecFlow |
 
-Set the runner up as its own documentation says, and check that it can run one example. Then come back here. `/bdd:init --detect` reads your build files and proposes the config.
+Not listed? Any Gherkin runner works, for example Behave (Python), Behat (PHP) or godog (Go). Put its commands in the config rows.
+
+Set the runner up as its own documentation says, then run one example: write a scenario with one `Given` step that does nothing, run the runner's test command, and look for one passing scenario. Then come back here. `/bdd:init --detect` reads your build files and proposes the config.
 
 ## Quick start
 
@@ -88,7 +91,11 @@ In Claude Code:
 /plugin install bdd@gennadyverdel-plugins
 ```
 
-The repo is `bdd-skills`. The plugin is `bdd`, so its commands are `/bdd:*`.
+Three names, one project:
+
+- `godrose/bdd-skills` is the repository.
+- `gennadyverdel-plugins` is the marketplace, the catalog the repository publishes.
+- `bdd` is the plugin, so its commands are `/bdd:*`. `bdd@gennadyverdel-plugins` means the plugin `bdd` from that marketplace.
 
 Then, once in each project:
 
@@ -144,7 +151,7 @@ Choose the mode with the `workflow_mode` row in `.claude/bdd-config.md`, or per 
 
 There are two ways to install. The plugin is the recommended one.
 
-**Access.** The repository is private for now. You need read access to it and git credentials on your machine: an SSH key loaded in `ssh-agent`, or HTTPS with a stored credential (`gh auth login`, then `gh auth setup-git`). Claude Code uses your own git setup and has no token of its own. The one-line `curl` install below only works once the repository is public. Until then, use the clone form.
+**Access.** The repository is private for now. You need read access to it and git credentials on your machine: an SSH key loaded in `ssh-agent`, or HTTPS with a stored credential (`gh auth login`, then `gh auth setup-git`). Claude Code uses your own git setup and has no token of its own. The one-line `curl` install below only works once the repository is public. Until then, use the clone form. To ask for access, message [the owner](https://github.com/godrose) on GitHub. The repository is planned to go public.
 
 ### As a plugin
 
@@ -208,7 +215,7 @@ A first run needs these rows in `.claude/bdd-config.md`. Every other row is opti
 | `steps_dir` | The folder that holds your step definitions |
 | `config_file` | The runner's config file |
 | `generate` | The command that turns `.feature` files into test files. Leave it empty if your runner reads them directly |
-| `typecheck` | The command that checks types or compiles with strict warnings |
+| `typecheck` | The command that checks types or compiles with strict warnings. Leave it empty if there is none |
 | `prepare` | Only if the tests need something built or started first, such as a server |
 
 For a small Playwright-BDD project, the rows look like this:
@@ -379,7 +386,7 @@ In `specify-only` mode, `bdd:design` stops after the scenarios. `bdd:implement` 
 
 ## Update
 
-**Plugin.** The plugin is versioned, and a change reaches you when a new version is released. `CHANGELOG.md` lists what each version changed. Update to get the latest release:
+**Plugin.** The plugin is versioned, and a change reaches you when a new version is released. [`CHANGELOG.md`](CHANGELOG.md) lists what each version changed. Update to get the latest release:
 
 ```bash
 claude plugin marketplace update gennadyverdel-plugins
@@ -397,6 +404,19 @@ cd /tmp/bdd-skills && git pull
 /tmp/bdd-skills/install.sh /path/to/your/project
 ```
 
+## Glossary
+
+- **Acceptance criteria** (ACs): the conditions a story must meet to count as done.
+- **Discovery pack**: the saved record of a `/bdd:discover` conversation: questions, examples, edge cases, exclusions and decisions. It goes to the folder in the `discovery_dir` row.
+- **Reuse audit**: the check of each step of a draft scenario against the step definitions that already exist, so no duplicate is added.
+- **Verifier**: the `bdd:verifier` agent. It runs the generate, test and type check commands and reports the result. It never edits code.
+- **Red-first**: seeing a scenario fail for the reason it states before it passes. A green that was never seen red proves little.
+- **Headless run**: a run of `claude -p`, without an interactive session.
+- **Triage**: `/bdd:triage` turns pasted discussion, such as Slack, Jira or pull request comments, into proposed scenario edits and decision records. It writes them only after you approve.
+- **Reconcile**: `/bdd:reconcile` compares the decision log with the scenarios and reports what does not line up. It never edits.
+- **Drift**: a scenario that changed since its last decision.
+- **Orphan**: a decision that points at a scenario that is gone.
+
 ## Related projects
 
 The plugin works with these BDD tools:
@@ -410,10 +430,10 @@ The plugin works with these BDD tools:
 Contributions from individuals and from teams are welcome. No sign-off form is needed. Under the Apache License 2.0, what you contribute is licensed the same way as the rest of the repo, unless you say otherwise.
 
 - Look for issues labeled `good first issue` or `help wanted`, or open an issue with your idea first.
-- This repo uses its own method. A larger change (a new command, a config row, anything in install) starts with a discovery pack in `docs/discovery/`. A small fix, rename or copy edit does not. `CLAUDE.md` has the details.
+- This repo uses its own method. A larger change (a new command, a config row, anything in install) starts with a discovery pack in `docs/discovery/`. A small fix, rename or copy edit does not. [`CLAUDE.md`](CLAUDE.md) has the details.
 - Install the scenario runner once with `npm ci`. Run `bash tests/run.sh` before you open a pull request, and `bash tests/ci_local.sh` before you push: it runs what CI runs and names the step that failed. A new test must fail before your change and pass after it.
 - To see whether the tests notice a change, break the code on purpose with `tests/mutate.sh` (usage in its header). It breaks copies and never your checkout, and it runs by hand.
-- To watch a whole `discover` or `deliver` conversation in a real session, use `flows/run.sh` (see `flows/README.md`). It runs by hand, after `npm ci`, and uses your plan limit.
+- To watch a whole `discover` or `deliver` conversation in a real session, use `flows/run.sh` (see [`flows/README.md`](flows/README.md)). It runs by hand, after `npm ci`, and uses your plan limit.
 - Try the plugin from a clone with `claude --plugin-dir <clone>/plugin`. Check it with `claude plugin validate plugin` and run its evals with `bash evals/run.sh`.
 - Fill in the pull request template.
 - What the plugin does not check is listed in [`docs/known-gaps.md`](docs/known-gaps.md). When you close a gap, remove its entry in the same change.
