@@ -121,3 +121,17 @@ Then("every term defined in the Glossary is used elsewhere in it", function (thi
   }
   assert.deepStrictEqual(unused, [], "defined and never used elsewhere: " + unused.join(" | "));
 });
+
+Then("its Files tree lists every top-level entry of the repo, and each entry it lists exists", function (this: World) {
+  const start = this.subject.indexOf("<summary><b>Files</b></summary>");
+  assert.ok(start >= 0, "no Files block");
+  const open = this.subject.indexOf("```\n", start) + 4;
+  const tree = this.subject.slice(open, this.subject.indexOf("```", open));
+  const listed = tree.split("\n").filter((l) => l !== "" && !/^\s/.test(l)).flatMap((l) => l.split("#")[0].split(",").map((x) => x.trim()).filter(Boolean));
+  const gone = listed.filter((n) => !fs.existsSync(path.join(ROOT, n.replace(/\/$/, ""))));
+  const skip = new Set([".gitattributes", ".gitignore", "package-lock.json", ".claude"]);
+  const top = [...new Set(execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" }).split("\n").filter(Boolean).map((f) => f.split("/")[0]))].filter((n) => !skip.has(n));
+  const topListed = new Set(listed.map((n) => n.split("/")[0]));
+  const missing = top.filter((n) => !topListed.has(n));
+  assert.deepStrictEqual({ listedButMissing: gone, notListed: missing }, { listedButMissing: [], notListed: [] });
+});

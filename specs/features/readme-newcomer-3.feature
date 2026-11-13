@@ -44,3 +44,11 @@ Feature: The README helps a newcomer choose a path and start safely
       | run `/bdd:init --detect` once in each project |
     And it does not contain:
       | fill in the commands and paths for your project, as described under Configure, then commit it |
+
+  Scenario: Quick start sends a first run to deliver, as the chooser does
+    Given the README
+    Then it has a section "## Quick start" holding:
+      | /bdd:deliver <description> |
+      | /bdd:discover <story>      |
+    And it does not contain:
+      | Then start with a story: |
