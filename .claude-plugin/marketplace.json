@@ -8,7 +8,7 @@
       "name": "bdd",
       "source": "./plugin",
       "description": "BDD workflow skills: discover, design, implement and verify scenarios, with an optional decision log.",
-      "version": "0.7.0"
+      "version": "0.7.1"
     }
   ],
   "description": "BDD workflow skills for Claude Code: discover, design, implement and verify scenarios, with an optional decision log. Framework-agnostic."

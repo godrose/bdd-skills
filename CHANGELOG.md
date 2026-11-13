@@ -2,6 +2,27 @@
 
 Releases are tagged `vX.Y.Z`. Before `1.0.0` the plugin can still change in ways that need an edit to your config. The notes say when.
 
+## 0.7.1 (2026-11-13)
+
+`/bdd:implement` and `/bdd:deliver` now say that they build the feature in your app, and a company skill can do that part. Nothing in your `bdd-config.md` needs to change.
+
+### What you will notice
+
+- **Application code changes. Read this first.** When a scenario fails on an assertion because the app does not do what it says, and the step code is right, `/bdd:implement` and `/bdd:deliver` build the feature in your application. They make the smallest change that turns the scenario green, ask for no extra approval, stop after three tries, and list the application files they changed. The text did not say so before, though the runs often did it. Work on a branch and read the diff before you merge.
+- **`feature-builder` role (new, optional).** Name your own skill for writing application code in the Skill Roles table, and `implement` and `deliver` use it. Without the row they build it themselves. A skill you name in the request, such as "use our X skill for the code", is used for that run and wins over the row. A skill that cannot be found is said in one line, and the default applies.
+- **The `deliver` report names each example once.** An example under "Not checked, and what it risks" says `couldn't be checked`, never also `passed`, even when its scenario passed.
+- **An empty `typecheck` row is skipped.** The verifier and `implement` skip the type check and say so in one line when the row is absent, empty or still a placeholder. The template placeholder now says "empty to skip".
+
+### Project-file installs
+
+- Re-run `install.sh` to get the changed commands, the verifier and the template. `bdd-config.md` is never overwritten. No row is required.
+
+### Repo
+
+- The README is rewritten for a reader new to BDD: what BDD is, what to install first, the minimum config, which path to take, and a glossary. It is written for a public repository. The tooling rows for SpecFlow and Reqnroll no longer name one project's build configuration, and the Cucumber (Maven) rows now use options that Maven accepts.
+- Perl is gone. The flow scripts and the mutation runner use TypeScript, so `flows/run.sh` and `tests/mutate.sh` need `npm ci`. `TSX_BIN` points them at another `tsx`.
+- About 730 scenarios in `specs/features`.
+
 ## 0.7.0 (2026-11-12)
 
 A new command, `/bdd:deliver`, and changes to `discover`, `design` and `implement`. Nothing in your `bdd-config.md` needs to change.
