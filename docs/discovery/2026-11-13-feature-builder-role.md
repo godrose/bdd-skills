@@ -59,6 +59,10 @@ A fresh project has the row in its template as `<your-feature-builder-skill>`, m
 
 One `deliver` run on fixture `c`, story 1 (an overdue notice with days late), with this branch's plugin text. 115 seconds, 4 turns, all nine harness rules held, no breaks. The agent built the feature: `src/pages/loans.js` (the notice) and `src/jobs/markOverdue.js` (the shared 14-day limit) changed, with three new steps. E1 and E2 were seen red naturally, because the page had no notice. The application files were listed in the developer note, and the plain sentences named no file. This is the default path of E1. The company-skill path (E2) was not run.
 
+## Result of a real run with a stand-in skill (E2)
+
+The same story on fixture `c`, with a Skill Roles table naming `acme-feature-builder`, a stand-in project skill with four house rules (code under `src/`, a `// ACME:` comment line on every new function, `const` arrow functions, no logging, and a closing line). The fixture was changed in the working tree for the run only and put back. 153 seconds, 7 turns, all nine harness rules held, no breaks. Before the first edit the agent said in the developer note that application code would be written with the `acme-feature-builder` rules. The new function `overdueNotice` in `src/pages/loans.js` has the `// ACME:` line and is a `const` arrow function, and nothing logs. The other change in application code was one export added to `src/jobs/markOverdue.js`, which is no new function. The agent did not print the exact closing line of the skill. The final report is in plain words by design, so it carries no such line. So the role is found and followed. Not shown: how the agent called the skill, and a skill that asks a question of its own (E4).
+
 ## Not proven by this change
 
-- That a company's own skill works well inside `deliver`. The role is tested for its text. A real run with a stand-in skill would check it. It was not done.
+- That a company's own skill works well inside `deliver`. The role is tested for its text. A stand-in skill was followed in one run (above). A real company skill, and one that asks its own questions (E4), were not tried.
