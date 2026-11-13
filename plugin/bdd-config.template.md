@@ -9,7 +9,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | prepare | `` (optional command that builds what the tests launch, such as servers; runs before generate and test; empty to skip) |
 | generate | `<command to generate test files from .feature files; empty if the framework reads .feature files directly>` |
 | test | `<command to run tests>` |
-| typecheck | `<command to check types / compile with strict warnings>` |
+| typecheck | `<command to check types / compile with strict warnings; empty to skip>` |
 | show-trace | `<command to view test traces, if available>` |
 | lint | `<optional project linter for tags, casing, indentation; empty to skip>` |
 
@@ -64,7 +64,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 
 | Rule | Details |
 |------|---------|
-| Typecheck must pass | Run **typecheck** command - zero errors required |
+| Typecheck must pass | Run **typecheck** command, when one is set - zero errors required |
 | No unused code | Remove unused imports, locals, parameters; prefix intentional unused with `_` |
 | State properties declared | New properties on **state_fixture** must be added to **state_type** |
 | Dead code | Delete entirely, don't comment out |

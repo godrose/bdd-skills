@@ -63,7 +63,7 @@ Report:
 
 #### 5. Type check (if scope is `strict`)
 
-Run the **typecheck** command from BDD config.
+Run the **typecheck** command from BDD config. If the row is absent, empty or in `<...>` form, skip this step and say so in one line.
 
 Report any errors with file, line, and error code.
 

@@ -60,6 +60,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-12-flows-perl-to-typescript.md` | The flow scripts move from Perl to TypeScript with the same rules, and the flow breaks are rewritten |
 | `2026-11-12-mutation-apply-typescript.md` | The mutation runner applies a break with TypeScript, so Perl is no longer needed (option B, scope A) |
 | `2026-11-13-readme-newcomer.md` | The README for a reader new to BDD and to the plugin |
+| `2026-11-13-readme-newcomer-2.md` | The README for a newcomer, second part: access, names, pointers, jargon, small gaps and an empty typecheck |
 | `2026-11-13-feature-builder-role.md` | `deliver` and `implement` build the feature, and a company skill can do it (the `feature-builder` role) |
 
 ## trials/
