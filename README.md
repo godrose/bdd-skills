@@ -108,7 +108,13 @@ In a headless run (`claude -p`), writes into `.claude/` may be refused. `/bdd:in
 
 > 💡 **Tip:** Commit `.claude/bdd-config.md` once it is filled in, so the whole team shares one setup.
 
-Then start with a story:
+Then give it a story. For a first run, in one conversation:
+
+```
+/bdd:deliver <description>
+```
+
+Or step by step, with a stop between steps (see The flow):
 
 ```
 /bdd:discover <story>
@@ -249,19 +255,20 @@ Drop one of these row sets into the **Tooling** table (the template ships with t
 | typecheck | `npx tsc --noEmit --noUnusedLocals --noUnusedParameters` |
 ```
 
-**SpecFlow (C#/.NET):**
+**SpecFlow or Reqnroll (C#/.NET):**
 ```markdown
-| generate | `dotnet build -c ServerWithFake` |
-| test | `dotnet test -c ServerWithFake --no-build` |
-| typecheck | `dotnet build -c ServerWithFake -warnaserror --no-incremental` |
+| generate | `dotnet build` |
+| test | `dotnet test --no-build` |
+| typecheck | `dotnet build -warnaserror --no-incremental` |
 ```
+If your project builds with a named configuration, add `-c <configuration>` to all three.
 
-**Cucumber (Java/Kotlin):**
+**Cucumber (Java/Kotlin, Maven):**
 ```markdown
-| generate | `mvn compile` |
-| test | `mvn test -Dcucumber.filter.tags="@smoke"` |
-| typecheck | `mvn compile -Werror` |
+| test | `mvn test` |
+| typecheck | `mvn compile -Dmaven.compiler.failOnWarning=true -Dmaven.compiler.showWarnings=true` |
 ```
+Leave `generate` empty: Cucumber reads the `.feature` files itself. Check that your version of the Maven compiler plugin honors the warning options.
 
 </details>
 
@@ -333,6 +340,7 @@ Each scenario in the log carries a stable tag such as `@spec-export-empty-list`.
 ```
 .claude-plugin/
   marketplace.json              # Marketplace listing for this repo. Its source is ./plugin
+.github/                        # CI workflows, the pull request template, code owners and Dependabot
 plugin/                         # The plugin. Claude Code installs this folder
   .claude-plugin/
     plugin.json                 # Plugin manifest: name, version, description
@@ -341,7 +349,7 @@ plugin/                         # The plugin. Claude Code installs this folder
     init.md                     # Plugin only: create .claude/bdd-config.md from the template (copy only)
     discover.md                 # Discover what to build: questions, examples, edge cases, exclusions
     design.md                   # Design scenarios from ACs - analyze gaps, formulate, implement
-    implement.md                # Implement step definitions - explore UI, discover selectors, verify
+    implement.md                # Implement step definitions and build the feature - explore, discover selectors, verify
     run.md                      # Run tests by tag/name/suite - config-driven, any framework
     triage.md                   # Turn pasted channel discussion into scenario edits and decision records
     reconcile.md                # Report drift between the decision log and the scenarios
@@ -358,8 +366,12 @@ flows/                          # Scripted runs of a whole discover or deliver c
 install.sh                      # Copy the skills into a project's .claude/ directory as bdd-<name> files
 specs/                          # The repo's own specification: scenarios in specs/features, their steps in specs/steps
 tests/                          # The test runner, the CI scripts, and tests/mutate.sh with its breaks in tests/mutations/
-package.json, tsconfig.json     # The scenario runner (Cucumber and tsx) and its typecheck
+package.json, tsconfig.json, cucumber.js  # The scenario runner (Cucumber and tsx), its config and its typecheck
 docs/                           # Discovery packs, trial records, the known gaps, the demo recording
+README.md                       # This file
+CHANGELOG.md                    # What each release changed
+CLAUDE.md                       # How to work on this repo, including releasing
+LICENSE                         # Apache 2.0
 ```
 
 </details>
@@ -374,6 +386,7 @@ bdd:design (methodology: what scenarios to create)
   ├─ Discovers: requirements-sync skill (fetch ACs, optional)
   ├─ Invokes:   implementer skill (implement each scenario)
   │               ├─ Discovers: domain-knowledge skill (project patterns, optional)
+  │               ├─ Discovers: feature-builder skill (writes application code, optional)
   │               └─ Dispatches: verifier agent (run tests + type check)
   └─ Discovers: requirements-sync skill (publish results, optional)
 
@@ -382,7 +395,7 @@ bdd:reconcile (optional: report drift between the decision log and the scenarios
 bdd:deliver (composes discover, design, implement and run: two approvals, a report in plain words)
 ```
 
-Skills reference each other by **role** (from `bdd-config.md`), not by name. The optional roles `reconciler` and `feedback-intake` point at `bdd:reconcile` and `bdd:triage`.
+Skills reference each other by **role** (from `bdd-config.md`), not by name. The optional roles `reconciler` and `feedback-intake` point at `bdd:reconcile` and `bdd:triage`. The optional role `feature-builder` points at your own skill for application code.
 
 With the decision log on, `bdd:triage` turns channel discussion into approved edits and records, and `bdd:reconcile` reports drift (neither runs tests).
 
