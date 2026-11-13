@@ -2,6 +2,7 @@
 Feature: deliver and implement build the feature, and a company skill can do it
 
   Decision (2026-11-13): The checks are contracts between files and one reversed decision, not phrases of prose. Why: the approach review of 2026-11-12.
+  Decision (2026-11-13): A skill named in the request is used for that run, whatever the row says. Why: a person without a config row can still use their own skill, and no question is asked.
   Decision (2026-11-13): implement no longer says it handles execution only, and the README no longer says implement does not build the feature. Why: both builders now build the feature. This replaces the line of the README added in 2026-11-13 (#94).
 
   Scenario: The config template has an optional feature-builder role
@@ -13,6 +14,7 @@ Feature: deliver and implement build the feature, and a company skill can do it
     Then it contains:
       | **feature-builder**                    |
       | No **feature-builder**: build it yourself |
+      | If the request names a skill for the application code, use it for this run |
 
     Examples:
       | command   |

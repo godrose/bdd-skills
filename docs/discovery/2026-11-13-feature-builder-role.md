@@ -24,6 +24,7 @@ A developer or product manager runs `/bdd:deliver` (or `/bdd:implement`) for a f
 | E5 | The step code is wrong (undefined step, locator not found, timeout) | That is a step problem, fixed in step code as before. Application code is changed only when the step code is right and the assertion fails because the application does not do it. |
 | E6 | The scenario itself looks wrong | A product decision, asked, as before. An approved scenario or its expected values never change to make a check pass. |
 | E7 | `workflow_mode` is `specify-only` | No implement step, so nothing is built. |
+| E8 | The request names a skill for the application code, and no row is set | The agent uses that skill for this run, with no question and no config. A skill that cannot be found is said in one line, then E1 or E2 applies. |
 
 ## Decisions
 
@@ -37,6 +38,7 @@ A developer or product manager runs `/bdd:deliver` (or `/bdd:implement`) for a f
 | 6 | A `feature-builder` row that cannot be resolved is said in one line, then the default applies. My call. | The same shape as the other optional roles. A hard stop would block a run for a name typo. |
 | 7 | `/bdd:init --detect` does not propose this role in this change. My call. | The proposal needs its own matching rule and tests. It is a follow-up. |
 | 8 | The checks are contracts between files and one reversed decision, not phrases of prose: the template has the row, `implement.md` and `deliver.md` name the role and give the default, `implement.md` no longer says "execution only", and the README no longer says `implement` does not build the feature. | The approach review of 2026-11-12. |
+| 9 | A skill named in the request is used for that run, and wins over the row. Added after the builder asked what happens when no skill is configured. | A person without a config row can still use their own skill. No question is asked, because `deliver` asks only the product owner. |
 
 ## Existing users
 
@@ -62,6 +64,10 @@ One `deliver` run on fixture `c`, story 1 (an overdue notice with days late), wi
 ## Result of a real run with a stand-in skill (E2)
 
 The same story on fixture `c`, with a Skill Roles table naming `acme-feature-builder`, a stand-in project skill with four house rules (code under `src/`, a `// ACME:` comment line on every new function, `const` arrow functions, no logging, and a closing line). The fixture was changed in the working tree for the run only and put back. 153 seconds, 7 turns, all nine harness rules held, no breaks. Before the first edit the agent said in the developer note that application code would be written with the `acme-feature-builder` rules. The new function `overdueNotice` in `src/pages/loans.js` has the `// ACME:` line and is a `const` arrow function, and nothing logs. The other change in application code was one export added to `src/jobs/markOverdue.js`, which is no new function. The agent did not print the exact closing line of the skill. The final report is in plain words by design, so it carries no such line. So the role is found and followed. Not shown: how the agent called the skill, and a skill that asks a question of its own (E4).
+
+## Result of a real run with a skill named in the request (E8)
+
+The story of fixture `c` story 1, with "Use our acme-feature-builder skill to write the application code." added, no Skill Roles row, and the stand-in skill in the project (working tree only, put back after). 125 seconds, 5 turns. Before the first edit the agent said the code would be written with that skill and named its rules. `src/pages/loans.js` has the `// ACME:` line and a `const` arrow function, with no logging. It asked no question about the skill. Seven of nine harness rules held. Two broke: report-shape and parked-not-passed. The report listed E2, E3 and E4 under "Not checked" because they were not looked at on the real page, and also marked them passed because the scenarios passed. That is about how `deliver` words a report, and the earlier runs without a named skill held both rules. It is one run, so the cause is not shown. It is noted as an open item and not fixed here.
 
 ## Not proven by this change
 
