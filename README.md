@@ -28,6 +28,8 @@
 
 ## Contents
 
+- [New to BDD?](#new-to-bdd)
+- [Before you start](#before-you-start)
 - [Quick start](#quick-start)
 - [The flow](#the-flow)
 - [Modes](#modes)
@@ -39,6 +41,41 @@
 - [Related projects](#related-projects)
 - [Contributing](#contributing)
 - [License](#license)
+
+## New to BDD?
+
+**BDD** (behaviour-driven development) means agreeing on examples of how a feature should behave, in words everyone understands, before anyone builds it. The examples then become automated checks.
+
+A **scenario** is one such example. It is written in **Gherkin**, a plain-text format with three keywords: `Given` is the starting point, `When` is what the user does, and `Then` is what they should see. Scenarios live in `.feature` files.
+
+```gherkin
+Feature: Cancel an order
+  Scenario: A customer cancels an order that has not shipped
+    Given an order that has not shipped
+    When the customer cancels it
+    Then the order shows as cancelled
+    And the customer sees a refund notice
+```
+
+A **step definition** is the code behind one line of a scenario. It makes that line run against your app. A **runner** finds the `.feature` files and runs the step definitions.
+
+This plugin finds the examples by asking you questions, then writes the scenarios and the step definitions and runs them.
+
+## Before you start
+
+You need three things:
+
+- **Claude Code**, and read access to this repository (see Access under Install).
+- **A project to work on.** It can be an app that already exists.
+- **A Gherkin runner.** The plugin does not install one. If your project has none, pick one for your stack first:
+
+| Stack | Runner |
+|-------|--------|
+| A web app tested through a browser, in TypeScript | [Playwright-BDD](https://vitalets.github.io/playwright-bdd/) |
+| JavaScript, Java or Kotlin | [Cucumber](https://cucumber.io/docs/installation/) |
+| .NET | [Reqnroll](https://reqnroll.net/), the successor of SpecFlow |
+
+Set the runner up as its own documentation says, and check that it can run one example. Then come back here. `/bdd:init --detect` reads your build files and proposes the config.
 
 ## Quick start
 
@@ -86,6 +123,12 @@ The agreed scenarios become automated checks, so later changes cannot silently b
 For a product manager with a developer watching, `/bdd:deliver <description>` runs the four steps in one conversation. It asks one question at a time, shows the agreed examples for approval, then the scenarios for a go-ahead, implements them, and ends with a report in plain words: each example passed, failed or couldn't be checked, and whether the earlier scenarios of the same feature still pass. It uses the commands above and does not replace them. Answers that shaped a scenario are written beside it in the `.feature` file. Exclusions and removals go in one list, `docs/out-of-scope.md`, so the next description is not asked for what was ruled out.
 
 If you run a command before `/bdd:init`, it stops and tells you to run it.
+
+### What you get
+
+`/bdd:implement` writes the step definitions and the support code, and runs the scenarios. It does not build the feature. You build it, or ask Claude to, until the scenarios pass. `/bdd:deliver` goes further and builds the feature in your app too.
+
+In both cases a scenario for a feature that does not exist yet fails first, on an assertion. That red is expected. It shows the scenario can fail. The scenario turns green when the feature works.
 
 ## Modes
 
@@ -153,6 +196,33 @@ Project files have no plugin namespace, so the commands use a hyphen: `/bdd-disc
 ## Configure
 
 Edit `.claude/bdd-config.md` in your project, or let `/bdd:init --detect` propose the values. Skills reference each other by **role** (from the Skill Roles table in that file), not by name, so you swap an implementation by editing the config. If your step code sits in more than one folder, list them in `steps_dir`, comma-separated, for example `src/Steps, src/Adapters`.
+
+### Minimum to start
+
+A first run needs these rows in `.claude/bdd-config.md`. Every other row is optional and has a default.
+
+| Row | What to put |
+|-----|-------------|
+| `test` | The command that runs your scenarios |
+| `features_dir` | The folder that holds your `.feature` files |
+| `steps_dir` | The folder that holds your step definitions |
+| `config_file` | The runner's config file |
+| `generate` | The command that turns `.feature` files into test files. Leave it empty if your runner reads them directly |
+| `typecheck` | The command that checks types or compiles with strict warnings |
+| `prepare` | Only if the tests need something built or started first, such as a server |
+
+For a small Playwright-BDD project, the rows look like this:
+
+```markdown
+| test | `npx playwright test` |
+| generate | `npx bddgen` |
+| typecheck | `npx tsc --noEmit` |
+| features_dir | `features` |
+| steps_dir | `steps` |
+| config_file | `playwright.config.ts` |
+```
+
+### More settings
 
 <details>
 <summary><b>Tooling rows by framework</b></summary>
