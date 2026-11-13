@@ -57,6 +57,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | verifier | `bdd:verifier` (agent) | yes | Run tests + type check, report results |
 | test-runner | `bdd:run` | no | Environment selection + test execution |
 | domain-knowledge | `<your-project-knowledge-skill>` | no | Project-specific selectors and patterns |
+| feature-builder | `<your-feature-builder-skill>` | no | Write application code when a scenario fails because the feature is missing or wrong |
 | requirements-sync | `<your-sync-skill>` | no | Fetch ACs from issue tracker, publish results |
 
 ## Code Quality

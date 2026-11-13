@@ -83,7 +83,7 @@ Sort every stop by kind.
 - **A product decision is asked at once.** Examples: the data does not fit an agreed example, an earlier scenario now fails and nobody said the change was intended, or the code shows a behavior nobody described. Explain what was found in plain words and ask one question about that behavior, record the answer, and resume. Do not ask the product manager to approve again what they already approved.
 - **A technical stop is parked.** Example: a step failed three times. Report the example as failed or as couldn't be checked, with the evidence for the developer. The independent examples go on. Collect the parked stops into the "Not checked, and what it risks" section of the report. Give each one plain sentence on what could go wrong for the users, then the evidence on a "For the developer" line. Never name a file, a field, a function or a status in the plain sentence. Do not ask whether there is a developer, and do not word the report differently for a person who has none. A parked example is never reported as passed.
 
-When a check fails against an agreed example, fix the step code or the implementation and re-run, within the fix loop's cap, and never change an approved scenario or its expected values to make a check pass. If the scenario is what is wrong, that is a product decision: ask.
+When a check fails against an agreed example, fix the step code or build the feature in the application and re-run (the **feature-builder** role from the config does it when it is set, as `bdd:implement` does), within the fix loop's cap, and never change an approved scenario or its expected values to make a check pass. If the request names a skill for the application code, use it for this run. If the scenario is what is wrong, that is a product decision: ask. List the application files that were changed on the "For the developer" line of the report, never in the plain sentences.
 
 ### Recording
 
@@ -122,6 +122,7 @@ Developer note: <anything that was not recorded, anything surprising seen in ste
 ```
 
 - "Couldn't be checked" covers an example whose result was not looked at in step 5 (the Seen line says why), a scenario still tagged `@pending`, a scenario that stays manual-only, a scenario the red-first check marked "not seen red", and any run that executed zero tests. A run of zero tests is never a pass.
+- Each example is in one place. An example named under "Not checked, and what it risks" has `couldn't be checked` on its own line, never `passed`, even when its scenario passed. Say so in the line: `couldn't be checked - the scenario passed, but the result was not looked at`. An example marked `passed` is not named in that section.
 - Name each example by the words the product manager agreed.
 - Put anything surprising that you saw in step 5 in the developer note, even when it was fixed.
 - Leave the developer note out when there is nothing in it.
@@ -138,4 +139,5 @@ Developer note: <anything that was not recorded, anything surprising seen in ste
 
 - No **out_of_scope_file**: use `docs/out-of-scope.md`.
 - No **requirements-sync** role: work from the text you were given.
+- No **feature-builder**: build it yourself, as `bdd:implement` does.
 - No **workflow_mode**: `specify-and-implement`.
