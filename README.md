@@ -66,7 +66,7 @@ This plugin finds the examples by asking you questions, then writes the scenario
 
 You need four things:
 
-- **Claude Code**, and read access to this repository (see Access under Install).
+- **Claude Code.**
 - **A project to work on.** It can be an app that already exists.
 - **A branch.** The plugin edits files in your project, tests and application code. Work on a branch and read the diff before you merge.
 - **A Gherkin runner.** The plugin does not install one. If your project has none, pick one for your stack first:
@@ -82,8 +82,6 @@ Not listed? Any Gherkin runner works, for example Behave (Python), Behat (PHP) o
 Set the runner up as its own documentation says, then run one example: follow the runner's own getting-started page until its example passes. Then come back here. `/bdd:init --detect` reads your build files and proposes the config.
 
 ## Quick start
-
-You need read access to this repository. It is private for now, so see Access under Install.
 
 In Claude Code:
 
@@ -160,8 +158,6 @@ Choose the mode with the `workflow_mode` row in `.claude/bdd-config.md`, or per 
 ## Install
 
 There are two ways to install. The plugin is the recommended one.
-
-**Access.** The repository is private for now. You need read access to it and git credentials on your machine: an SSH key loaded in `ssh-agent`, or HTTPS with a stored credential (`gh auth login`, then `gh auth setup-git`). Claude Code uses your own git setup and has no token of its own. The one-line `curl` install below only works once the repository is public. Until then, use the clone form. To ask for access, message [the owner](https://github.com/godrose) on GitHub. The repository is planned to go public.
 
 ### As a plugin
 

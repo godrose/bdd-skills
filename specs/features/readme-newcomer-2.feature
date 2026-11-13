@@ -2,7 +2,7 @@
 Feature: The README answers a newcomer's remaining questions
 
   Decision (2026-11-13): The checks are contracts between files: the install line names the marketplace of the marketplace file, every relative link points at a file, and the sections sit where they should. Why: the approach review of 2026-11-12.
-  Decision (2026-11-13): The route to ask for access is the owner's GitHub profile. Why: a person without access cannot open an issue.
+  Decision (2026-11-13): The route to ask for access was the owner's GitHub profile. Why: a person without access cannot open an issue. Replaced the same day by readme-public.feature: the repo goes public, so the README has no access step and this scenario is gone.
   Decision (2026-11-13): An empty typecheck row is a plugin text rule, in the verifier, in implement and in the template. Why: a README line alone would rest on what the agent happens to do.
 
   Scenario: The install line names the marketplace of the marketplace file
@@ -15,11 +15,6 @@ Feature: The README answers a newcomer's remaining questions
       | `godrose/bdd-skills`     |
       | `gennadyverdel-plugins` |
       | `bdd@gennadyverdel-plugins` |
-
-  Scenario: The Access paragraph says how to ask the owner
-    Given the README
-    Then it has a section "## Install" holding:
-      | [the owner](https://github.com/godrose) |
 
   Scenario: Every relative link in the README points at a file
     Given the README
