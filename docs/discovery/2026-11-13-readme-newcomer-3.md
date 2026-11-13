@@ -21,6 +21,8 @@ A developer who reads The flow sees the three commands and `/bdd:deliver` and ca
 | E2 | Runner check | The check is "follow the runner's own getting-started page until its example passes". The do-nothing step is dropped. |
 | E3 | Branch | Before you start lists a branch: the plugin edits tests and application code, so work on a branch and read the diff before you merge. |
 | E4 | Scenario data | What you get says each `Given` step needs code that puts the app in that state. `implement` writes it, using how your tests and app already create data. State that something else provides (a seeded user, a deployed service) gets a step that checks it is there and fails with a setup error. |
+| E5 | Audience labels | "For an individual builder" becomes "Step by step:". The `deliver` paragraph loses "For a product manager with a developer watching" and says it is written for one and suits a developer too. |
+| E6 | Install against Quick start | The Install paragraph leads with `/bdd:init --detect`, as Quick start does. Plain `/bdd:init` is explained as filling in nothing, so the person fills the file in. |
 
 ## Decisions
 
@@ -31,6 +33,8 @@ A developer who reads The flow sees the three commands and `/bdd:deliver` and ca
 | 3 | Say "work on a branch" and do not add an approval gate. My call. | Decision 3 of `2026-11-13-feature-builder-role.md` has no extra approval before application code. A branch is the user's own safety net. |
 | 4 | E4 is stated from `design.md` (the "check the setup" rule) and from what `implement` does with step code. My call. | It is what the text says. No new behavior. |
 | 5 | The checks are structure: the chooser sits at the top of The flow and names both paths, and the runner check no longer says the do-nothing step. | The approach review of 2026-11-12. |
+| 6 | The two audience labels are replaced, and the chooser says who each path suits. My call, after the fourth goldfish run. | The labels sent a developer to the wrong path. This replaces "For an individual builder" and "For a product manager with a developer watching". |
+| 7 | The Install paragraph leads with `--detect`. My call. | It said to fill the file in by hand first, which contradicted Quick start. No plugin behavior changes. |
 
 ## Existing users
 
