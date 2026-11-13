@@ -126,9 +126,9 @@ If you run a command before `/bdd:init`, it stops and tells you to run it.
 
 ### What you get
 
-`/bdd:implement` writes the step definitions and the support code, and runs the scenarios. It does not build the feature. You build it, or ask Claude to, until the scenarios pass. `/bdd:deliver` goes further and builds the feature in your app too.
+`/bdd:implement` and `/bdd:deliver` write the step definitions and the support code, run the scenarios, and build the feature in your app until they pass. A scenario for a feature that does not exist yet fails first, on an assertion. That red is expected. It shows the scenario can fail. The scenario turns green when the feature works.
 
-In both cases a scenario for a feature that does not exist yet fails first, on an assertion. That red is expected. It shows the scenario can fail. The scenario turns green when the feature works.
+If your company has its own way of writing application code, name that skill in the `feature-builder` row of the Skill Roles table in `.claude/bdd-config.md`. The plugin then asks it to write the application code. Without the row, the plugin makes the smallest change that turns the scenario green and lists the files it changed.
 
 ## Modes
 

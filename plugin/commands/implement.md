@@ -6,7 +6,7 @@ description: "Implement a BDD scenario step by step - explore the system under t
 
 Implement a BDD scenario by exploring the actual state of the system under test at each step, finding the correct locators or calls, and verifying iteratively.
 
-This skill handles **execution only** - it takes a scenario (from a `.feature` file or from the **designer** skill) and implements the step definitions, page objects or helpers, and support code needed to make it pass.
+This skill takes a scenario (from a `.feature` file or from the **designer** skill) and makes it pass. It implements the step definitions, page objects or helpers, and support code. When the step code is right and the scenario still fails because the application does not do what it says, it builds the feature in the application too.
 
 **Before starting**, read `.claude/bdd-config.md` for project-specific tooling, conventions, and skill role mappings. Project-specific patterns and selector knowledge are loaded separately via the **domain-knowledge** skill if configured. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
 
@@ -92,6 +92,9 @@ Based on what you learned from the evidence:
 1. Update the page objects or helpers
 2. Update step definitions
 3. Update support modules if needed
+4. Build the feature in the application, but only when the step code is right and an assertion fails because the application does not do what the scenario says. An undefined step, a locator that finds nothing, a timeout or a setup error is a step problem: fix it in step code. Never change an approved scenario or its expected values to make it pass. If the scenario looks wrong, that is a product decision: report it as an open decision.
+
+**Building the feature.** Check the **feature-builder** role in the BDD config. If it names a skill that you can find, invoke it to write the application code, and follow its standards. If it asks a question about behavior, report an open decision. If the row names a skill you cannot find, say so in one line and build it yourself. No **feature-builder**: build it yourself, with the smallest change that turns the scenario green. Ask for no approval before editing application code. The retry cap below applies. In the final report, list the application files you changed.
 
 **Before authoring a NEW step def** (as opposed to editing an existing one), repeat the paraphrase grep from Phase 0 step 5 against the current inventory. The inventory may have changed since Phase 0 (e.g., a sibling scenario was implemented in between, or a step def merged upstream). If a paraphrase now exists, reword the `.feature` instead of adding a duplicate.
 
