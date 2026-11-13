@@ -64,10 +64,11 @@ This plugin finds the examples by asking you questions, then writes the scenario
 
 ## Before you start
 
-You need three things:
+You need four things:
 
 - **Claude Code**, and read access to this repository (see Access under Install).
 - **A project to work on.** It can be an app that already exists.
+- **A branch.** The plugin edits files in your project, tests and application code. Work on a branch and read the diff before you merge.
 - **A Gherkin runner.** The plugin does not install one. If your project has none, pick one for your stack first:
 
 | Stack | Runner |
@@ -78,7 +79,7 @@ You need three things:
 
 Not listed? Any Gherkin runner works, for example Behave (Python), Behat (PHP) or godog (Go). Put its commands in the config rows.
 
-Set the runner up as its own documentation says, then run one example: write a scenario with one `Given` step that does nothing, run the runner's test command, and look for one passing scenario. Then come back here. `/bdd:init --detect` reads your build files and proposes the config.
+Set the runner up as its own documentation says, then run one example: follow the runner's own getting-started page until its example passes. Then come back here. `/bdd:init --detect` reads your build files and proposes the config.
 
 ## Quick start
 
@@ -117,6 +118,13 @@ Then start with a story:
 
 ## The flow
 
+### Which path?
+
+- **One conversation, first run:** `/bdd:deliver <description>`. It asks, shows the agreed examples, then the scenarios, builds and checks them, and reports in plain words.
+- **Step by step, with a stop between steps:** `/bdd:discover`, `/bdd:design` and `/bdd:implement`. Add `--specify-only` to stop at the scenarios (see Modes).
+
+Either path suits a developer. A first run is easier with `deliver`.
+
 For an individual builder:
 
 1. `/bdd:discover <story>` first looks at what the project already has, then asks one question at a time and finds examples, edge cases and exclusions. Trivial changes skip it.
@@ -134,6 +142,8 @@ If you run a command before `/bdd:init`, it stops and tells you to run it.
 ### What you get
 
 `/bdd:implement` and `/bdd:deliver` write the step definitions and the support code, run the scenarios, and build the feature in your app until they pass. A scenario for a feature that does not exist yet fails first, on an assertion. That red is expected. It shows the scenario can fail. The scenario turns green when the feature works.
+
+Each `Given` step in a scenario needs code that puts your app in that state, such as an order that has not shipped. `/bdd:implement` writes it, using how your tests and app already create data: an API call, a database helper or a page step. For state that something else provides, such as a seeded user or a deployed service, the scenario gets a step that checks it is there and fails with a setup error when it is not.
 
 If your company has its own way of writing application code, name that skill in the `feature-builder` row of the Skill Roles table in `.claude/bdd-config.md`. The plugin then asks it to write the application code. You can also name a skill in your request, for example "use our X skill for the code", and the plugin uses it for that run without any config. Without either, the plugin makes the smallest change that turns the scenario green and lists the files it changed.
 
