@@ -64,7 +64,7 @@ The trial record
 
 The listings
 - **E25** `README.md` and `plugin/README.md` name `/bdd:deliver`. The docs index lists `2026-11-09-deliver.md` and the trial record.
-- **E26** Four checks that are not about `deliver.md`: the README line "only if its first lines carry the installer", `### G9` in `docs/known-gaps.md`, and the handoff file with no `/Users/` and no `bdd-netcore`.
+- **E26** Four checks that are not about `deliver.md`: the README line "only if its first lines carry the installer", `### G9` in `docs/known-gaps.md`, and the handoff file with no `/Users/` and no trial project name.
 
 ## Decisions
 

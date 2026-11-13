@@ -1,8 +1,8 @@
-# Dogfood: the plugin on bdd-netcore (2026-11-04)
+# Dogfood: the plugin on the .NET project (2026-11-04)
 
 Input for discovery, not a spec. Each finding is a question for the plugin, with the evidence from a real brownfield project.
 
-Project: `godrose/bdd-netcore` (SpecFlow, xUnit, .NET 10, Server and EndToEnd specs, one config committed before the plugin existed). Plugin: `main` at `2c4669f`, loaded with `claude --plugin-dir`.
+Project: a .NET project (SpecFlow, xUnit, .NET 10, Server and EndToEnd specs, one config committed before the plugin existed). Plugin: `main` at `2c4669f`, loaded with `claude --plugin-dir`.
 
 ## What was run
 
@@ -43,7 +43,7 @@ The config covers `Features.Server` only. The repo also has `Features.EndToEnd` 
 
 ## Findings on the scenarios (what a review should catch)
 
-All fixed in bdd-netcore and checked against the real executor stack.
+All fixed in the .NET project and checked against the real executor stack.
 
 | # | Finding | Fix |
 |---|---------|-----|

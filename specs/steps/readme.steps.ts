@@ -1,5 +1,6 @@
-import { Then, type DataTable } from "@cucumber/cucumber";
+import { Given, Then, type DataTable } from "@cucumber/cucumber";
 import assert from "node:assert";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { ROOT, read, type World } from "./support";
@@ -90,4 +91,15 @@ Then("every relative link in it points at a file that exists", function (this: W
   assert.ok(links.length > 0, "no relative links found");
   const bad = [...new Set(links)].filter((l) => !fs.existsSync(path.join(ROOT, l)));
   assert.deepStrictEqual(bad, [], "links to files that do not exist: " + bad.join(", "));
+});
+
+Given("the tracked text files of the repo", function (this: World) {
+  const names = execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" }).split("\n").filter(Boolean);
+  this.files = names.filter((n) => /\.(md|ts|json|yml|yaml|sh|feature|txt|js)$/.test(n) && !n.endsWith("package-lock.json"));
+});
+
+Then("none of them names the trial project", function (this: World) {
+  const word = ["bdd", "net" + "core"].join("-");
+  const bad = this.files.filter((n) => n.toLowerCase().includes(word) || read(n).toLowerCase().includes(word));
+  assert.deepStrictEqual(bad, [], "names the trial project: " + bad.join(", "));
 });

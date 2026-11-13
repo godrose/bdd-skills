@@ -4,7 +4,7 @@ A record of one working session, kept as an example of how a product manager tal
 
 ## What this is, and what it is not
 
-- Two changes were delivered on a real project, one after the other, in one session. The project is a .NET experiment runner with a web client and two test suites. It is the same project as in `docs/discovery/2026-11-04-dogfood-bdd-netcore.md`. Its name and paths are left out here.
+- Two changes were delivered on a real project, one after the other, in one session. The project is a .NET experiment runner with a web client and two test suites. It is the same project as in `docs/discovery/2026-11-04-dogfood-dotnet-project.md`. Its name and paths are left out here.
 - The assistant followed `plugin/commands/deliver.md` step by step. Not run through the command itself: nobody typed `/bdd:deliver`. This tests the method and the text of the command, not how the command behaves in a live session.
 - In this session the plugin author played the product manager. They know the method well, so this is not a test with a person who has never seen it. Where the product manager was confused, that is marked below, and those moments are the most useful ones.
 - The product manager's words are quoted as they were written. The assistant's messages are summarized.

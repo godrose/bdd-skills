@@ -14,7 +14,7 @@ Two problems in `/bdd:init --detect` and the config template, treated as one sto
 - README and `run.md` say `run` and the verifier skip `@pending` and undefined steps under it. Nothing covers the `generate` row.
 - `implement` removes `@pending` only after the verifier passes. A scenario is still `@pending` while it is being implemented.
 - In the demo's Playwright-BDD 9.2.1: `bddgen --tags <expression>` filters generation, and the config option `missingSteps` takes `fail-on-gen` (the default), `fail-on-run` or `skip-scenario`. Verified in `node_modules`.
-- Other frameworks were not verified. In bdd-netcore, `generate` is a plain `dotnet build`.
+- Other frameworks were not verified. In the .NET project, `generate` is a plain `dotnet build`.
 - `init.md` says never overwrite the config and never change a row that already has a value.
 
 ## Decisions
