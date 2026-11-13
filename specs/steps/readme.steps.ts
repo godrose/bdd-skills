@@ -104,6 +104,24 @@ Then("none of them names the trial project", function (this: World) {
   assert.deepStrictEqual(bad, [], "names the trial project: " + bad.join(", "));
 });
 
+Then("it has a section {string} lacking:", function (this: World, heading: string, table: DataTable) {
+  const body = section(this, heading);
+  const present = table.raw().flat().filter((t) => body.includes(t));
+  assert.deepStrictEqual(present, [], `still in '${heading}': ${present.join(" | ")}`);
+});
+
+Then("every term defined in the Glossary is used elsewhere in it", function (this: World) {
+  const gloss = section(this, "## Glossary");
+  const outside = lower(this.subject.replace(gloss, ""));
+  const unused: string[] = [];
+  for (const m of gloss.matchAll(/^- \*\*(.+?)\*\*(?: \(([^)]+)\))?/gm)) {
+    const names = m[1].split(/ and /).map((n) => n.replace(/`/g, ""));
+    if (m[2]) names.push(m[2]);
+    if (!names.some((n) => outside.includes(lower(n.replace(/ tags$/, ""))))) unused.push(m[1]);
+  }
+  assert.deepStrictEqual(unused, [], "defined and never used elsewhere: " + unused.join(" | "));
+});
+
 Then("its Files tree lists every top-level entry of the repo, and each entry it lists exists", function (this: World) {
   const start = this.subject.indexOf("<summary><b>Files</b></summary>");
   assert.ok(start >= 0, "no Files block");

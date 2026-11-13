@@ -145,7 +145,7 @@ If you run a command before `/bdd:init`, it stops and tells you to run it.
 
 ### What you get
 
-`/bdd:implement` and `/bdd:deliver` write the step definitions and the support code, run the scenarios, and build the feature in your app until they pass. A scenario for a feature that does not exist yet fails first, on an assertion. That red is expected. It shows the scenario can fail. The scenario turns green when the feature works.
+`/bdd:implement` and `/bdd:deliver` write the step definitions and the support code, run the scenarios, and build the feature in your app until they pass. A scenario for a feature that does not exist yet fails first, on an assertion. That red is expected: it shows the scenario can fail, and the plugin checks for it (red-first). The scenario turns green when the feature works.
 
 Each `Given` step in a scenario needs code that puts your app in that state, such as an order that has not shipped. `/bdd:implement` writes it, using how your tests and app already create data: an API call, a database helper or a page step. For state that something else provides, such as a seeded user or a deployed service, the scenario gets a step that checks it is there and fails with a setup error when it is not.
 
@@ -425,16 +425,31 @@ cd /tmp/bdd-skills && git pull
 
 ## Glossary
 
+### BDD
+
 - **Acceptance criteria** (ACs): the conditions a story must meet to count as done.
+- **Red-first**: seeing a scenario fail for the reason it states before it passes. A green that was never seen red proves little. The plugin checks it for every scenario it implements.
+
+### This plugin
+
 - **Discovery pack**: the saved record of a `/bdd:discover` conversation: questions, examples, edge cases, exclusions and decisions. It goes to the folder in the `discovery_dir` row.
 - **Reuse audit**: the check of each step of a draft scenario against the step definitions that already exist, so no duplicate is added.
-- **Verifier**: the `bdd:verifier` agent. It runs the generate, test and type check commands and reports the result. It never edits code.
-- **Red-first**: seeing a scenario fail for the reason it states before it passes. A green that was never seen red proves little.
-- **Headless run**: a run of `claude -p`, without an interactive session.
-- **Triage**: `/bdd:triage` turns pasted discussion, such as Slack, Jira or pull request comments, into proposed scenario edits and decision records. It writes them only after you approve.
-- **Reconcile**: `/bdd:reconcile` compares the decision log with the scenarios and reports what does not line up. It never edits.
+- **Skill role**: a job in the Skill Roles table of `.claude/bdd-config.md`, such as designer, verifier or feature-builder. A command looks up the skill for a role there and not by name, so you can swap in your own skill.
+- **Specify-only**: a mode that stops after the scenarios are approved and written, so a product manager can review them before any automation exists. See Modes.
+- **Pending and manual-only tags**: `@pending` marks a scenario planned to be automated and not yet. `@manual-only` marks one that stays manual by design. `/bdd:run` and the verifier skip both.
+
+### Decision log (opt-in)
+
+- **Decision log**: with `decision_log` set to `on`, one file per story records what was decided and why, and which scenarios the decision adds, changes or removes. `/bdd:triage` writes to it and `/bdd:reconcile` reads it. See Decision log.
 - **Drift**: a scenario that changed since its last decision.
 - **Orphan**: a decision that points at a scenario that is gone.
+- **Undecided**: a scenario with a stable id tag and no live decision.
+- **Conflict**: two live decisions that supersede the same record.
+
+### Claude Code
+
+- **Marketplace**: a catalog of plugins that Claude Code installs from. This repo publishes one, `gennadyverdel-plugins`.
+- **Headless run**: a run of `claude -p`, without an interactive session.
 
 ## Related projects
 

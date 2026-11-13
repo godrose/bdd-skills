@@ -30,17 +30,6 @@ Feature: The README answers a newcomer's remaining questions
       | ## Update           |
       | ## Glossary         |
       | ## Related projects |
-    And it has a section "## Glossary" holding:
-      | **Acceptance criteria**  |
-      | **Discovery pack**       |
-      | **Reuse audit**          |
-      | **Verifier**             |
-      | **Red-first**            |
-      | **Headless run**         |
-      | **Triage**               |
-      | **Reconcile**            |
-      | **Drift**                |
-      | **Orphan**               |
     And it contains:
       | - [Glossary](#glossary) |
 
