@@ -4,11 +4,11 @@ Releases are tagged `vX.Y.Z`. Before `1.0.0` the plugin can still change in ways
 
 ## 0.8.0 (2026-11-15)
 
-`/bdd:implement` no longer builds the feature in your app. `/bdd:deliver` does. Nothing in your `bdd-config.md` needs to change, and one row is new and optional.
+`/bdd:implement` goes back to writing test code only, and `/bdd:deliver` builds the feature in your app. This undoes what 0.7.1 said about `implement`. Nothing in your `bdd-config.md` needs to change, and one row is new and optional.
 
 ### What you will notice
 
-- **`implement` writes test code only. Read this first.** It writes the step definitions and the support code, runs the scenarios and stops when one is red for the right reason, which means the feature is missing. It no longer edits application code to turn it green. If you used `implement` for that, use `/bdd:deliver`, which goes on from the red and builds the feature.
+- **`implement` writes test code only. Read this first.** It writes the step definitions and the support code, runs the scenarios and stops when one is red for the right reason, which means the feature is missing. 0.7.1 said that it builds the feature too. It does not edit application code to turn a scenario green, apart from a test hook. If you relied on that, use `/bdd:deliver`, which goes on from the red and builds the feature.
 - **`implement` may add a test hook.** A behavior-neutral hook such as a `data-testid` or an accessibility label is allowed. When your steps find elements by a test id and the element a step needs has none, it adds the hook. It does not settle for a positional locator, such as a cell index or the nth child.
 - **One branch rule for any application edit.** On the default branch, the plugin creates `bdd/<story-slug>`, says so in one line and never uses a worktree. On any other branch it stays where it is.
 - **`build_order` row (new, optional) and a `--build-order` flag on `deliver`.** `all-first` is the default and automates every scenario before building. `per-scenario` automates and builds one scenario at a time. The flag wins over the row.
