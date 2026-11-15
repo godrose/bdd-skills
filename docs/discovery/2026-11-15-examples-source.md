@@ -6,6 +6,12 @@ People who approve and write behavior find Gherkin too formal. They must read it
 
 The people who do not want Gherkin at all were asked about. The builder chose to hide it from authors and approvers (H1), not to remove it from the repo (H2, ordinary tests in the project's own framework). H2 is a possible later step.
 
+## Why this is on its own branch
+
+This change asks whether Gherkin should be visible at all, and that touches the value the plugin claims: a spec people read, approve and keep. If the examples carry that value better, the plugin changes what it asks of its users. If they do not, the Gherkin stays the source and this work is dropped.
+
+So the work builds up on `feat/examples-source`, one PR per slice, and `main` keeps shipping 0.7.x fixes in the meantime. No slice bumps the version or adds a CHANGELOG entry. The branch reaches `main` once, as a release PR, and only after the trial on a real project (slice 4) settles the open points. The trial may decide not to ship it. That is an acceptable result, and the pack records why.
+
 ## Existing behavior
 
 - `discover` writes a pack with a numbered list of agreed examples (E1, E2 and so on) in plain words. It is a record of one conversation and nothing keeps it current.
