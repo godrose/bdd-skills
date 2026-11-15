@@ -190,15 +190,17 @@ function buildOrder(): void {
   };
   const first = calls.findIndex(isApp);
   if (first < 0) return;
-  let failed = 0;
+  let undef: number | null = null;
   for (const c of calls.slice(0, first)) {
     if (c.name !== "Bash" || !/\bnpm test\b|cucumber/.test(String(c.input.command ?? ""))) continue;
     const m = c.result.match(rx(`(\\d+) scenarios?(?: \\(([^)]*)\\))?`, ""));
-    const f = m?.[2]?.match(/(\d+) failed/);
-    failed = Math.max(failed, f ? Number(f[1]) : 0);
+    if (!m || Number(m[1]) < (meta.new_scenarios ?? 0)) continue;
+    const u = m[2]?.match(/(\d+) undefined/);
+    undef = u ? Number(u[1]) : 0;
   }
-  const broken = expected === "all-first" ? failed < 2 : failed > 1;
-  row("build-order", broken, `expected ${expected}: ${failed} failed of ${meta.new_scenarios} new scenarios at the first application edit`);
+  if (undef === null) return;
+  const broken = expected === "all-first" ? undef > 0 : undef === 0;
+  row("build-order", broken, `expected ${expected}: ${undef} of ${meta.new_scenarios} new scenarios had no steps at the first application edit`);
 }
 
 count();

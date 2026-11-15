@@ -2,9 +2,9 @@
 Feature: A deliver run records its calls, and the rule build-order counts the order of the build
 
   Decision (2026-11-15): Each turn is run with the stream output and the raw events are saved next to the turn text. Why: the plain output keeps only the text, so the order of the calls cannot be seen. Chosen by the builder over reading the session file of Claude Code.
-  Decision (2026-11-15): The rule counts the scenarios that had failed in one test run before the first application edit. Two or more is all-first, and one or none is per-scenario. Why: the two orders differ at that moment, and a scenario that already passes never fails, so the number of new scenarios cannot be the target.
+  Decision (2026-11-15): The rule counts the new scenarios that still had no steps (undefined) in the last run of the whole suite before the first application edit. None is all-first, and one or more is per-scenario. Why: the two orders differ at that moment in how many new scenarios have steps. The count of failures was tried first and a real per-scenario run broke it, because scenarios share steps and one new step turns several of them red at once. Replaces the earlier decision that counted failures.
   Decision (2026-11-15): The expected order is the flag in the story, else the row of the fixture config, else all-first. Why: it is the order of the plugin text, and the default of the plugin.
-  Decision (2026-11-15): A run without events, with fewer than two new scenarios, or without an application edit is not counted. Why: a recorded run of the older kind is not a break, and nothing can be told apart without a build.
+  Decision (2026-11-15): A run without events, with fewer than two new scenarios, without an application edit, or without a run of the whole suite before that edit is not counted. Why: a recorded run of the older kind is not a break, nothing can be told apart without a build, and a run of one scenario by name says nothing about the others.
 
   Scenario: Each turn is run with the stream output
     Given the assistant says the checklist and then the scenarios
@@ -37,9 +37,9 @@ Feature: A deliver run records its calls, and the rule build-order counts the or
       | "build_order": "per-scenario" |
       | "new_scenarios": 3            |
 
-  Rule: With all-first, several scenarios have failed when the first application edit is made
+  Rule: With all-first, every new scenario has steps when the first application edit is made
 
-    Scenario: All scenarios failed before the build
+    Scenario: Every new scenario had steps before the build
       Given the assistant says the checklist and then the scenarios
       And the assistant adds a feature file with 3 scenarios while it says message 3
       And the assistant makes these calls while it says message 3:
@@ -50,24 +50,25 @@ Feature: A deliver run records its calls, and the rule build-order counts the or
       And the assistant ends with the clean report
       When the harness plays the conversation
       Then the rule "build-order" is held
-      And the detail of the rules mentions "3 failed"
+      And the detail of the rules mentions "0 of 3"
 
-    Scenario: Only one scenario had failed before the build
+    Scenario: Some new scenarios had no steps before the build
       Given the assistant says the checklist and then the scenarios
       And the assistant adds a feature file with 3 scenarios while it says message 3
       And the assistant makes these calls while it says message 3:
         | tool | input                | result                           |
         | Edit | steps/loans.steps.js | ok                               |
-        | Bash | npm test             | 4 scenarios (1 failed, 3 passed) |
+        | Bash | npm test             | 4 scenarios (2 failed, 1 undefined, 1 passed) |
         | Edit | src/pages/loans.js   | ok                               |
       And the assistant ends with the clean report
       When the harness plays the conversation
       Then the rule "build-order" is broken
       And the detail of the rules mentions "all-first"
+      And the detail of the rules mentions "1 of 3"
 
-  Rule: With per-scenario, one scenario at most has failed when the first application edit is made
+  Rule: With per-scenario, some new scenarios still have no steps when the first application edit is made
 
-    Scenario: One scenario failed before the build
+    Scenario: The next scenarios still had no steps at the first build
       Given the assistant says the checklist and then the scenarios
       And the run uses a story that holds:
         """
@@ -77,13 +78,13 @@ Feature: A deliver run records its calls, and the rule build-order counts the or
       And the assistant makes these calls while it says message 3:
         | tool | input                | result                           |
         | Edit | steps/loans.steps.js | ok                               |
-        | Bash | npm test             | 4 scenarios (1 failed, 3 passed) |
+        | Bash | npm test             | 4 scenarios (1 failed, 2 undefined, 1 passed) |
         | Edit | src/pages/loans.js   | ok                               |
       And the assistant ends with the clean report
       When the harness plays the conversation
       Then the rule "build-order" is held
 
-    Scenario: Several scenarios had failed before the build
+    Scenario: All new scenarios had steps at once, so the build came late
       Given the assistant says the checklist and then the scenarios
       And the run uses a story that holds:
         """
@@ -93,7 +94,7 @@ Feature: A deliver run records its calls, and the rule build-order counts the or
       And the assistant makes these calls while it says message 3:
         | tool | input                | result                           |
         | Edit | steps/loans.steps.js | ok                               |
-        | Bash | npm test             | 4 scenarios (2 failed, 2 passed) |
+        | Bash | npm test             | 4 scenarios (3 failed, 1 passed) |
         | Edit | src/pages/loans.js   | ok                               |
       And the assistant ends with the clean report
       When the harness plays the conversation
@@ -113,17 +114,34 @@ Feature: A deliver run records its calls, and the rule build-order counts the or
       When the harness of the copy plays the conversation
       Then the rule "build-order" is broken
 
-  Rule: The highest count of failures before the first application edit is the one that counts
+  Rule: The last run of the whole suite before the first application edit is the one that counts
 
-    Scenario: A later run with fewer failures does not lower the count
+    Scenario: A later run replaces the count of an earlier one
       Given the assistant says the checklist and then the scenarios
       And the assistant adds a feature file with 3 scenarios while it says message 3
       And the assistant makes these calls while it says message 3:
         | tool | input                | result                           |
-        | Bash | npm test             | 4 scenarios (3 failed, 1 passed) |
+        | Bash | npm test             | 4 scenarios (1 failed, 2 undefined, 1 passed) |
         | Edit | steps/loans.steps.js | ok                               |
-        | Bash | npm test             | 4 scenarios (1 failed, 3 passed) |
+        | Bash | npm test             | 4 scenarios (3 failed, 1 passed) |
         | Edit | src/pages/loans.js   | ok                               |
+      And the assistant ends with the clean report
+      When the harness plays the conversation
+      Then the rule "build-order" is held
+
+    Scenario: A run of one scenario by name does not count
+      Given the assistant says the checklist and then the scenarios
+      And the run uses a story that holds:
+        """
+        --build-order per-scenario A late loan shows its days late.
+        """
+      And the assistant adds a feature file with 3 scenarios while it says message 3
+      And the assistant makes these calls while it says message 3:
+        | tool | input                | result                                |
+        | Edit | steps/loans.steps.js | ok                                    |
+        | Bash | npm test             | 4 scenarios (1 failed, 2 undefined, 1 passed) |
+        | Bash | npm test             | 1 scenario (1 failed)                 |
+        | Edit | src/pages/loans.js   | ok                                    |
       And the assistant ends with the clean report
       When the harness plays the conversation
       Then the rule "build-order" is held
@@ -135,7 +153,7 @@ Feature: A deliver run records its calls, and the rule build-order counts the or
       And the assistant adds a feature file with 3 scenarios while it says message 3
       And the assistant makes these calls while it says message 3:
         | tool | input   | result                           |
-        | Bash | npm test | 4 scenarios (1 failed, 3 passed) |
+        | Bash | npm test | 4 scenarios (1 failed, 2 undefined, 1 passed) |
         | Edit | <path>  | ok                               |
         | Bash | npm test | 4 scenarios (3 failed, 1 passed) |
         | Edit | src/pages/loans.js | ok                  |
@@ -158,7 +176,8 @@ Feature: A deliver run records its calls, and the rule build-order counts the or
       And the assistant makes these calls while it says message 3:
         | tool | input                | result                           |
         | Edit | steps/loans.steps.js | ok                               |
-        | Bash | npm test             | 4 scenarios (1 failed, 3 passed) |
+        | Bash | npm test             | 4 scenarios (1 failed, 2 undefined, 1 passed) |
+        | Edit | steps/more.steps.js  | ok |
       And the assistant ends with the clean report
       When the harness plays the conversation
       Then the rule "build-order" is not counted
@@ -170,6 +189,18 @@ Feature: A deliver run records its calls, and the rule build-order counts the or
         | tool | input                | result                           |
         | Bash | npm test             | 2 scenarios (1 failed, 1 passed) |
         | Edit | src/pages/loans.js   | ok                               |
+      And the assistant ends with the clean report
+      When the harness plays the conversation
+      Then the rule "build-order" is not counted
+
+    Scenario: No run of the whole suite came before the build
+      Given the assistant says the checklist and then the scenarios
+      And the assistant adds a feature file with 3 scenarios while it says message 3
+      And the assistant makes these calls while it says message 3:
+        | tool | input                | result                |
+        | Edit | steps/loans.steps.js | ok                    |
+        | Bash | npm test             | 1 scenario (1 failed) |
+        | Edit | src/pages/loans.js   | ok                    |
       And the assistant ends with the clean report
       When the harness plays the conversation
       Then the rule "build-order" is not counted
