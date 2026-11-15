@@ -43,6 +43,7 @@
 | 6 | A new Workflow row `build_order`: `all-first` (default) or `per-scenario`, with a flag on `deliver` that wins for one run. An absent row means `all-first`. The names are my call. | From the builder's experience the best order varies. A row plus a flag is the pattern of `workflow_mode`. |
 | 7 | The build rule is written once, in `deliver`. The copy in `implement` 2c goes. | The drift risk named when #95 merged. |
 | 8 | The checks are contracts between files and reversed decisions, not phrases of prose: the template has the `build_order` row, `deliver.md` names the role, the order and the flag, and `implement.md` no longer says it builds the feature. | The approach review of 2026-11-12. |
+| 9 | When the project's steps find elements by a test id and the element a step needs has none, `implement` adds the hook and does not settle for a positional locator. Added after the first hook trial. | The first text said "may". The agent matched a table cell by its position, which breaks when the page changes, and the branch rule never ran. A hook is one attribute and does not change behavior. |
 
 ## Existing users
 
@@ -78,3 +79,13 @@ A copy of fixture c as a git project on `main`, with one scenario tagged `@pendi
 One thing to watch: the report ended with an open decision about what "1 day late" means for a limit of 14 days. It was reported and not asked, and both options give the same value for the example, so it is a small excess and not a break of the rule.
 
 Not shown: a test hook (the branch rule on `main`), the one-line "deliver will use that skill" when a role is set, and a feature whose page or route is missing altogether (E3).
+
+## Result of the hook trial, before and after decision 9
+
+The same project twice: a copy of fixture c as a git project on `main`, an existing passing scenario whose step finds the page title by `data-testid`, and one `@pending` scenario about the status cell, which has no test id. `/bdd:implement features/loans.feature`, `git` allowed.
+
+Before decision 9 ("may add"): 15 turns. The agent read the status from the third cell by position, added no hook, edited no application code and made no branch. It wrote that a test id would make the step sturdier. The branch rule did not run.
+
+After decision 9: 20 turns, 39 seconds. The agent ran the new step, saw "no element with data-testid loan-status", and wrote that this is a missing hook and not a missing feature. It looked at the default branch (the `origin/HEAD` lookup failed, as the copy has no remote, and it took `main`), created `bdd/loans-page-status` before the edit, and added `data-testid="loan-status"` to the status cell. The step uses the project's own helper. The diff holds the hook, the step and the removed `@pending`. Red-first was forced and restored, the verifier passed, and the report named the branch, the hook and the application file. Nothing was committed.
+
+Not shown: a skill named in a `feature-builder` row with the one-line pointer, a feature whose page or route is missing altogether, and `deliver` with `per-scenario`.
