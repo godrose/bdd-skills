@@ -2,7 +2,7 @@
 
 Releases are tagged `vX.Y.Z`. Before `1.0.0` the plugin can still change in ways that need an edit to your config. The notes say when.
 
-## 0.8.0 (2026-11-15)
+## 0.7.2 (2026-11-15)
 
 `/bdd:implement` goes back to writing test code only, and `/bdd:deliver` builds the feature in your app. This undoes what 0.7.1 said about `implement`. Nothing in your `bdd-config.md` needs to change, and one row is new and optional.
 
