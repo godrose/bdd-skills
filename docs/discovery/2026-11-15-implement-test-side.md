@@ -65,6 +65,7 @@ A fresh project with no config. `/bdd:deliver` on a story: if the project is on 
 ## Open
 
 - The release number. It is a behavior change, and the builder chooses it.
+- Follow-up, not in this change: the flow harness keeps only the text of each turn, so the order of the calls in `deliver` (`all-first` or `per-scenario`) cannot be seen in a run. The harness should save the tool calls of each turn, and a rule should count the order. Decided by the builder to be its own change, with its own discovery.
 
 ## Result of a real run (fixture c, story 1, deliver, default order)
 
