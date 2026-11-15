@@ -37,3 +37,16 @@ look-first drops i checked	flows/rules.ts	s~\|checked([|)])~$1~
 look-first drops i read	flows/rules.ts	s~\|read([|)])~$1~
 look-first drops i searched	flows/rules.ts	s~\|searched([|)])~$1~
 look-first drops i ran	flows/rules.ts	s~\(\?:ran\|~(?:~
+build-order all-first needs two	flows/rules.ts	s~failed < 2 : failed > 1~failed < 1 : failed > 1~
+build-order per-scenario allows one	flows/rules.ts	s~failed < 2 : failed > 1~failed < 2 : failed > 2~
+build-order default is per-scenario	flows/rules.ts	s~"per-scenario" : "all-first";~"per-scenario" : "per-scenario";~
+build-order one new scenario counted	flows/rules.ts	s~\(meta\.new_scenarios \?\? 0\) < 2~(meta.new_scenarios ?? 0) < 1~
+build-order no application edit counted	flows/rules.ts	s~  if \(first < 0\) return;~~
+build-order steps counted as application	flows/rules.ts	s~dir\("steps_dir", "steps"\), ~~
+build-order features counted as application	flows/rules.ts	s~dir\("features_dir", "features"\), ~~
+build-order docs counted as application	flows/rules.ts	s~"docs", "data"~"data"~
+build-order data counted as application	flows/rules.ts	s~"docs", "data", "node_modules"~"docs", "node_modules"~
+build-order highest count not kept	flows/rules.ts	s~failed = Math\.max\(failed, f \? Number\(f\[1\]\) : 0\);~failed = f ? Number(f[1]) : 0;~
+build-order stream output dropped	flows/run.sh	s~--output-format stream-json --verbose --session-id~--output-format json --session-id~
+build-order events not saved	flows/run.sh	s~    printf '%s\\n' "\$out" > "\$rd/turn-\$tt-events\.jsonl"\n~~
+build-order default expected per-scenario	flows/run.sh	s~\[ -n "\$order" \] \|\| order=all-first~[ -n "$order" ] || order=per-scenario~

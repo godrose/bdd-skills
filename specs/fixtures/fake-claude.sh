@@ -6,7 +6,10 @@ case " $* " in *" --model haiku "*) kind=pm ;; *) kind=assistant ;; esac
 n=$(cat "$D/.$kind" 2>/dev/null || echo 0); n=$((n + 1)); echo "$n" > "$D/.$kind"
 echo "$*" > "$D/$kind-args-$n.txt"
 if [ "$kind" = pm ]; then cat > "$D/pm-prompt-$n.txt"; fi
-if [ "$kind" = assistant ] && [ "${FAKE_WRITE_AT:-0}" = "$n" ]; then mkdir -p "$(dirname "$FAKE_WRITE_FILE")"; echo changed > "$FAKE_WRITE_FILE"; fi
+if [ "$kind" = assistant ] && [ "${FAKE_WRITE_AT:-0}" = "$n" ]; then mkdir -p "$(dirname "$FAKE_WRITE_FILE")"; printf "%s\n" "${FAKE_WRITE_TEXT:-changed}" > "$FAKE_WRITE_FILE"; fi
 f="$D/$kind-$n.txt"
 [ -f "$f" ] || { echo "fake claude: no $kind message $n" >&2; exit 1; }
-jq -Rs '{result: ., total_cost_usd: 0.01}' < "$f"
+if [ "$kind" = pm ]; then jq -Rs '{result: ., total_cost_usd: 0.01}' < "$f"; else
+  [ ! -f "$D/assistant-events-$n.jsonl" ] || cat "$D/assistant-events-$n.jsonl"
+  jq -cRs '{type: "result", result: ., total_cost_usd: 0.01}' < "$f"
+fi
