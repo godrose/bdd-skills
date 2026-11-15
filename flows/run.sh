@@ -81,15 +81,17 @@ for i in $(seq 1 "$RUNS"); do
   for t in $(seq 1 "$TURNS"); do
     tt=$(printf '%02d' "$t")
     if [ "$t" -eq 1 ]; then
-      out=$(cd "$proj" && "$CLAUDE" -p "/bdd:$COMMAND $story" --plugin-dir "$ROOT/plugin" --allowedTools "${TOOLS[@]}" --output-format json --session-id "$sid" 2> "$rd/stderr-$tt.txt")
+      out=$(cd "$proj" && "$CLAUDE" -p "/bdd:$COMMAND $story" --plugin-dir "$ROOT/plugin" --allowedTools "${TOOLS[@]}" --output-format stream-json --verbose --session-id "$sid" 2> "$rd/stderr-$tt.txt")
     else
-      out=$(cd "$proj" && "$CLAUDE" -p "$reply" --plugin-dir "$ROOT/plugin" --allowedTools "${TOOLS[@]}" --output-format json --resume "$sid" 2> "$rd/stderr-$tt.txt")
+      out=$(cd "$proj" && "$CLAUDE" -p "$reply" --plugin-dir "$ROOT/plugin" --allowedTools "${TOOLS[@]}" --output-format stream-json --verbose --resume "$sid" 2> "$rd/stderr-$tt.txt")
     fi
-    msg=$(printf '%s' "$out" | jq -r '.result // empty' 2> /dev/null)
+    printf '%s\n' "$out" > "$rd/turn-$tt-events.jsonl"
+    final=$(printf '%s\n' "$out" | jq -c 'select(.type == "result")' 2> /dev/null | tail -n 1)
+    msg=$(printf '%s' "$final" | jq -r '.result // empty' 2> /dev/null)
     [ -n "$msg" ] || { echo "run $i, turn $t: no answer from claude (see $rd/stderr-$tt.txt)" >&2; break; }
     printf '%s\n' "$msg" > "$rd/turn-$tt-assistant.txt"
     manifest "$proj" | diff <(manifest "$FX/project") - | grep '^[<>]' | awk '{print $3}' | sed 's|^\./||' | grep '\.feature$' | sort -u > "$rd/turn-$tt-features.txt"
-    cost=$(printf '%s %s' "$cost" "$(printf '%s' "$out" | jq -r '.total_cost_usd // 0')" | awk '{print $1 + $2}')
+    cost=$(printf '%s %s' "$cost" "$(printf '%s' "$final" | jq -r '.total_cost_usd // 0')" | awk '{print $1 + $2}')
     turns=$t
     if final_message "$rd/turn-$tt-assistant.txt"; then finished=true; break; fi
     [ "$t" -lt "$TURNS" ] || break
@@ -101,8 +103,13 @@ for i in $(seq 1 "$RUNS"); do
     cost=$(printf '%s %s' "$cost" "$(printf '%s' "$pout" | jq -r '.total_cost_usd // 0')" | awk '{print $1 + $2}')
   done
   end=$(date +%s)
-  jq -n --argjson turns "$turns" --argjson finished "$finished" --argjson seconds "$((end - start))" --argjson cost "$cost" \
-    '{turns: $turns, finished: $finished, seconds: $seconds, cost_usd: $cost}' > "$rd/meta.json"
+  order=$(printf '%s' "$story" | grep -oE -- '--build-order (all-first|per-scenario)' | head -n 1 | awk '{print $2}')
+  [ -n "$order" ] || order=$(tr -d '\r' < "$FX/project/.claude/bdd-config.md" 2> /dev/null | sed -nE 's/^\| build_order \| `(all-first|per-scenario)`.*/\1/p' | head -n 1)
+  [ -n "$order" ] || order=all-first
+  scen() { cat "$1"/features/*.feature 2> /dev/null | tr -d '\r' | grep -cE '^ *Scenario'; }
+  new=$(( $(scen "$proj") - $(scen "$FX/project") ))
+  jq -n --argjson turns "$turns" --argjson finished "$finished" --argjson seconds "$((end - start))" --argjson cost "$cost" --arg order "$order" --argjson new "$new" \
+    '{turns: $turns, finished: $finished, seconds: $seconds, cost_usd: $cost, build_order: $order, new_scenarios: $new}' > "$rd/meta.json"
   # The real test output, taken by the harness, is what the report is checked against.
   [ "$COMMAND" != deliver ] || [ "$turns" -eq 0 ] || (cd "$proj" && "$NPM" test > "$rd/test-output.txt" 2>&1)
   diff <(manifest "$FX/project") <(manifest "$proj") | grep '^[<>]' | awk '{print $3}' | sed 's|^\./||' | sort -u > "$rd/project-diff.txt"

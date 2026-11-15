@@ -1,4 +1,4 @@
-import { After, Given, When } from "@cucumber/cucumber";
+import { After, Given, When, type DataTable } from "@cucumber/cucumber";
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -21,6 +21,25 @@ Given("the assistant ends with:", function (this: World, text: string) { flow(th
 Given("the assistant writes {string} while it says message {int}", function (this: World, file: string, at: number) {
   flow(this).write = { file, at };
 });
+Given("the assistant makes these calls while it says message {int}:", function (this: World, n: number, table: DataTable) {
+  flow(this).calls.set(n, table.hashes().map((r) => ({ tool: r.tool, input: r.input, result: r.result })));
+});
+Given("the assistant adds a feature file with {int} scenarios while it says message {int}", function (this: World, count: number, at: number) {
+  const text = "Feature: Added\n" + Array.from({ length: count }, (_, i) => `  Scenario: Added ${i + 1}\n    Given a step\n`).join("\n");
+  flow(this).write = { file: "features/added.feature", at, text };
+});
+Given("the run uses a story that holds:", function (this: World, text: string) {
+  const file = path.join(FLOWS, "fixtures/c/story-9.txt");
+  fs.writeFileSync(file, text + "\n");
+  const f = flow(this);
+  f.fixtureFiles.push(file);
+  f.story = "9";
+});
+Given("the build order row of the fixture config in a copy of the harness is {string}", function (this: World, value: string) {
+  const copy = copyHarness(this, "bo");
+  fs.appendFileSync(path.join(copy, "fixtures/c/project/.claude/bdd-config.md"), `| build_order | \`${value}\` |\n`);
+});
+
 Given("the product manager replies to message {int} with {string}", function (this: World, n: number, text: string) {
   flow(this).replies.set(n, text);
 });

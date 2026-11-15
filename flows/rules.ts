@@ -78,6 +78,7 @@ function count(): void {
 
   if (cmd !== "deliver") return;
   deliverRules();
+  buildOrder();
 }
 
 function deliverRules(): void {
@@ -138,6 +139,68 @@ function deliverRules(): void {
   const all = [...status.values()];
   const allpassed = all.length > 0 && all.every((v) => v === "passed");
   row("never-reported-passed", suspect && allpassed, suspect && allpassed ? `the test output shows ${!n ? "no scenarios" : `${notpass} not passed`}, and every example is reported as passed` : "");
+}
+
+// build-order: how many scenarios had failed in one test run before the first edit of application code.
+// all-first: two or more. per-scenario: one or none. Not counted without events, an application edit or two new scenarios.
+type Call = { name: string; input: Record<string, unknown>; result: string };
+function callsOf(): Call[] {
+  const out: Call[] = [];
+  const byId = new Map<string, Call>();
+  const names = fs.readdirSync(rd).filter((n) => /^turn-.*-events\.jsonl$/.test(n)).sort();
+  for (const n of names) {
+    for (const line of (slurp(`${rd}/${n}`) ?? "").split("\n")) {
+      let ev: any;
+      try { ev = JSON.parse(line); } catch { continue; }
+      const content = ev?.message?.content;
+      if (!Array.isArray(content)) continue;
+      for (const c of content) {
+        if (ev.type === "assistant" && c?.type === "tool_use") { const call = { name: String(c.name), input: c.input ?? {}, result: "" }; out.push(call); byId.set(String(c.id), call); }
+        if (ev.type === "user" && c?.type === "tool_result") {
+          const call = byId.get(String(c.tool_use_id));
+          if (call) call.result = typeof c.content === "string" ? c.content : Array.isArray(c.content) ? c.content.map((x: any) => x?.text ?? "").join("\n") : "";
+        }
+      }
+    }
+  }
+  return out;
+}
+
+function buildOrder(): void {
+  const calls = callsOf();
+  if (calls.length === 0) return;
+  let meta: { build_order?: string; new_scenarios?: number } = {};
+  try { meta = JSON.parse(slurp(`${rd}/meta.json`) ?? "{}"); } catch { /* no record */ }
+  const expected = meta.build_order === "per-scenario" ? "per-scenario" : "all-first";
+  if ((meta.new_scenarios ?? 0) < 2) return;
+
+  const config = slurp(`${rd}/project/.claude/bdd-config.md`) ?? "";
+  const dir = (key: string, dflt: string): string => config.match(rx(`${BOL}\\|[ \\t]*${key}[ \\t]*\\|[ \\t]*\`([^\`\\n]+)\``, ""))?.[1].replace(/\/+$/, "") ?? dflt;
+  const test = [dir("features_dir", "features"), dir("steps_dir", "steps"), "docs", "data", "node_modules"];
+  const project = (() => { try { return fs.realpathSync(`${rd}/project`); } catch { return `${rd}/project`; } })();
+  const rel = (p: string): string => {
+    for (const base of [project, `${rd}/project`]) if (p.startsWith(base + "/")) return p.slice(base.length + 1);
+    const i = p.lastIndexOf("/project/");
+    return i >= 0 ? p.slice(i + "/project/".length) : p.replace(/^\.\//, "");
+  };
+  const isApp = (c: Call): boolean => {
+    if (!/^(Edit|Write|MultiEdit|NotebookEdit)$/.test(c.name)) return false;
+    const p = rel(String(c.input.file_path ?? c.input.notebook_path ?? ""));
+    return p.length > 0 && !test.some((d) => p === d || p.startsWith(d + "/"));
+  };
+  const first = calls.findIndex(isApp);
+  if (first < 0) return;
+  let undef: number | null = null;
+  for (const c of calls.slice(0, first)) {
+    if (c.name !== "Bash" || !/\bnpm test\b|cucumber/.test(String(c.input.command ?? ""))) continue;
+    const m = c.result.match(rx(`(\\d+) scenarios?(?: \\(([^)]*)\\))?`, ""));
+    if (!m || Number(m[1]) < (meta.new_scenarios ?? 0)) continue;
+    const u = m[2]?.match(/(\d+) undefined/);
+    undef = u ? Number(u[1]) : 0;
+  }
+  if (undef === null) return;
+  const broken = expected === "all-first" ? undef > 0 : undef === 0;
+  row("build-order", broken, `expected ${expected}: ${undef} of ${meta.new_scenarios} new scenarios had no steps at the first application edit`);
 }
 
 count();

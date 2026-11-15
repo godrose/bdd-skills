@@ -49,7 +49,8 @@ export type Flow = {
   tmp: string;
   messages: string[];
   replies: Map<number, string>;
-  write: { file: string; at: number } | null;
+  write: { file: string; at: number; text?: string } | null;
+  calls: Map<number, { tool: string; input: string; result: string }[]>;
   testOutput: string;
   installFails: boolean;
   plays: number;
@@ -79,7 +80,7 @@ export function flow(world: World): Flow {
     }
     fs.writeFileSync(path.join(tmp, "npm.log"), "");
     world.flow = {
-      tmp, messages: [], replies: new Map(), write: null, testOutput: TEST_OUTPUT.passed, installFails: false, plays: 0,
+      tmp, messages: [], replies: new Map(), write: null, calls: new Map(), testOutput: TEST_OUTPUT.passed, installFails: false, plays: 0,
       scriptDir: "", outDir: "", harness: path.join(FLOWS, "run.sh"), fixtureFiles: [], scenarioCount: 0, reports: [],
       command: "deliver", fixture: "c", story: "1", turns: null, relativeOut: false, noClaude: false, noTools: false,
     };
@@ -105,6 +106,17 @@ export function play(world: World, harness: string = path.join(FLOWS, "run.sh"))
     fs.writeFileSync(path.join(f.scriptDir, `pm-${i + 1}.txt`), (f.command === "deliver" && i < 2 ? "Approved" : `A. reply ${i + 1}`) + "\n");
   });
   for (const [n, text] of f.replies) fs.writeFileSync(path.join(f.scriptDir, `pm-${n}.txt`), text + "\n");
+  for (const [n, calls] of f.calls) {
+    const lines = calls.flatMap((c, i) => {
+      const id = `t${n}-${i}`;
+      const input = /^(Edit|Write|MultiEdit|NotebookEdit)$/.test(c.tool) ? { file_path: c.input } : { command: c.input };
+      return [
+        JSON.stringify({ type: "assistant", message: { content: [{ type: "tool_use", id, name: c.tool, input }] } }),
+        JSON.stringify({ type: "user", message: { content: [{ type: "tool_result", tool_use_id: id, content: c.result }] } }),
+      ];
+    });
+    fs.writeFileSync(path.join(f.scriptDir, `assistant-events-${n}.jsonl`), lines.join("\n") + "\n");
+  }
   const npmOut = path.join(f.tmp, "npm-out.txt");
   fs.writeFileSync(npmOut, f.testOutput);
   const env: NodeJS.ProcessEnv = {
@@ -117,6 +129,7 @@ export function play(world: World, harness: string = path.join(FLOWS, "run.sh"))
     FAKE_NPM_OUT: npmOut,
     FAKE_WRITE_AT: f.write ? String(f.write.at) : "",
     FAKE_WRITE_FILE: f.write ? f.write.file : "",
+    FAKE_WRITE_TEXT: f.write?.text ?? "",
   };
   if (f.installFails) env.FAKE_NPM_FAIL = "1";
   if (f.noClaude) env.CLAUDE_BIN = "no-such-claude-binary";
