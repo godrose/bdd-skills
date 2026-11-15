@@ -88,4 +88,12 @@ Before decision 9 ("may add"): 15 turns. The agent read the status from the thir
 
 After decision 9: 20 turns, 39 seconds. The agent ran the new step, saw "no element with data-testid loan-status", and wrote that this is a missing hook and not a missing feature. It looked at the default branch (the `origin/HEAD` lookup failed, as the copy has no remote, and it took `main`), created `bdd/loans-page-status` before the edit, and added `data-testid="loan-status"` to the status cell. The step uses the project's own helper. The diff holds the hook, the step and the removed `@pending`. Red-first was forced and restored, the verifier passed, and the report named the branch, the hook and the application file. Nothing was committed.
 
-Not shown: a skill named in a `feature-builder` row with the one-line pointer, a feature whose page or route is missing altogether, and `deliver` with `per-scenario`.
+## Result of three more trials (the paths left open above)
+
+All three ran with the plugin of this branch, after decision 9.
+
+- **A: `implement` on its own, with a `feature-builder` row set** (`acme-feature-builder`, no such skill in the project). 11 turns. It wrote the two steps, left the scenario red on an assertion, changed no application code and made no branch. The report named the next step, and said that `/bdd:deliver` will use `acme-feature-builder`. That is the one line of example E11.
+- **B: a scenario for a page that does not exist** (a reminders page). 10 turns. It wrote both steps with the `require` of the missing module inside the step, so the run failed there with "Cannot find module". It created no page, changed no application code and kept `@pending`. The report said red for the right reason and named `/bdd:deliver`. It also said "not seen red", because a missing module is not an assertion failure and the red-first rule counts only an assertion. Both lines are true, and the text is left as it is. This is example E3.
+- **C: `deliver` with `--build-order per-scenario`** (the flag put in front of the story text, fixture c). 5 turns, 104 seconds, all nine harness rules held, 4 of 4 scenarios green, the feature built in two application files, no branch because the copy is not a git repository. The order of the build is not visible: the harness keeps only the text of each turn, so this run does not show that `per-scenario` was followed. The flag and the row are checked as text only.
+
+Still not shown by any run: the order of the calls in `deliver` for either value of `build_order`.
