@@ -1,0 +1,23 @@
+# Breaks of the examples guard (scripts/examples.sh). Run with:
+# tests/mutate.sh --jobs 4 --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @examples-guard' tests/mutations/examples.tsv
+# The substitutions use ~ as the delimiter.
+duplicate id allowed	scripts/examples.sh	s~    case "\$seen" in \*" \$id "\*\) finding E-DUP [^\n]*\n~~
+missing scenario not reported	scripts/examples.sh	s~finding E-MISSING "\$ex:\$line" "\$id has no scenario tagged @example-\$id"~true~
+orphan scenario not reported	scripts/examples.sh	s~\|\| finding E-ORPHAN [^\n]*~|| true~
+no feature file not reported	scripts/examples.sh	s~finding E-NOFEATURE "\$ex:1" [^\n]*~true~
+decimal split in two	scripts/examples.sh	s~\[0-9\]\+\(\\\.\[0-9\]\+\)\?/~[0-9]+/~
+number found inside a longer number	scripts/examples.sh	s~pat="[^\n]*"~pat="\${v//./\\\\.}"~
+quoted text not checked	scripts/examples.sh	s~printf '%s\\n' "\$body" \| grep -qF -- "\$v" \|\| finding E-VALUE [^\n]*~true~
+source hash not compared	scripts/examples.sh	s~elif \[ "\$src" != [^\n]* \]; then~elif false; then~
+generated hash not compared	scripts/examples.sh	s~elif \[ "\$gen" != [^\n]* \]; then~elif false; then~
+missing source tag not reported	scripts/examples.sh	s~finding E-NOHASH "\$feature:\$start" "\$id has no @src- tag"~true~
+missing generated tag not reported	scripts/examples.sh	s~finding E-NOHASH "\$feature:\$start" "\$id has no @gen- tag"~true~
+example spaces not collapsed	scripts/examples.sh	s~; gsub\(/\[ \\t\]\+/, " ", text\)~~
+scenario spaces not collapsed	scripts/examples.sh	s~gsub\(/\[ \\t\]\+/, " "\); if \(\$0 != "" && ~if (\$0 != "" \&\& ~
+comments kept in the scenario text	scripts/examples.sh	s~/\^\[@#\]/~/^[@]/~
+nested folders not searched	scripts/examples.sh	s~find "\$FEATURES" -name~find "\$FEATURES" -maxdepth 1 -name~
+missing folder is not a usage error	scripts/examples.sh	s~features directory not found: \$FEATURES" >&2; exit 2~features directory not found: \$FEATURES" >\&2; exit 1~
+no examples file not said	scripts/examples.sh	s~\[ "\$found" -eq 1 \] \|\| echo "INFO I-NONE [^\n]*"~true~
+errors do not fail the run	scripts/examples.sh	s~  \[ "\$ERRORS" -eq 0 \]\n\}~  true\n}~
+carriage return kept in examples	scripts/examples.sh	s~    sub\(/\\r\$/, ""\)\n    if \(match~    if (match~
+id on two scenarios not reported	scripts/examples.sh	s~finding E-DUP "\$feature:\$start" [^\n]*~true~

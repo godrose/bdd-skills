@@ -79,4 +79,6 @@ In a fresh project with no config the default is `examples`. The first conversat
 
 ## Results
 
-None yet.
+Slice 1 is done: `scripts/examples.sh` with `check`, `source-hash` and `scenario-hash`, and 28 scenarios in `specs/features/examples-guard.feature`. The findings are E-MISSING, E-ORPHAN, E-DUP (an id used twice in the examples file, or tagged on two scenarios), E-VALUE, E-SRC, E-GEN, E-NOHASH and E-NOFEATURE, and I-NONE when a project has no examples file. All 25 first scenarios failed before the script existed. 20 breaks in `tests/mutations/examples.tsv` are all caught. The first pass left four to look at: two broken break lines, a Windows line endings case that no scenario pinned (the hash was stamped by the same script, so it agreed with itself) and a break that is equivalent to the code (the first scenario of an id wins either way), which was dropped. A scenario for an id tagged on two scenarios was added, and with it a new rule, E-DUP.
+
+The script is not yet copied by `install.sh` and no plugin text uses it. That is slice 2.
