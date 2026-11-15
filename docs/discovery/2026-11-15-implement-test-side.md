@@ -70,3 +70,11 @@ A fresh project with no config. `/bdd:deliver` on a story: if the project is on 
 One run, 4 turns, 104 seconds. All nine harness rules held, no breaks, 4 of 4 scenarios green at the end. The build was done by `deliver` and not by a separate skill: `src/pages/loans.js` and `src/jobs/markOverdue.js` changed, and the steps file got three new steps. The developer note listed the application files and the test code separately, and said that E1 and E2 failed first because the page had no notice, which is red for the right reason. The project is not a git repository, so no branch was made, and the agent said so in one line.
 
 Not shown by this run: the transcript keeps only the text of each turn, so the order of the calls is not visible. The harness runs `deliver` and `discover` only, so `implement` on its own was not tried. The fixture has no `build_order` row, so only the default was used, and the branch rule met no git repository.
+
+## Result of a real run of implement on its own (E1, E3, E11 partly)
+
+A copy of fixture c as a git project on `main`, with one scenario tagged `@pending` for a notice that the loans page does not show. `/bdd:implement features/loans.feature` with the plugin of this branch, and `git` allowed so that a branch would have been possible. 12 turns, 28 seconds. The agent wrote the two missing steps in `steps/loans.steps.js` and ran the suite. The scenario failed on its assertion, with the expected notice and the page text. The report said `red for the right reason`, that the step code is right and the feature is missing, and named the next step: run `/bdd:deliver`, or build it and run `/bdd:run`. It listed no application files, because none were changed. The project stayed on `main` with one modified file, the steps file, and no branch was created. The scenario kept `@pending`, and the verifier was not dispatched. Red-first was reported as natural.
+
+One thing to watch: the report ended with an open decision about what "1 day late" means for a limit of 14 days. It was reported and not asked, and both options give the same value for the example, so it is a small excess and not a break of the rule.
+
+Not shown: a test hook (the branch rule on `main`), the one-line "deliver will use that skill" when a role is set, and a feature whose page or route is missing altogether (E3).
