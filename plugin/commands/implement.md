@@ -6,7 +6,7 @@ description: "Implement a BDD scenario step by step - explore the system under t
 
 Implement a BDD scenario by exploring the actual state of the system under test at each step, finding the correct locators or calls, and verifying iteratively.
 
-This skill takes a scenario (from a `.feature` file or from the **designer** skill) and makes it pass. It implements the step definitions, page objects or helpers, and support code. When the step code is right and the scenario still fails because the application does not do what it says, it builds the feature in the application too.
+This skill takes a scenario (from a `.feature` file or from the **designer** skill) and makes it executable. It writes test code: the step definitions, page objects or helpers, and support code. It never builds the feature. A scenario for a feature that does not exist yet stays red for the right reason, and `bdd:deliver` builds the feature.
 
 **Before starting**, read `.claude/bdd-config.md` for project-specific tooling, conventions, and skill role mappings. Project-specific patterns and selector knowledge are loaded separately via the **domain-knowledge** skill if configured. If `.claude/bdd-config.md` does not exist, say so and stop. Tell the user to create it from `bdd-config.template.md`; re-running `install.sh` also creates it.
 
@@ -92,9 +92,11 @@ Based on what you learned from the evidence:
 1. Update the page objects or helpers
 2. Update step definitions
 3. Update support modules if needed
-4. Build the feature in the application, but only when the step code is right and an assertion fails because the application does not do what the scenario says. An undefined step, a locator that finds nothing, a timeout or a setup error is a step problem: fix it in step code. Never change an approved scenario or its expected values to make it pass. If the scenario looks wrong, that is a product decision: report it as an open decision.
+4. Leave a missing feature red. The feature is missing when the step code is right and an assertion fails because the application does not do what the scenario says, or when the thing the scenario names (a page, an element, a route, a field) is not in the system at all. An undefined step, a locator or call that is wrong for something that exists, a timeout or a setup error is a step problem: fix it in step code. Never change an approved scenario or its expected values to make it pass. If the scenario looks wrong, that is a product decision: report it as an open decision.
 
-**Building the feature.** If the request names a skill for the application code, use it for this run, whatever the **feature-builder** row says. If you cannot find it, say so in one line and go on as below. Otherwise check the **feature-builder** role in the BDD config. If it names a skill that you can find, invoke it to write the application code, and follow its standards. If it asks a question about behavior, report an open decision. If the row names a skill you cannot find, say so in one line and build it yourself. No **feature-builder**: build it yourself, with the smallest change that turns the scenario green. Ask for no approval before editing application code. The retry cap below applies. In the final report, list the application files you changed.
+**A missing feature.** Write the step the way the scenario words it, with the project's locator conventions, and let the run fail at that step. Edit no application code and ask nothing. Report the example as **red for the right reason**: the feature is missing, with the example and the failing step. Say what to do next: run `/bdd:deliver`, or build the feature and run `/bdd:run`. When the **feature-builder** row names a skill, or the request names one, add one line: run `/bdd:deliver` and it will use that skill. This command does not use it.
+
+**Test hooks.** You may add a hook to the application so that a step can reach something that exists, such as a `data-testid` attribute or an accessible label, when the edit does not change what the application does. When the project's steps find elements by a test id and the element a step needs has none, add the hook. Do not settle for a positional locator, such as a cell index or the nth child. Anything that changes what the application does is the feature: leave it to `bdd:deliver`. Before the first application edit, look at the current branch. On the default branch (the one `origin/HEAD` names, usually `main`), create `bdd/<story-slug>` and say so in one line with its name. On any other branch, stay on it and say nothing about branches. Never create a worktree. In the final report, list the application files you changed.
 
 **Before authoring a NEW step def** (as opposed to editing an existing one), repeat the paraphrase grep from Phase 0 step 5 against the current inventory. The inventory may have changed since Phase 0 (e.g., a sibling scenario was implemented in between, or a step def merged upstream). If a paraphrase now exists, reword the `.feature` instead of adding a duplicate.
 
@@ -134,7 +136,7 @@ After the verifier reports PASS for a scenario from an approved spec, remove the
 
 A verifier verdict of "no tests ran" or "executed count unknown" is a FAIL: do not change any tag.
 
-Remove the unautomated tag only when the scenario also has a red-first line that is not "not seen red". A scenario that was not seen red keeps the unautomated tag, and the report says why.
+Remove the unautomated tag only when the scenario also has a red-first line that is not "not seen red". A scenario that was not seen red keeps the unautomated tag, and the report says why. A scenario that is red for the right reason keeps it too, and the report says that the feature is missing.
 
 **Defaults when config rows are absent.** A value in `<...>` form counts as empty.
 

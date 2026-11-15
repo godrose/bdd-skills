@@ -28,7 +28,7 @@ Feature: The README's reference notes say what they should
     Given the README
     Then it contains:
       | Discovers: feature-builder skill                      |
-      | Implement step definitions and build the feature      |
+      | Implement step definitions                            |
 
   Scenario: The generate hint names the setting that defers missing steps
     Given the README
