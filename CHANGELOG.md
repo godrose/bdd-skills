@@ -2,6 +2,28 @@
 
 Releases are tagged `vX.Y.Z`. Before `1.0.0` the plugin can still change in ways that need an edit to your config. The notes say when.
 
+## 0.7.2 (2026-11-15)
+
+`/bdd:implement` goes back to writing test code only, and `/bdd:deliver` builds the feature in your app. This undoes what 0.7.1 said about `implement`. Nothing in your `bdd-config.md` needs to change, and one row is new and optional.
+
+### What you will notice
+
+- **`implement` writes test code only. Read this first.** It writes the step definitions and the support code, runs the scenarios and stops when one is red for the right reason, which means the feature is missing. 0.7.1 said that it builds the feature too. It does not edit application code to turn a scenario green, apart from a test hook. If you relied on that, use `/bdd:deliver`, which goes on from the red and builds the feature.
+- **`implement` may add a test hook.** A behavior-neutral hook such as a `data-testid` or an accessibility label is allowed. When your steps find elements by a test id and the element a step needs has none, it adds the hook. It does not settle for a positional locator, such as a cell index or the nth child.
+- **One branch rule for any application edit.** On the default branch, the plugin creates `bdd/<story-slug>`, says so in one line and never uses a worktree. On any other branch it stays where it is.
+- **`build_order` row (new, optional) and a `--build-order` flag on `deliver`.** `all-first` is the default and automates every scenario before building. `per-scenario` automates and builds one scenario at a time. The flag wins over the row.
+- **`feature-builder` is used by `deliver` only.** A skill named in the request still wins for that run. Without the row, `deliver` builds the feature itself.
+- **The forced red breaks what the step observes.** When no natural red was kept, `implement` now breaks the side the step reads, not the expected value, so a scenario that passes for an unrelated reason shows up. When that side cannot be broken (generated code, a shared client), it falls back to the expected value. The report line says `forced on the actual side` or `forced on the expected side`.
+
+### Project-file installs
+
+- Re-run `install.sh` to get the changed commands and the template. `bdd-config.md` is never overwritten. No row is required. To choose `per-scenario`, add the `build_order` row from the template.
+
+### Repo
+
+- The flow harness saves the raw events of each turn and a rule `build-order` counts which order `deliver` followed. It counts the new scenarios that were still undefined at the first application edit.
+- About 757 scenarios in `specs/features`.
+
 ## 0.7.1 (2026-11-13)
 
 `/bdd:implement` and `/bdd:deliver` now say that they build the feature in your app, and a company skill can do that part. Nothing in your `bdd-config.md` needs to change.
