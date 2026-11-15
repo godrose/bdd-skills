@@ -68,7 +68,7 @@ You need four things:
 
 - **Claude Code.**
 - **A project to work on.** It can be an app that already exists.
-- **A branch.** The plugin edits files in your project, tests and application code. Work on a branch and read the diff before you merge.
+- **A branch.** The plugin edits files in your project, tests and application code. Before its first application edit on the default branch, it creates a branch `bdd/<story-slug>` and tells you. Read the diff before you merge.
 - **A Gherkin runner.** The plugin does not install one. If your project has none, pick one for your stack first:
 
 | Stack | Runner |
@@ -145,11 +145,13 @@ If you run a command before `/bdd:init`, it stops and tells you to run it.
 
 ### What you get
 
-`/bdd:implement` and `/bdd:deliver` write the step definitions and the support code, run the scenarios, and build the feature in your app until they pass. A scenario for a feature that does not exist yet fails first, on an assertion. That red is expected: it shows the scenario can fail, and the plugin checks for it (red-first). The scenario turns green when the feature works.
+`/bdd:implement` writes test code: the step definitions and the support code. It runs the scenarios and stops when one is red for the right reason, which means the feature is missing. `/bdd:deliver` goes on from there and builds the feature in your app until the scenarios pass. A scenario for a feature that does not exist yet fails first, on an assertion. That red is expected: it shows the scenario can fail, and the plugin checks for it (red-first). The scenario turns green when the feature works.
 
 Each `Given` step in a scenario needs code that puts your app in that state, such as an order that has not shipped. `/bdd:implement` writes it, using how your tests and app already create data: an API call, a database helper or a page step. For state that something else provides, such as a seeded user or a deployed service, the scenario gets a step that checks it is there and fails with a setup error when it is not.
 
-If your company has its own way of writing application code, name that skill in the `feature-builder` row of the Skill Roles table in `.claude/bdd-config.md`. The plugin then asks it to write the application code. You can also name a skill in your request, for example "use our X skill for the code", and the plugin uses it for that run without any config. Without either, the plugin makes the smallest change that turns the scenario green and lists the files it changed.
+If your company has its own way of writing application code, name that skill in the `feature-builder` row of the Skill Roles table in `.claude/bdd-config.md`. `/bdd:deliver` then asks it to write the application code. You can also name a skill in your request, for example "use our X skill for the code", and `/bdd:deliver` uses it for that run without any config. Without either, it makes the smallest change that turns the scenarios green and lists the files it changed.
+
+The `build_order` row in the Workflow table sets the order for `/bdd:deliver`. `all-first` (the default) automates every scenario and then builds the feature once. `per-scenario` automates, builds and runs one scenario at a time. The flag `--build-order` on the command wins for one run.
 
 ## Modes
 
@@ -349,7 +351,7 @@ plugin/                         # The plugin. Claude Code installs this folder
     init.md                     # Plugin only: create .claude/bdd-config.md from the template (copy only)
     discover.md                 # Discover what to build: questions, examples, edge cases, exclusions
     design.md                   # Design scenarios from ACs - analyze gaps, formulate, implement
-    implement.md                # Implement step definitions and build the feature - explore, discover selectors, verify
+    implement.md                # Implement step definitions - explore, discover selectors, verify
     run.md                      # Run tests by tag/name/suite - config-driven, any framework
     triage.md                   # Turn pasted channel discussion into scenario edits and decision records
     reconcile.md                # Report drift between the decision log and the scenarios
@@ -386,13 +388,13 @@ bdd:design (methodology: what scenarios to create)
   ├─ Discovers: requirements-sync skill (fetch ACs, optional)
   ├─ Invokes:   implementer skill (implement each scenario)
   │               ├─ Discovers: domain-knowledge skill (project patterns, optional)
-  │               ├─ Discovers: feature-builder skill (writes application code, optional)
   │               └─ Dispatches: verifier agent (run tests + type check)
   └─ Discovers: requirements-sync skill (publish results, optional)
 
 bdd:triage (optional: channel discussion to approved edits and decision records)
 bdd:reconcile (optional: report drift between the decision log and the scenarios)
 bdd:deliver (composes discover, design, implement and run: two approvals, a report in plain words)
+  └─ Discovers: feature-builder skill (writes application code, optional)
 ```
 
 Skills reference each other by **role** (from `bdd-config.md`), not by name. The optional roles `reconciler` and `feedback-intake` point at `bdd:reconcile` and `bdd:triage`. The optional role `feature-builder` points at your own skill for application code.

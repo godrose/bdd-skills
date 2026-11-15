@@ -5,6 +5,8 @@ Feature: deliver and implement build the feature, and a company skill can do it
   Decision (2026-11-13): A skill named in the request is used for that run, whatever the row says. Why: a person without a config row can still use their own skill, and no question is asked.
   Decision (2026-11-13): implement no longer says it handles execution only, and the README no longer says implement does not build the feature. Why: both builders now build the feature. This replaces the line of the README added in 2026-11-13 (#94).
 
+  Decision (2026-11-15): implement no longer builds the feature, so only deliver names the feature-builder role and its default, and the two checks that implement lost "execution only" and that the README says implement does not build the feature are retired. Why: this reverses the decision of 2026-11-13 that both build it. See implement-test-side.feature.
+
   Scenario: The config template has an optional feature-builder role
     Given the file "plugin/bdd-config.template.md"
     Then it contains "| feature-builder | `<your-feature-builder-skill>` | no |"
@@ -18,15 +20,4 @@ Feature: deliver and implement build the feature, and a company skill can do it
 
     Examples:
       | command   |
-      | implement |
       | deliver   |
-
-  Scenario: implement no longer handles execution only
-    Given the plugin command "implement"
-    Then it does not contain:
-      | execution only |
-
-  Scenario: The README no longer says implement does not build the feature
-    Given the README
-    Then it does not contain:
-      | It does not build the feature |

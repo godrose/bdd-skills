@@ -56,7 +56,11 @@ If **workflow_mode** is `specify-only`, stop after the go-ahead. Say that the sc
 
 #### Step 3: Implement
 
-Invoke the **implementer** skill (`bdd:implement`) for each approved scenario. It runs its own fix loop and its red-first check. If `bdd:design` already invoked the implementer for a scenario after the go-ahead, do not invoke it again for that scenario. This step covers only the scenarios that are not yet implemented.
+Invoke the **implementer** skill (`bdd:implement`) for each approved scenario. It runs its own fix loop and its red-first check, and it writes test code only. A scenario for a feature that does not exist stays red for the right reason, and this step builds the feature (see below). If `bdd:design` already invoked the implementer for a scenario after the go-ahead, do not invoke it again for that scenario. This step covers only the scenarios that are not yet implemented.
+
+**Build order.** Read **build_order**: `all-first` or `per-scenario`. The flag `--build-order all-first` or `--build-order per-scenario` on this command wins for this run. With `all-first`, invoke the implementer for every scenario first, then build the feature once for all the red examples together, then go to Step 4. With `per-scenario`, take one scenario at a time: the implementer, the build, then the run of Step 4, before the next scenario.
+
+**Building the feature.** This is the only place that builds application code. If the request names a skill for the application code, use it for this run, whatever the **feature-builder** row says. If you cannot find it, say so in one line and go on as below. Otherwise check the **feature-builder** role in the BDD config. If it names a skill that you can find, invoke it to write the application code, and follow its standards. If it asks a question about behavior, that is a product decision: ask one question. If the row names a skill you cannot find, say so in one line and build it yourself. No **feature-builder**: build it yourself, with the smallest change that turns the scenarios green. Ask for no approval before editing application code. Before the first edit, look at the current branch. On the default branch (the one `origin/HEAD` names, usually `main`), create `bdd/<story-slug>` and say so in one line with its name. On any other branch, stay on it and say nothing about branches. Never create a worktree. The fix loop's cap applies. List the application files that were changed on the "For the developer" line of the report.
 
 #### Step 4: Run
 
@@ -83,7 +87,7 @@ Sort every stop by kind.
 - **A product decision is asked at once.** Examples: the data does not fit an agreed example, an earlier scenario now fails and nobody said the change was intended, or the code shows a behavior nobody described. Explain what was found in plain words and ask one question about that behavior, record the answer, and resume. Do not ask the product manager to approve again what they already approved.
 - **A technical stop is parked.** Example: a step failed three times. Report the example as failed or as couldn't be checked, with the evidence for the developer. The independent examples go on. Collect the parked stops into the "Not checked, and what it risks" section of the report. Give each one plain sentence on what could go wrong for the users, then the evidence on a "For the developer" line. Never name a file, a field, a function or a status in the plain sentence. Do not ask whether there is a developer, and do not word the report differently for a person who has none. A parked example is never reported as passed.
 
-When a check fails against an agreed example, fix the step code or build the feature in the application and re-run (the **feature-builder** role from the config does it when it is set, as `bdd:implement` does), within the fix loop's cap, and never change an approved scenario or its expected values to make a check pass. If the request names a skill for the application code, use it for this run. If the scenario is what is wrong, that is a product decision: ask. List the application files that were changed on the "For the developer" line of the report, never in the plain sentences.
+When a check fails against an agreed example, fix the step code, or build the feature as Step 3 says, and re-run within the fix loop's cap. Never change an approved scenario or its expected values to make a check pass. If the scenario is what is wrong, that is a product decision: ask. The application files that were changed go on the "For the developer" line of the report, never in the plain sentences.
 
 ### Recording
 
@@ -139,5 +143,6 @@ Developer note: <anything that was not recorded, anything surprising seen in ste
 
 - No **out_of_scope_file**: use `docs/out-of-scope.md`.
 - No **requirements-sync** role: work from the text you were given.
-- No **feature-builder**: build it yourself, as `bdd:implement` does.
+- No **feature-builder**: build it yourself, as Step 3 says.
+- No **build_order**: `all-first`.
 - No **workflow_mode**: `specify-and-implement`.

@@ -42,6 +42,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | Setting | Value |
 |---------|-------|
 | workflow_mode | `specify-and-implement` (default) or `specify-only` (stop at the scenarios, automate later) |
+| build_order | `all-first` (default: automate every scenario, then build the feature once) or `per-scenario` (automate, build and run one scenario at a time) |
 | decision_log | `off` (default) or `on` (record decisions in `decisions_dir`) |
 | step_batch | `` (optional: `auto` groups steps by risk in `implement`; `1`, a number or `all` fixes the steps per run; empty means `auto`) |
 
@@ -57,7 +58,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | verifier | `bdd:verifier` (agent) | yes | Run tests + type check, report results |
 | test-runner | `bdd:run` | no | Environment selection + test execution |
 | domain-knowledge | `<your-project-knowledge-skill>` | no | Project-specific selectors and patterns |
-| feature-builder | `<your-feature-builder-skill>` | no | Write application code when a scenario fails because the feature is missing or wrong |
+| feature-builder | `<your-feature-builder-skill>` | no | Write application code when a scenario fails because the feature is missing or wrong (used by `bdd:deliver`) |
 | requirements-sync | `<your-sync-skill>` | no | Fetch ACs from issue tracker, publish results |
 
 ## Code Quality
