@@ -57,7 +57,7 @@ The domain in the examples is a library. The existing example is E3 of the late-
 | 2 | The app can be deployed anywhere and connects to where the examples are stored, a GitHub repo or a case manager such as Qase. It should not matter which. Chosen by the builder. | Teams keep their test cases in different places. |
 | 3 | The common language is the labelled example. Gherkin and automation are generated and hidden from the approver. Chosen by the builder. | It is what failed in AssertThat. It is decision 5 of the examples-source pack, carried into the app. |
 | 4 | A new example is checked for contradiction, overlap and value. Value means it pins something new: a rule, a boundary, an outcome or a situation. Chosen by the builder. | These are the problems an approver cannot see across many stories. |
-| 5 | Each example is split into situation, action and outcome in the vocabulary. A model proposes the split, and a person confirms it once, at the approval. The comparisons after the split are mechanical. My call. | It keeps the rule of the examples source that a verdict is repeatable. The only judgment is the split, and a person owns it. |
+| 5 | Each example is split into situation, action and outcome in the vocabulary. A model proposes the split, and a person confirms it once, at the approval. The comparisons after the split are mechanical. The split follows fixed rules: the action is one of a fixed list kept in the vocabulary, a value is short and normalized (an amount with its currency, a status as written, no sentences), and a fact every existing example shares is background and is dropped by the script before comparing. Two splits are compared on the terms both carry, when they share enough of their situation, because a plain example splits shorter than a long scenario. My call, from the spike. | It keeps the rule of the examples source that a verdict is repeatable. The only judgment is the split, and a person owns it. |
 | 6 | A contradiction blocks the approval until a person answers it, whether a comparison found it or the model proposed it. An overlap and a missing value only inform. My call. | A contradiction left in the scope makes one of two examples false. An overlap costs only a duplicate test. |
 | 7 | Most of the work is autonomous, and people approve only the scope. Chosen by the builder. | The success criterion. |
 | 8 | One view shows the runs of all examples. An agent reads each run and highlights suspicious deviations. Chosen by the builder, for slices A and D. | People approve the scope and do not read the automation, so the trust has to come from looking at the results. |
@@ -92,7 +92,22 @@ The app is connected to a repo with no examples file. A story is pasted, example
 
 ## Open, to learn in a trial of B
 
-- Whether a model splits real examples well enough that a person confirms most splits without editing them.
+- Whether a careful review confirms as many splits as the quick one in the spike (see Results).
 - Whether the vocabulary finds the related examples and scenarios, and how many it misses.
 - How long a check takes and what it costs per story, with the related scenarios split on the way.
-- Whether a proposed rule-level contradiction (B5) is right often enough that blocking on it does not annoy.
+- Whether a proposed rule-level contradiction (B5) is right often enough that blocking on it does not annoy. The spike tried only contradictions that a comparison finds.
+
+## Results
+
+A throwaway spike, on 2026-11-20, took 22 Gherkin-owned scenarios from a private payments project (long UI scripts with tables) and ran the split and the checks on them, with no UI. The scenarios and their data stay out of this repo.
+
+- **Vocabulary.** One model call proposed 34 terms from the 22 scenarios, each with its meaning and the words to avoid. They read as domain words, such as a customer for what the steps call a kiosk user.
+- **Free splits cannot be compared.** The first pass filed the same fact under different terms and wrote values as sentences, so two scenarios that differ by one value did not match. With the rules now in decision 5, the second pass matched them.
+- **Background.** The script found the facts that every scenario shares (test data such as a fixed device and language) and dropped them. The model did not need to.
+- **Exact matching is too strict.** Three seeded plain examples, a contradiction, a duplicate in other words and a new outcome, were all missed by comparing whole key sets, because a plain example splits shorter. Comparing on shared terms caught the contradiction (an amount that differs) and the duplicate.
+- **False contradictions have one cause.** The seeded new outcome was flagged as a contradiction, because its split left out the condition that decides it (the provider rejects the payout). Among the 231 pairs of existing scenarios, one pair was flagged for the same reason. It is the safe direction: it blocks, and the person adds the condition to the split, which is resolution three of B4.
+- **Real findings.** Two near-duplicates (the same payout reached through two providers, differing only in the customer's contact), a rule tested three times with other countries, a scenario that checks less than its twin (no amount), and a scenario whose own tables disagree on an amount, which the model raised as a question.
+- **Confirmation.** The builder confirmed all 22 splits in a quick review. One of them misses the deciding condition above, so 21 of 22 stand as they are.
+- **Cost.** 23 model calls, six at a time, in a few minutes.
+
+What it changes: decision 5 gets its rules. The split confirmation is where a missing condition is added, so it stays a required step and not a formality. The plain sentence of an example should be written after the background facts are dropped, or it repeats test data.
