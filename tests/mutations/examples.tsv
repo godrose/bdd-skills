@@ -1,6 +1,7 @@
 # Breaks of the examples guard (scripts/examples.sh). Run with:
 # tests/mutate.sh --jobs 4 --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @examples-guard' tests/mutations/examples.tsv
 # The substitutions use ~ as the delimiter.
+# Keep the tag filter: @examples-generation checks the SHA-256 of this script, so it fails on every break.
 duplicate id allowed	scripts/examples.sh	s~    case "\$seen" in \*" \$id "\*\) finding E-DUP [^\n]*\n~~
 missing scenario not reported	scripts/examples.sh	s~finding E-MISSING "\$ex:\$line" "\$id has no scenario tagged @example-\$id"~true~
 orphan scenario not reported	scripts/examples.sh	s~\|\| finding E-ORPHAN [^\n]*~|| true~

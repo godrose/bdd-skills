@@ -2,6 +2,7 @@ import { Given, When } from "@cucumber/cucumber";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { ROOT, type World } from "./support";
 
@@ -55,7 +56,33 @@ Given("a release branch that moves the plugin into the plugin folder and sets th
   });
 });
 
+// init pins the guard script with the tag and the SHA-256 of the script now in the repo.
+function pinGuard(world: World, tag: string): void {
+  const sha = crypto.createHash("sha256").update(fs.readFileSync(path.join(world.dir, "scripts/examples.sh"))).digest("hex");
+  fs.writeFileSync(path.join(world.dir, "plugin/commands/init.md"), `The guard script is pinned to tag \`${tag}\`. Its SHA-256 at that tag is \`${sha}\`.\n`);
+}
+
+Given("a main at version {string} whose init pins the guard script to the released tag {string}", function (this: World, version: string, tag: string) {
+  mainWith(this, version, false);
+  fs.mkdirSync(path.join(this.dir, "scripts"));
+  fs.writeFileSync(path.join(this.dir, "scripts/examples.sh"), "a\n");
+  pinGuard(this, tag);
+  git(this.dir, "add", "-A");
+  git(this.dir, "commit", "-q", "-m", "guard");
+  git(this.dir, "tag", tag);
+});
+Given("a release branch that changes the guard script and sets the version to {string}", function (this: World, version: string) {
+  branch(this, version, () => fs.appendFileSync(path.join(this.dir, "scripts/examples.sh"), "b\n"));
+});
+Given("a release branch that changes the guard script, pins it to tag {string} and sets the version to {string}", function (this: World, tag: string, version: string) {
+  branch(this, version, () => {
+    fs.appendFileSync(path.join(this.dir, "scripts/examples.sh"), "b\n");
+    pinGuard(this, tag);
+  });
+});
+
 const CHECKS: Record<string, string> = {
+  "guard pin": "assert_guard_pinned",
   "plugin changed": "assert_version_bumped",
   "version is higher": "assert_version_higher",
 };

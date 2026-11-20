@@ -64,7 +64,7 @@ INSTALLED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 # The source tree holds plugin text (bdd:design, ${CLAUDE_PLUGIN_ROOT}). A project install uses
 # prefixed file names and .claude/ paths, so convert the text back.
 to_project() {
-  sed -E '/^> Plugin note:/{N;d;}; s#"\$\{CLAUDE_PLUGIN_ROOT\}"/scripts/decisions\.sh#.claude/scripts/decisions.sh#g; s/bdd:(discover|design|implement|run|triage|reconcile|deliver|verifier)/bdd-\1/g; s/^name: verifier(\r?)$/name: bdd-verifier\1/'
+  sed -E '/^> Plugin note:/{N;d;}; s#"\$\{CLAUDE_PLUGIN_ROOT\}"/scripts/decisions\.sh#.claude/scripts/decisions.sh#g; s#scripts/bdd/examples\.sh#.claude/scripts/examples.sh#g; s/bdd:(discover|design|implement|run|triage|reconcile|deliver|verifier)/bdd-\1/g; s/^name: verifier(\r?)$/name: bdd-verifier\1/'
 }
 
 # The plugin carries no pre-approved tools, because the directory refuses them. A project install is not scanned,
@@ -140,6 +140,8 @@ for s in discover design implement run triage reconcile deliver; do
 done
 cp "$SCRIPTS_DIR/decisions.sh" "$CLAUDE_DIR/scripts/decisions.sh"
 chmod +x "$CLAUDE_DIR/scripts/decisions.sh"
+cp "$SCRIPTS_DIR/examples.sh" "$CLAUDE_DIR/scripts/examples.sh"
+chmod +x "$CLAUDE_DIR/scripts/examples.sh"
 cp "$SCHEMAS_DIR/decision.schema.json" "$CLAUDE_DIR/schemas/decision.schema.json"
 install_skill "$PLUGIN_DIR/agents/verifier.md" "$CLAUDE_DIR/agents/bdd-verifier.md"
 
@@ -152,6 +154,7 @@ echo "  $CLAUDE_DIR/commands/bdd-triage.md"
 echo "  $CLAUDE_DIR/commands/bdd-reconcile.md"
 [ -z "${DELIVER_SKIPPED:-}" ] && echo "  $CLAUDE_DIR/commands/bdd-deliver.md"
 echo "  $CLAUDE_DIR/scripts/decisions.sh"
+echo "  $CLAUDE_DIR/scripts/examples.sh"
 echo "  $CLAUDE_DIR/schemas/decision.schema.json"
 echo "  $CLAUDE_DIR/agents/bdd-verifier.md"
 
@@ -184,6 +187,8 @@ report_missing_row automated_tag "skipped"
 report_missing_row decision_log "off"
 report_missing_row decisions_dir "docs/decisions"
 report_missing_row scenario_id_prefix "spec-"
+report_missing_row spec_source "empty (examples when the examples_guard script is there, else gherkin)"
+report_missing_row examples_guard "scripts/bdd/examples.sh"
 report_missing_row status_scope "scenario"
 report_missing_row manual_only_tag "@manual-only"
 report_missing_row planned_dir "none (used with status_scope directory)"

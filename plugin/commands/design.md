@@ -20,7 +20,7 @@ The user provides one or more of:
 - A feature area to cover (e.g., "user profile settings")
 - A gap to fill (e.g., "we test field presence but not field values")
 - A discovery pack from `bdd:discover` (agreed examples, edge cases and exclusions)
-- An approved checklist of agreed examples from `bdd:deliver`. That checklist counts as the approval of the examples, so do not ask for it again. Still show the scenarios in plain words and wait for the go-ahead.
+- An approved checklist of agreed examples from `bdd:deliver`. That checklist counts as the approval of the examples, so do not ask for it again. In the examples flow it is the only approval (see Spec source). In the Gherkin flow, still show the scenarios in plain words and wait for the go-ahead.
 
 ### Mode
 
@@ -30,6 +30,21 @@ Read `workflow_mode` from `.claude/bdd-config.md`.
 - `specify-only`: design and get approval, then stop. The scenarios are written as `.feature` files and left unautomated. A team uses this to put the scenarios in front of a product manager before any automation exists.
 
 `--specify-only` or `--specify-and-implement` on the command overrides the config. If `workflow_mode` is absent, use `specify-and-implement`.
+
+### Spec source
+
+Read **spec_source** and **examples_guard**. A config with no **examples_guard** row uses `scripts/bdd/examples.sh`. A config with no **spec_source** row counts as empty. The examples flow runs when `spec_source` is `examples` or empty and the file **examples_guard** names exists. The same path whoever runs it: a product manager through `bdd:deliver`, or a developer directly. When `spec_source` is `examples` and that file is not there, say "The examples flow needs the guard script. Run /bdd:init to add it. This run uses Gherkin." and design as below. When `spec_source` is `gherkin`, or empty and the file is not there, design as below and say nothing.
+
+In the examples flow the source is the examples file, `<features_dir>/<slug>.examples.md`: a rule line, then one labelled example per line, `E1. `, `E2. ` and so on, each with its situation, action and outcome in the story's words and with concrete values. Phases 1 to 3 run as below. What changes:
+
+1. **The approval.** When the story has no examples file, draft one from the agreed examples of the discovery pack or the checklist, or from the story. Show the examples in plain words and ask for the one approval of the examples. A checklist approved in `bdd:deliver` is that approval. Write the examples file only after it.
+2. **The scenarios.** Generate one scenario per example into `<features_dir>/<slug>.feature`, a file of its own. Its first line is `# Generated from <slug>.examples.md. Change the examples, not this file.` Never write a generated scenario into a feature file that has a scenario without an example id. Each scenario carries its spec id tag, `@example-E<n>`, and the `@src-` and `@gen-` tags. Reuse existing steps first, with the passes of Phase 2.
+3. **The hashes.** Run `<examples_guard> source-hash <examples file> E<n>` and put the result after `@src-`. Write the scenario, then run `<examples_guard> scenario-hash <feature file> E<n>` and put the result after `@gen-`.
+4. **The check.** Run `<examples_guard> check --features <features_dir>` and show its result under "For the developer:".
+5. **No second gate.** There is no second approval. Show the generated scenarios only under "For the developer:", and show anyone who asks the scenario of an example. A finding of Phase 2 that changes what a scenario proves is one plain question about the behavior, asked alone. Put the answer into the example and generate that scenario again. A purely technical finding goes under "For the developer:".
+6. **A changed example.** When the text of an example changed after its scenario was generated, generate only that scenario again and stamp both hashes again. Leave the other scenarios as they are.
+
+Phase 5 then implements the generated scenarios as usual.
 
 ### Workflow
 
@@ -134,6 +149,8 @@ For each gap, formulate a scenario following these principles:
 - Put simpler scenarios first (they validate infrastructure for complex ones)
 
 #### Phase 4: Review with User
+
+In the examples flow, the approval is the one of Spec source, and the scenarios and this table go under "For the developer:".
 
 Present the designed scenarios to the user. **Before requesting approval, produce a per-step reuse audit table - this is mandatory, not optional. It is the artifact that forces conscious reconciliation of every new step against the existing inventory.**
 
