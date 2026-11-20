@@ -6,18 +6,18 @@ description: "Create .claude/bdd-config.md from the plugin's template. With --de
 
 Create `.claude/bdd-config.md` in the current project from the template that ships with the plugin.
 
-Without `--detect`, this command only copies the file. It never overwrites an existing config, and it does not fill in anything. With `--detect`, it also proposes values for the rows that are still placeholders, and writes only the ones the user approves.
+Without `--detect`, this command only copies the file and offers the examples guard script. It never overwrites an existing config, and it fills in nothing but `spec_source`. With `--detect`, it also proposes values for the rows that are still placeholders, and writes only the ones the user approves.
 
 ### Input
 
-- No argument: copy the template, then stop.
+- No argument: copy the template, offer the examples guard script, then stop.
 - `--detect`: copy the template if the config is missing, then detect and propose values.
 
 Both forms then offer the examples guard script (see Examples guard), and end by reporting leftover project-file copies (see Leftovers).
 
 ### Copy
 
-1. **Check.** Run `test -e .claude/bdd-config.md`. If the file exists, say so and leave it as it is. Without `--detect`, stop here. With `--detect`, go on to Detect.
+1. **Check.** Run `test -e .claude/bdd-config.md`. If the file exists, say so and leave it as it is. Without `--detect`, go on to Examples guard. With `--detect`, go on to Detect.
 
 2. **Copy.** If the file is missing, run:
 
@@ -38,20 +38,26 @@ Both forms then offer the examples guard script (see Examples guard), and end by
 
 The examples flow (`spec_source` set to `examples`) needs the guard script in the project. The plugin cannot ship scripts, so this step downloads it, only when the user says yes. It runs in both forms, after Copy.
 
-1. **Check.** Read the **spec_source** and **examples_guard** rows. Skip this step and say nothing when `spec_source` is `gherkin`, or when the file **examples_guard** names exists. Otherwise go on.
-2. **Ask.** Ask with `"AskUserQuestion"`: "Add the examples guard script to this project? It downloads one bash script from github.com/godrose/bdd-skills at the version of this plugin, checks it, and writes it to <examples_guard> for you to commit." On no, download nothing and set `spec_source` to `gherkin`. Stop this step.
-3. **Download.** Read the version from `"${CLAUDE_PLUGIN_ROOT}"/.claude-plugin/plugin.json`. Then run this, with `<v>` the version and `<path>` the **examples_guard** value:
+1. **Check.** Read the **spec_source** and **examples_guard** rows. A config with no **examples_guard** row uses `scripts/bdd/examples.sh`. A config with no **spec_source** row counts as empty. Skip this step and say nothing when `spec_source` is `gherkin`, or when the file **examples_guard** names exists. Otherwise go on.
+2. **Ask.** Ask with `"AskUserQuestion"`: "Add the examples guard script to this project? It downloads one bash script from github.com/godrose/bdd-skills at a pinned release, checks it, and writes it to <examples_guard> for you to commit." On no, download nothing and set `spec_source` to `gherkin`. Stop this step.
+3. **Download.** The guard script is pinned to tag `v0.8.0`. Its SHA-256 at that tag is `69afcef4de5e88d10b9be816b06c256448c3afcbd61bb396f4e82d04a41fa94b`. Only a release moves this pin. Run this, with `<tag>` the pinned tag:
 
    ```
-   mkdir -p "$(dirname <path>)" && curl -fsSL https://raw.githubusercontent.com/godrose/bdd-skills/v<v>/scripts/examples.sh -o <path>.part && shasum -a 256 <path>.part
+   curl -fsSL https://raw.githubusercontent.com/godrose/bdd-skills/<tag>/scripts/examples.sh -o .claude/examples-guard.part && shasum -a 256 .claude/examples-guard.part
    ```
 
-   When the user gives a local copy of the script for a trial, copy that file to `<path>.part` in place of the download, then run the same `shasum -a 256` line. Where `shasum` is missing, use `sha256sum`.
-4. **Check the checksum.** The SHA-256 of the guard script for this plugin version is `69afcef4de5e88d10b9be816b06c256448c3afcbd61bb396f4e82d04a41fa94b`. Compare it with the output of the `shasum` line.
-5. **Move.** Only when the checksum matches, move it into place: `mv <path>.part <path> && chmod +x <path>`. Then set `spec_source` to `examples`, and say that the script is part of the project and should be committed.
-6. **On a failure.** When the download failed or the checksum did not match, delete `<path>.part`. Nothing is written. Say which of the two happened in one line, and set `spec_source` to `gherkin`.
+   When the user gives a local copy of the script for a trial, copy that file to `.claude/examples-guard.part` in place of the download, then run the same `shasum -a 256` line. Where `shasum` is missing, use `sha256sum`.
+4. **Check the checksum.** Compare the output of the `shasum` line with the pinned SHA-256.
+5. **Move.** Only when the checksum matches, move it into place, with `<path>` the **examples_guard** value:
 
-To set `spec_source`, change the value cell of that row only, using `"Edit"`.
+   ```
+   mkdir -p "$(dirname "<path>")" && mv .claude/examples-guard.part "<path>" && chmod +x "<path>"
+   ```
+
+   Then set `spec_source` to `examples`, and say that the script is part of the project and should be committed.
+6. **On a failure.** When the download failed or the checksum did not match, delete `.claude/examples-guard.part`. Nothing is written. Say which of the two happened in one line. Leave `spec_source` as it is, so the next run offers the script again.
+
+To set `spec_source`, change the value cell of that row only, using `"Edit"`. When the config has no **spec_source** row, add it as the last row of the Workflow table: `| spec_source | <value> |`.
 
 ### Detect
 
@@ -127,6 +133,6 @@ Projects that used the project-file install may hold copies of the skills next t
 - Never overwrite `.claude/bdd-config.md`, and never change a row that already has a value, except `decision_log` with approval (see Hints) and `spec_source` (see Examples guard).
 - Without `--detect`, do not fill in any value other than `spec_source`.
 - Writes nothing until the user approves it.
-- Do not run the project's commands, builds or tests. Read files only.
+- Do not run the project's commands, builds or tests. Read files only, except the download in Examples guard.
 - Do not delete or edit the leftover files. Only report them.
 - Do not commit.

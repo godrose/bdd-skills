@@ -20,7 +20,7 @@ The user provides one or more of:
 - A feature area to cover (e.g., "user profile settings")
 - A gap to fill (e.g., "we test field presence but not field values")
 - A discovery pack from `bdd:discover` (agreed examples, edge cases and exclusions)
-- An approved checklist of agreed examples from `bdd:deliver`. That checklist counts as the approval of the examples, so do not ask for it again. Still show the scenarios in plain words and wait for the go-ahead.
+- An approved checklist of agreed examples from `bdd:deliver`. That checklist counts as the approval of the examples, so do not ask for it again. In the examples flow it is the only approval (see Spec source). In the Gherkin flow, still show the scenarios in plain words and wait for the go-ahead.
 
 ### Mode
 
@@ -33,7 +33,7 @@ Read `workflow_mode` from `.claude/bdd-config.md`.
 
 ### Spec source
 
-Read **spec_source** and **examples_guard**. The examples flow runs when `spec_source` is `examples` or empty and the file **examples_guard** names exists. The same path whoever runs it: a product manager through `bdd:deliver`, or a developer directly. When `spec_source` is `examples` and that file is not there, say "The examples flow needs the guard script. Run /bdd:init to add it. This run uses Gherkin." and design as below. When `spec_source` is `gherkin`, or empty and the file is not there, design as below and say nothing.
+Read **spec_source** and **examples_guard**. A config with no **examples_guard** row uses `scripts/bdd/examples.sh`. A config with no **spec_source** row counts as empty. The examples flow runs when `spec_source` is `examples` or empty and the file **examples_guard** names exists. The same path whoever runs it: a product manager through `bdd:deliver`, or a developer directly. When `spec_source` is `examples` and that file is not there, say "The examples flow needs the guard script. Run /bdd:init to add it. This run uses Gherkin." and design as below. When `spec_source` is `gherkin`, or empty and the file is not there, design as below and say nothing.
 
 In the examples flow the source is the examples file, `<features_dir>/<slug>.examples.md`: a rule line, then one labelled example per line, `E1. `, `E2. ` and so on, each with its situation, action and outcome in the story's words and with concrete values. Phases 1 to 3 run as below. What changes:
 

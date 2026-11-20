@@ -1,0 +1,6 @@
+# Breaks of the guard pin check in tests/check_release.sh. Run with:
+# tests/mutate.sh --cmd 'NODE_OPTIONS="--import tsx" npx cucumber-js --tags @examples-generation' tests/mutations/release.tsv
+# The substitutions use ~ as the delimiter.
+script change not noticed	tests/check_release.sh	s~if \[ "\$sha" != "\$here" \]; then~if false; then~
+any tag accepted	tests/check_release.sh	s~if \[ "\$tag" = "v\$new" \] \|\| ~if true || ~
+new version tag not accepted	tests/check_release.sh	s~\[ "\$tag" = "v\$new" \] \|\| ~~
