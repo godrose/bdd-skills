@@ -91,7 +91,7 @@ Present the discovery pack (below). It stays in the conversation by default. Sav
 <concrete examples in plain words, each marked confirmed or proposed>
 
 ## Agreed examples
-<only when the builder has confirmed examples: a numbered checklist in plain words, E1, E2 and so on, each marked confirmed. `bdd:deliver` shows this list to the product manager for approval>
+<only when the builder has confirmed examples: a numbered checklist in plain words, E1, E2 and so on, each marked confirmed. `bdd:deliver` shows this list to the product manager for approval. Write them as labelled examples, one per line: `E1. ` and the example with its concrete values. `bdd:design` writes the examples file from them, so this command writes no file for them>
 
 ## Edge and negative cases
 <cases with the agreed outcome, or the question still open>

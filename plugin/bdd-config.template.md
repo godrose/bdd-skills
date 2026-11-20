@@ -30,6 +30,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 | unautomated_tag | `@pending` (tag for scenarios planned to be automated; optional) |
 | automated_tag | `<optional tag your test-management tool keys on, e.g. @automated; empty to skip>` |
 | decisions_dir | `docs/decisions` (where the decision log lives; used when decision_log is on) |
+| examples_guard | `scripts/bdd/examples.sh` (the examples guard script; `/bdd:init` adds it) |
 | scenario_id_prefix | `spec-` (stable scenario id tag prefix, for example `@spec-export-empty-list`) |
 | status_scope | `scenario` (where the planned marker sits: `scenario`, `feature` or `directory`) |
 | manual_only_tag | `@manual-only` (scenarios that stay manual by design; never automated) |
@@ -43,6 +44,7 @@ Project-level manifest mapping roles to tools, conventions, and skills. Read by 
 |---------|-------|
 | workflow_mode | `specify-and-implement` (default) or `specify-only` (stop at the scenarios, automate later) |
 | build_order | `all-first` (default: automate every scenario, then build the feature once) or `per-scenario` (automate, build and run one scenario at a time) |
+| spec_source | `` (`examples` or `gherkin`; empty means `examples` when the examples_guard script is there, else `gherkin`) |
 | decision_log | `off` (default) or `on` (record decisions in `decisions_dir`) |
 | step_batch | `` (optional: `auto` groups steps by risk in `implement`; `1`, a number or `all` fixes the steps per run; empty means `auto`) |
 

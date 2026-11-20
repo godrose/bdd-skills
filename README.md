@@ -290,6 +290,8 @@ Every row below is optional. If a row is absent, the default applies.
 | `decision_log` | `off` | `on` records decisions in `decisions_dir`. `/bdd:init --detect` asks whether to turn it on |
 | `decisions_dir` | `docs/decisions` | Where the decision log lives |
 | `scenario_id_prefix` | `spec-` | Prefix of the stable scenario id tag |
+| `spec_source` | `examples` when the guard script is there, else `gherkin` | `examples` makes labelled examples the source, and `design` generates the scenarios from them. `/bdd:init` sets it |
+| `examples_guard` | `scripts/bdd/examples.sh` | Where the examples guard script is. `/bdd:init` downloads it there after asking |
 | `automated_tag` | none | Tag your test-management tool keys on, added when a scenario is automated |
 | `glossary_file` | none | Domain terms for the vocabulary check |
 | `lint` | none | Project linter for tags, casing and indentation. `design` runs it on the draft before showing it, using a temp `.bdd-draft-*` file in `features_dir`. It acts only on findings in the draft, and warns and continues if the linter cannot run |

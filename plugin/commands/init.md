@@ -13,7 +13,7 @@ Without `--detect`, this command only copies the file. It never overwrites an ex
 - No argument: copy the template, then stop.
 - `--detect`: copy the template if the config is missing, then detect and propose values.
 
-Both forms end by reporting leftover project-file copies (see Leftovers).
+Both forms then offer the examples guard script (see Examples guard), and end by reporting leftover project-file copies (see Leftovers).
 
 ### Copy
 
@@ -33,6 +33,25 @@ Both forms end by reporting leftover project-file copies (see Leftovers).
    - the **Conventions** table: at least `features_dir` and `steps_dir`
 
    A value still in `<...>` form counts as empty. The README's Configure section has ready-made row sets for common frameworks. The file should be committed once it is filled in. Mention that `/bdd:init --detect` can propose the values.
+
+### Examples guard
+
+The examples flow (`spec_source` set to `examples`) needs the guard script in the project. The plugin cannot ship scripts, so this step downloads it, only when the user says yes. It runs in both forms, after Copy.
+
+1. **Check.** Read the **spec_source** and **examples_guard** rows. Skip this step and say nothing when `spec_source` is `gherkin`, or when the file **examples_guard** names exists. Otherwise go on.
+2. **Ask.** Ask with `"AskUserQuestion"`: "Add the examples guard script to this project? It downloads one bash script from github.com/godrose/bdd-skills at the version of this plugin, checks it, and writes it to <examples_guard> for you to commit." On no, download nothing and set `spec_source` to `gherkin`. Stop this step.
+3. **Download.** Read the version from `"${CLAUDE_PLUGIN_ROOT}"/.claude-plugin/plugin.json`. Then run this, with `<v>` the version and `<path>` the **examples_guard** value:
+
+   ```
+   mkdir -p "$(dirname <path>)" && curl -fsSL https://raw.githubusercontent.com/godrose/bdd-skills/v<v>/scripts/examples.sh -o <path>.part && shasum -a 256 <path>.part
+   ```
+
+   When the user gives a local copy of the script for a trial, copy that file to `<path>.part` in place of the download, then run the same `shasum -a 256` line. Where `shasum` is missing, use `sha256sum`.
+4. **Check the checksum.** The SHA-256 of the guard script for this plugin version is `69afcef4de5e88d10b9be816b06c256448c3afcbd61bb396f4e82d04a41fa94b`. Compare it with the output of the `shasum` line.
+5. **Move.** Only when the checksum matches, move it into place: `mv <path>.part <path> && chmod +x <path>`. Then set `spec_source` to `examples`, and say that the script is part of the project and should be committed.
+6. **On a failure.** When the download failed or the checksum did not match, delete `<path>.part`. Nothing is written. Say which of the two happened in one line, and set `spec_source` to `gherkin`.
+
+To set `spec_source`, change the value cell of that row only, using `"Edit"`.
 
 ### Detect
 
@@ -105,8 +124,8 @@ Projects that used the project-file install may hold copies of the skills next t
 
 ### Rules
 
-- Never overwrite `.claude/bdd-config.md`, and never change a row that already has a value, except `decision_log` with approval: see Hints.
-- Without `--detect`, do not fill in any value.
+- Never overwrite `.claude/bdd-config.md`, and never change a row that already has a value, except `decision_log` with approval (see Hints) and `spec_source` (see Examples guard).
+- Without `--detect`, do not fill in any value other than `spec_source`.
 - Writes nothing until the user approves it.
 - Do not run the project's commands, builds or tests. Read files only.
 - Do not delete or edit the leftover files. Only report them.
