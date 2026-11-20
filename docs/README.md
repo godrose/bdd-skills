@@ -67,6 +67,7 @@ One pack per change: questions, examples, edge cases, exclusions and decisions w
 | `2026-11-15-flow-call-order.md` | The flow harness records the calls of each turn and counts the build order of `deliver` |
 | `2026-11-15-forced-red-actual-side.md` | The forced red in `implement` breaks what the step observes, with the expected side as the fallback |
 | `2026-11-15-examples-source.md` | Labelled examples are the source of the spec, and the Gherkin is generated and hidden from authors and approvers |
+| `2026-11-16-examples-app.md` | An app where a story becomes examples checked for contradiction, overlap and value, approved once as the scope |
 | `2026-11-13-go-public.md` | The README for a public repository, and the audit done before the flip |
 
 ## trials/
